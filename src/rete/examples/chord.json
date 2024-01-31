@@ -1,1 +1,128 @@
-{"nodes":[{"id":"da6ab80ecf3eb8fe","name":"Oscillator","data":{"baseFreq":440,"waveform":"sine"}},{"id":"aae2729a777da64b","name":"Gain","data":{"gain":0.1}},{"id":"d965e50fa8938daa","name":"Universal Output","data":{"gain":1}},{"id":"ce460270432e5af0","name":"Oscillator","data":{"baseFreq":440,"waveform":"sine"}},{"id":"f96941fe4e5b78d4","name":"Oscillator","data":{"baseFreq":440,"waveform":"sine"}},{"id":"6e9494d38d8c15e2","name":"Oscillator","data":{"baseFreq":440,"waveform":"sine"}},{"id":"f10a4339d0207584","name":"Oscillator","data":{"baseFreq":440,"waveform":"sine"}},{"id":"7e04fb6deb2f873f","name":"Note Frequency","data":{"octave":4,"note":"2"}},{"id":"b1f29eb8d7c36d3a","name":"Note Frequency","data":{"octave":4,"note":"11"}},{"id":"0ac7a720c3077da5","name":"Note Frequency","data":{"octave":4,"note":"7"}},{"id":"2628141823d63c1b","name":"Note Frequency","data":{"octave":4,"note":"0"}},{"id":"b8ff64385f38be7c","name":"Note Frequency","data":{"octave":3,"note":"4"}}],"connections":[{"source":"aae2729a777da64b","sourceOutput":"signal","target":"d965e50fa8938daa","targetInput":"signal"},{"source":"f10a4339d0207584","sourceOutput":"signal","target":"aae2729a777da64b","targetInput":"signal"},{"source":"da6ab80ecf3eb8fe","sourceOutput":"signal","target":"aae2729a777da64b","targetInput":"signal"},{"source":"ce460270432e5af0","sourceOutput":"signal","target":"aae2729a777da64b","targetInput":"signal"},{"source":"6e9494d38d8c15e2","sourceOutput":"signal","target":"aae2729a777da64b","targetInput":"signal"},{"source":"f96941fe4e5b78d4","sourceOutput":"signal","target":"aae2729a777da64b","targetInput":"signal"},{"source":"b8ff64385f38be7c","sourceOutput":"value","target":"f10a4339d0207584","targetInput":"baseFrequency"},{"source":"7e04fb6deb2f873f","sourceOutput":"value","target":"da6ab80ecf3eb8fe","targetInput":"baseFrequency"},{"source":"2628141823d63c1b","sourceOutput":"value","target":"f96941fe4e5b78d4","targetInput":"baseFrequency"},{"source":"0ac7a720c3077da5","sourceOutput":"value","target":"6e9494d38d8c15e2","targetInput":"baseFrequency"},{"source":"b1f29eb8d7c36d3a","sourceOutput":"value","target":"ce460270432e5af0","targetInput":"baseFrequency"}]}
+{
+    "nodes": [
+        {
+            "id": "da6ab80ecf3eb8fe",
+            "name": "Oscillator",
+            "data": { "baseFreq": 440, "waveform": "sine" }
+        },
+        { "id": "aae2729a777da64b", "name": "Gain", "data": { "gain": 0.1 } },
+        {
+            "id": "d965e50fa8938daa",
+            "name": "Universal Output",
+            "data": { "gain": 1 }
+        },
+        {
+            "id": "ce460270432e5af0",
+            "name": "Oscillator",
+            "data": { "baseFreq": 440, "waveform": "sine" }
+        },
+        {
+            "id": "f96941fe4e5b78d4",
+            "name": "Oscillator",
+            "data": { "baseFreq": 440, "waveform": "sine" }
+        },
+        {
+            "id": "6e9494d38d8c15e2",
+            "name": "Oscillator",
+            "data": { "baseFreq": 440, "waveform": "sine" }
+        },
+        {
+            "id": "f10a4339d0207584",
+            "name": "Oscillator",
+            "data": { "baseFreq": 440, "waveform": "sine" }
+        },
+        {
+            "id": "7e04fb6deb2f873f",
+            "name": "Note Frequency",
+            "data": { "octave": 4, "note": "2" }
+        },
+        {
+            "id": "b1f29eb8d7c36d3a",
+            "name": "Note Frequency",
+            "data": { "octave": 4, "note": "11" }
+        },
+        {
+            "id": "0ac7a720c3077da5",
+            "name": "Note Frequency",
+            "data": { "octave": 4, "note": "7" }
+        },
+        {
+            "id": "2628141823d63c1b",
+            "name": "Note Frequency",
+            "data": { "octave": 4, "note": "0" }
+        },
+        {
+            "id": "b8ff64385f38be7c",
+            "name": "Note Frequency",
+            "data": { "octave": 3, "note": "4" }
+        }
+    ],
+    "connections": [
+        {
+            "source": "aae2729a777da64b",
+            "sourceOutput": "signal",
+            "target": "d965e50fa8938daa",
+            "targetInput": "signal"
+        },
+        {
+            "source": "f10a4339d0207584",
+            "sourceOutput": "signal",
+            "target": "aae2729a777da64b",
+            "targetInput": "signal"
+        },
+        {
+            "source": "da6ab80ecf3eb8fe",
+            "sourceOutput": "signal",
+            "target": "aae2729a777da64b",
+            "targetInput": "signal"
+        },
+        {
+            "source": "ce460270432e5af0",
+            "sourceOutput": "signal",
+            "target": "aae2729a777da64b",
+            "targetInput": "signal"
+        },
+        {
+            "source": "6e9494d38d8c15e2",
+            "sourceOutput": "signal",
+            "target": "aae2729a777da64b",
+            "targetInput": "signal"
+        },
+        {
+            "source": "f96941fe4e5b78d4",
+            "sourceOutput": "signal",
+            "target": "aae2729a777da64b",
+            "targetInput": "signal"
+        },
+        {
+            "source": "b8ff64385f38be7c",
+            "sourceOutput": "value",
+            "target": "f10a4339d0207584",
+            "targetInput": "baseFrequency"
+        },
+        {
+            "source": "7e04fb6deb2f873f",
+            "sourceOutput": "value",
+            "target": "da6ab80ecf3eb8fe",
+            "targetInput": "baseFrequency"
+        },
+        {
+            "source": "2628141823d63c1b",
+            "sourceOutput": "value",
+            "target": "f96941fe4e5b78d4",
+            "targetInput": "baseFrequency"
+        },
+        {
+            "source": "0ac7a720c3077da5",
+            "sourceOutput": "value",
+            "target": "6e9494d38d8c15e2",
+            "targetInput": "baseFrequency"
+        },
+        {
+            "source": "b1f29eb8d7c36d3a",
+            "sourceOutput": "value",
+            "target": "ce460270432e5af0",
+            "targetInput": "baseFrequency"
+        }
+    ]
+}

@@ -1,7 +1,7 @@
-import * as React from "react";
-import { ClassicPreset } from "rete";
-import styled from "styled-components";
-import { $socketsize, $socketcolor, $socketmargin } from "./vars";
+import * as React from 'react'
+import { ClassicPreset } from 'rete'
+import styled from 'styled-components'
+import { $socketsize, $socketcolor, $socketmargin } from './vars'
 
 const Styles = styled.div`
     display: inline-block;
@@ -15,10 +15,10 @@ const Styles = styled.div`
     z-index: 2;
     box-sizing: border-box;
     &:hover {
-      border-width: 4px;
+        border-width: 4px;
     }
     &.multiple {
-      border-color: yellow;
+        border-color: yellow;
     }
 `
 
@@ -26,16 +26,16 @@ const Hoverable = styled.div`
     border-radius: ${($socketsize + $socketmargin * 2) / 2.0}px;
     padding: ${$socketmargin}px;
     &:hover ${Styles} {
-      border-width: 4px;
+        border-width: 4px;
     }
 `
 
 export function CustomSocket<T extends ClassicPreset.Socket>(props: {
-	data: T;
+    data: T
 }) {
-	return (
-		<Hoverable>
-			<Styles title={props.data.name} />
-		</Hoverable>
-	)
+    return (
+        <Hoverable>
+            <Styles title={props.data.name} />
+        </Hoverable>
+    )
 }

@@ -1,31 +1,31 @@
 .App {
-  text-align: center;
-  max-height: 100vh;
-  max-width: 100vw;
+    text-align: center;
+    max-height: 100vh;
+    max-width: 100vw;
 }
 
 .App-header {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    font-size: calc(10px + 2vmin);
+    color: white;
 }
 
 .App-link {
-  color: white;
+    color: white;
 }
 
 .ant-btn-default {
-  color: white;
-  background-color: transparent;
-  border: 2px solid;
-  border-color: white;
+    color: white;
+    background-color: transparent;
+    border: 2px solid;
+    border-color: white;
 }
 
 .ant-btn-default:hover {
-  color: white !important;
-  background-color: transparent;
-  border: 2px solid;
-  border-color: pink !important;
+    color: white !important;
+    background-color: transparent;
+    border: 2px solid;
+    border-color: pink !important;
 }
