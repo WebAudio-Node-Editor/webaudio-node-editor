@@ -4,7 +4,7 @@ import './App.css';
 import './rete.css';
 import { createEditor } from './rete';
 import { Layout, Button, Flex, Select, Divider } from "antd";
-import {Link} from 'react-router-dom'
+import { Link } from 'react-router-dom'
 
 let selectedExample = "Default"
 
@@ -25,12 +25,12 @@ function App() {
     <Layout style={{ display: 'flex', height: '100vh', backgroundImage: "linear-gradient(to bottom right, CornflowerBlue, Pink)" }}>
       <Flex gap="small" className="header" align="center" style={{ color: "white", backgroundColor: 'rgba(0,0,0,0.3)', height: "46px", padding: '0.5em 1em', position: "absolute", top: "0px", width: "100%", zIndex: "1" }}>
         <Link to="/" className='App-header' >WebAudio Node Editor</Link>
-        <Divider type="vertical" style={{ top: "0px", height: "20px", borderLeft: "2px solid rgba(255,255,255,0.4)"}}></Divider>
+        <Divider type="vertical" style={{ top: "0px", height: "20px", borderLeft: "2px solid rgba(255,255,255,0.4)" }}></Divider>
         <Link to="/blog" className='App-link'>Blog</Link>
-        <Divider type="vertical" style={{ top: "0px", height: "20px", borderLeft: "2px solid rgba(255,255,255,0.4)"}}></Divider>
+        <Divider type="vertical" style={{ top: "0px", height: "20px", borderLeft: "2px solid rgba(255,255,255,0.4)" }}></Divider>
         <Link to="/documentation" className='App-link'>Documentation</Link>
-        <Divider type="vertical" style={{ top: "0px", height: "20px", borderLeft: "2px solid rgba(255,255,255,0.4)"}}></Divider>
-        <a className='App-link' href="https://github.com/ruan-xian/webaudio-node-editor" target="_blank" rel="noreferrer">GitHub</a>
+        <Divider type="vertical" style={{ top: "0px", height: "20px", borderLeft: "2px solid rgba(255,255,255,0.4)" }}></Divider>
+        <a className='App-link' href="https://github.com/WebAudio-Node-Editor/webaudio-node-editor" target="_blank" rel="noreferrer">GitHub</a>
         <div style={{ flexGrow: 1 }} />
         <Button onClick={() => editor?.layout(true)}>Auto-arrange nodes</Button>
         <Button danger onClick={() => editor?.toggleAudio()}>Toggle Audio</Button>
