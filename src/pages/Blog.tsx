@@ -72,32 +72,19 @@ export default function Blog() {
 						prototype keyboard-playable synths.
 						This turned out to be much more difficult than the baseline of just having oscillators,
 						noise nodes, and constant nodes as the only audio sources, because we need <i>25</i> oscillators
-						to represent every playable note. To support this, I decided to add bundleable signals,
-						inspired somewhat by the pack nodes of Max and Pure Data.
-					</div>
-					<div className="Blog-content">
-						In short, a bundled signal allows many more nodes to be created from a single series of
-						connections than usual. (See
-						the <Link to="/documentation" className="Blog-link">documentation</Link> for
-						how this works!) Bundling turned out
-						to add a great deal of complexity to the project, since inputs turned from single-dimensional
-						arrays into two-dimensional arrays, and Cartesian products got involved down the line, but
-						they added a lot of capacity for compactness in the node graph, and I'm happy with
-						how it turned out.
+						to represent every playable note.
 					</div>
 					<div className="Blog-content">
 						Keyboard-playable notes were the last feature I added, and I'm honestly not entirely satisfied
 						with the final implementation. They're functional, but not as flexible as I would've wanted.
 						Ideally, I would have the ADSR envelope as its own node, separate from the oscillators
 						and their frequencies, but I just couldn't figure out a flexible enough way to have these
-						elements link together properly, so instead I opted for a mega node. It... works I guess?
+						elements link together properly, so instead I opted for a mega node. It... works I guess? EDIT:
+						It's now possible (but painful) to assemble your own keyboard from Keyboard ADSR nodes and oscillators.
 					</div>
 					<div className="Blog-header">Limitations and Future Steps</div>
 					<div className="Blog-content">
 						- Some clipping prevention is included through a DynamicsCompressorNode, but it's not always enough
-					</div>
-					<div className="Blog-content">
-						- Bundling is still somewhat hard to understand
 					</div>
 					<div className="Blog-content">
 						- I haven't figured out how to get AudioWorkletNodes to play

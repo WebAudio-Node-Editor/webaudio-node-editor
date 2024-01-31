@@ -1,7 +1,6 @@
 import { ClassicPreset as Classic } from "rete"
 import { socket, audioCtx } from "../default"
 import { LabeledInputControl } from "../controls/LabeledInputControl"
-import { processBundledSignal } from "../utils"
 
 export class ClipNode extends Classic.Node<{ signal: Classic.Socket }, { signal: Classic.Socket }, { amp: LabeledInputControl }> {
 	width = 180
@@ -18,27 +17,20 @@ export class ClipNode extends Classic.Node<{ signal: Classic.Socket }, { signal:
 		this.addOutput("signal", new Classic.Output(socket, "Signal"))
 	}
 
-	data(inputs: { signal?: AudioNode[][] }): { signal: AudioNode[] } {
+	data(inputs: { signal?: AudioNode[] }): { signal: AudioNode } {
 		const amp = this.controls.amp.value || 1;
-		const outputNodes: AudioNode[] = []
 
-		var signals = processBundledSignal(inputs.signal)
+		const gain = audioCtx.createGain();
+		gain.gain.value = 1. / amp;
+		const waveShaper = new WaveShaperNode(audioCtx, {
+			curve: new Float32Array([-amp, amp])
+		});
+		gain.connect(waveShaper);
 
-		for (const inSignal of signals) {
-			const gain = audioCtx.createGain();
-			gain.gain.value = 1. / amp;
-			const waveShaper = new WaveShaperNode(audioCtx, {
-				curve: new Float32Array([-amp, amp])
-			});
-			gain.connect(waveShaper);
-
-			inSignal.forEach(sig => sig.connect(gain))
-
-			outputNodes.push(waveShaper)
-		}
+		inputs.signal?.forEach(sig => sig.connect(gain))
 
 		return {
-			signal: outputNodes
+			signal: waveShaper
 		}
 	}
 

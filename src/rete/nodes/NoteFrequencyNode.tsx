@@ -2,7 +2,6 @@ import { ClassicPreset as Classic } from "rete"
 import { socket, audioCtx, audioSources, audioSourceStates } from "../default"
 import { DropdownControl } from "../controls/DropdownControl";
 import { LabeledInputControl } from "../controls/LabeledInputControl";
-import { processBundledSignal } from "../utils";
 
 export class NoteFrequencyNode extends Classic.Node<{}, { value: Classic.Socket }, { note: DropdownControl, octave: LabeledInputControl }> {
 	width = 180
@@ -34,7 +33,7 @@ export class NoteFrequencyNode extends Classic.Node<{}, { value: Classic.Socket 
 		);
 	}
 
-	data(): { value: AudioNode[] } {
+	data(): { value: AudioNode } {
 		const constantNode = audioCtx.createConstantSource();
 		const noteVal = Number(this.controls.note.value)
 		const octave = this.controls.octave.value || 0
@@ -46,7 +45,7 @@ export class NoteFrequencyNode extends Classic.Node<{}, { value: Classic.Socket 
 		audioSourceStates.push(false);
 
 		return {
-			value: [constantNode]
+			value: constantNode
 		}
 	}
 
@@ -76,23 +75,17 @@ export class TransposeNode extends Classic.Node<{ signal: Classic.Socket }, { si
 		);
 	}
 
-	data(inputs: { signal?: AudioNode[][]}): { signal: AudioNode[] } {
-		const signal = processBundledSignal(inputs.signal);
+	data(inputs: { signal?: AudioNode[] }): { signal: AudioNode } {
 		const halfstep = this.controls.halfstep.value || 0;
 		const octave = this.controls.octave.value || 0;
 
-		const outputs: AudioNode[] = []
-
-		for (const s of signal) {
-			const gainNode = audioCtx.createGain();
-			const val = Math.pow(2.0, octave + (1.0 / 12) * halfstep);
-			gainNode.gain.value = val;
-			s.forEach(itm => itm.connect(gainNode));
-			outputs.push(gainNode);
-		}
+		const gainNode = audioCtx.createGain();
+		const val = Math.pow(2.0, octave + (1.0 / 12) * halfstep);
+		gainNode.gain.value = val;
+		inputs.signal?.forEach(itm => itm.connect(gainNode));
 
 		return {
-			signal: outputs
+			signal: gainNode
 		}
 	}
 

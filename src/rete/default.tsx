@@ -39,7 +39,7 @@ import { EditorBiquadNode } from './nodes/EditorBiquadNode';
 import { ClipNode } from './nodes/ClipNode';
 import { NoteFrequencyNode, TransposeNode } from './nodes/NoteFrequencyNode';
 
-import { BundlerNodeStyle, InputNodeStyle, ProcessorNodeStyle, OutputNodeStyle, SourceNodeStyle } from './styles/nodestyles';
+import { InputNodeStyle, ProcessorNodeStyle, OutputNodeStyle, SourceNodeStyle } from './styles/nodestyles';
 import { DashedConnection } from './styles/connectionstyles';
 import { SmoothZoom } from './smoothzoom';
 
@@ -57,7 +57,6 @@ import lofiSynthExample from './examples/lofisynth.json'
 import gatedLofiExample from './examples/gatedlofisynth.json'
 
 import { CustomContextMenu } from './styles/contextstyles';
-import { BundleDebuggerNode, SignalBundlerNode, SignalFlattenerNode } from './nodes/SignalBundlerNode';
 import { ConsoleDebuggerNode } from './nodes/ConsoleDebuggerNode';
 import { KeyboardADSRNode, KeyboardNoteNode, initKeyboard, initKeyboardHandlers } from './nodes/KeyboardOscillatorNode';
 import { EditorDelayNode } from './nodes/EditorDelayNode';
@@ -67,7 +66,7 @@ const examples: { [key in string]: any } = {
   "AM+FM Synthesis": { json: amfmExample, concepts: "Synthesis, addition to base values" },
   "Jet Engine": { json: jetEngineExample, concepts: "Multiparameter control with one constant node, intermediate debugging with visualizer outputs" },
   "Keyboard Controlled Jet": { json: keyboardJetEngineExample, concepts: "Try pressing A! Uses a keyboard gain node to control the speed of the engine" },
-  "Chord": { json: chordExample, concepts: "Signal bundling, note frequency node, transpose node" },
+  "Chord": { json: chordExample, concepts: "Note frequency node" },
   "Lo-fi Synth": { json: lofiSynthExample, concepts: "Try pressing keyboard keys. Shift key acts as a sustain pedal." },
   "Gated Lo-fi Synth": { json: gatedLofiExample, concepts: "Hold A to shift the mix between filtered and unfiltered notes." }
 }
@@ -104,19 +103,11 @@ type OutputNode =
 
 const outputNodeTypes = [UniversalOutputNode, AudioOutputNode, TimeDomainVisualizerNode, FrequencyDomainVisualizerNode, ConsoleDebuggerNode]
 
-type BundlerNode =
-  | SignalBundlerNode
-  | SignalFlattenerNode
-  | BundleDebuggerNode
-
-const bundlerNodeTypes = [SignalBundlerNode, SignalFlattenerNode, BundleDebuggerNode]
-
 type Node =
   | SourceNode
   | ProcessorNode
   | InputNode
-  | OutputNode
-  | BundlerNode;
+  | OutputNode;
 
 type Conn = Connection<Node, Node>
 export type Schemes = GetSchemes<Node, Conn>;
@@ -195,7 +186,7 @@ export async function createEditor(container: HTMLElement) {
     setTimeout(() => {
       editor
         .getNodes()
-        .filter((n) => outputNodeTypes.some(itm => n instanceof itm) || bundlerNodeTypes.some(itm => n instanceof itm))
+        .filter((n) => outputNodeTypes.some(itm => n instanceof itm))
         .forEach((n) => engine.fetch(n.id));
       setTimeout(reInitOscillators, 100);
       setTimeout(() => {
@@ -242,11 +233,7 @@ export async function createEditor(container: HTMLElement) {
         ["Audio Output", () => new AudioOutputNode(process)],
         ["Time Domain Visualizer", () => new TimeDomainVisualizerNode()],
         ["Frequency Domain Visualizer", () => new FrequencyDomainVisualizerNode()],
-        ["Console Debugger", () => new ConsoleDebuggerNode()]]],
-      ["Signal Bundling",
-        [["Signal Bundler", () => new SignalBundlerNode((c) => area.update("control", c.id))],
-        ["Signal Flattener", () => new SignalFlattenerNode()],
-        ["Bundle Debugger", () => new BundleDebuggerNode((c) => area.update("control", c.id))]]]
+        ["Console Debugger", () => new ConsoleDebuggerNode()]]]
     ])
   });
 
@@ -306,9 +293,6 @@ export async function createEditor(container: HTMLElement) {
         }
         if (processorNodeTypes.some((c) => context.payload instanceof c)) {
           return ProcessorNodeStyle;
-        }
-        if (bundlerNodeTypes.some((c) => context.payload instanceof c)) {
-          return BundlerNodeStyle;
         }
         if (context.payload instanceof Classic.Node) {
           return Presets.classic.Node;

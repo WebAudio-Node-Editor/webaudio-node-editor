@@ -2,7 +2,6 @@ import { ClassicPreset as Classic } from "rete"
 import { socket, audioCtx, audioSources, audioSourceStates } from "../default"
 import { LabeledInputControl } from "../controls/LabeledInputControl"
 import { DropdownControl } from "../controls/DropdownControl"
-import { processBundledSignal } from "../utils"
 
 const EPSILON = 0.00001
 
@@ -99,14 +98,14 @@ export function initKeyboard() {
 	keyboardADSRProfiles.length = 0
 }
 
-const keyboardGainNodes: { [Key: string]: {gain: GainNode, profile: number}[] } = {}
+const keyboardGainNodes: { [Key: string]: { gain: GainNode, profile: number }[] } = {}
 const keyboardADSRProfiles: ADSR_Profile[] = []
 const keyHoldStates: { [Key: string]: boolean } = {}
 var sustaining = false
 
 type ADSR_Profile = { attack: number, attackLength: number, decay: number, decayLength: number, sustain: number, sustainLength: number, releaseLength: number }
 
-export class KeyboardNoteNode extends Classic.Node<{additionalFrequency: Classic.Socket},
+export class KeyboardNoteNode extends Classic.Node<{ additionalFrequency: Classic.Socket },
 	{ signal: Classic.Socket },
 	{
 		waveform: DropdownControl, halfstep: LabeledInputControl, octave: LabeledInputControl,
@@ -142,7 +141,7 @@ export class KeyboardNoteNode extends Classic.Node<{additionalFrequency: Classic
 			'octave',
 			new LabeledInputControl(initial ? initial.octave : 0, "Octave difference", change)
 		);
-		
+
 		this.addControl("attack", new LabeledInputControl(initial ? initial.adsrProfile.attack : 0.8, "Attack Amplitude", change))
 		this.addControl("attackLength", new LabeledInputControl(initial ? initial.adsrProfile.attackLength : 0.05, "Attack Length", change))
 		this.addControl("decay", new LabeledInputControl(initial ? initial.adsrProfile.decay : 0.7, "Decay Amplitude", change))
@@ -152,16 +151,17 @@ export class KeyboardNoteNode extends Classic.Node<{additionalFrequency: Classic
 		this.addControl("releaseLength", new LabeledInputControl(initial ? initial.adsrProfile.releaseLength : 1, "Release Length", change))
 	}
 
-	data(inputs: {additionalFrequency: AudioNode[][]}): { signal: AudioNode[] } {
-		const frequency = processBundledSignal(inputs.additionalFrequency)
+	data(inputs: { additionalFrequency?: AudioNode[] }): { signal: AudioNode } {
 		const oscType = this.controls.waveform.value?.toString() as OscillatorType || "sine"
 		const halfstep = this.controls.halfstep.value || 0;
 		const octave = this.controls.octave.value || 0;
 
-		function getCompositeNode(baseFrequency: number, additionalFrequency: AudioNode[]) {
+		function getCompositeNode(baseFrequency: number, additionalFrequency?: AudioNode[]) {
 			const osc = audioCtx.createOscillator();
 			osc.frequency.setValueAtTime(baseFrequency * Math.pow(2.0, octave + (1.0 / 12) * halfstep), audioCtx.currentTime);
-			additionalFrequency.forEach(itm => itm.connect(osc.frequency))
+			if (additionalFrequency) {
+				additionalFrequency.forEach(itm => itm.connect(osc.frequency))
+			}
 			osc.type = oscType;
 
 			const gainNode = audioCtx.createGain();
@@ -173,18 +173,18 @@ export class KeyboardNoteNode extends Classic.Node<{additionalFrequency: Classic
 			return gainNode;
 		}
 
-		const outputs: AudioNode[] = []
+		const combinerGainNode = audioCtx.createGain();
+		combinerGainNode.gain.value = 1;
 
 		for (const k in keyboardFrequencyMap) {
-			for (const f of frequency) {
-				const gNode = getCompositeNode(keyboardFrequencyMap[k], f)
-				keyboardGainNodes[k].push({
-					gain: gNode,
-					profile: keyboardADSRProfiles.length
-				})
-				outputs.push(gNode)
-			}
+			const gNode = getCompositeNode(keyboardFrequencyMap[k], inputs.additionalFrequency)
+			keyboardGainNodes[k].push({
+				gain: gNode,
+				profile: keyboardADSRProfiles.length
+			})
+			gNode.connect(combinerGainNode)
 		}
+
 		keyboardADSRProfiles.push(
 			{
 				attack: this.controls.attack.value,
@@ -197,7 +197,7 @@ export class KeyboardNoteNode extends Classic.Node<{additionalFrequency: Classic
 			}
 		)
 		return {
-			signal: outputs
+			signal: combinerGainNode
 		}
 	}
 
@@ -220,7 +220,7 @@ export class KeyboardNoteNode extends Classic.Node<{additionalFrequency: Classic
 }
 
 
-export class KeyboardADSRNode extends Classic.Node<{signal: Classic.Socket},
+export class KeyboardADSRNode extends Classic.Node<{ signal: Classic.Socket },
 	{ signal: Classic.Socket },
 	{
 		keyName: DropdownControl,
@@ -242,7 +242,7 @@ export class KeyboardADSRNode extends Classic.Node<{signal: Classic.Socket},
 		this.addOutput("signal", new Classic.Output(socket, "Signal"))
 
 		this.addControl("keyName", new DropdownControl(change, keyCodeMap, initial ? initial.keyCode : "KeyA"))
-		
+
 		this.addControl("attack", new LabeledInputControl(initial ? initial.adsrProfile.attack : 0.8, "Attack Amplitude", change))
 		this.addControl("attackLength", new LabeledInputControl(initial ? initial.adsrProfile.attackLength : 0.05, "Attack Length", change))
 		this.addControl("decay", new LabeledInputControl(initial ? initial.adsrProfile.decay : 0.7, "Decay Amplitude", change))
@@ -252,26 +252,19 @@ export class KeyboardADSRNode extends Classic.Node<{signal: Classic.Socket},
 		this.addControl("releaseLength", new LabeledInputControl(initial ? initial.adsrProfile.releaseLength : 1, "Release Length", change))
 	}
 
-	data(inputs: {signal: AudioNode[][]}): { signal: AudioNode[] } {
-		const signal = processBundledSignal(inputs.signal)
+	data(inputs: { signal?: AudioNode[] }): { signal: AudioNode } {
 
 		const keyCode = this.controls.keyName.value || "KeyA";
 
-		const outputs: AudioNode[] = []
+		const gNode = audioCtx.createGain();
+		gNode.gain.setValueAtTime(0, audioCtx.currentTime);
 
-		for (const s of signal) {
-			const gNode = audioCtx.createGain();
-			gNode.gain.setValueAtTime(0, audioCtx.currentTime);
+		inputs.signal?.forEach(itm => itm.connect(gNode));
 
-			s.forEach(itm => itm.connect(gNode));
-
-			keyboardGainNodes[keyCode].push({
-				gain: gNode,
-				profile: keyboardADSRProfiles.length
-			})
-
-			outputs.push(gNode)
-		}
+		keyboardGainNodes[keyCode].push({
+			gain: gNode,
+			profile: keyboardADSRProfiles.length
+		})
 
 		keyboardADSRProfiles.push(
 			{
@@ -285,7 +278,7 @@ export class KeyboardADSRNode extends Classic.Node<{signal: Classic.Socket},
 			}
 		)
 		return {
-			signal: outputs
+			signal: gNode
 		}
 	}
 

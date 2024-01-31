@@ -25,29 +25,19 @@ const ProcessorStyle = css<{ selected?: boolean }>`
   border-color: white;
 `;
 
-const BundlerStyle = css<{ selected?: boolean }>`
-background: #00000044;
-border: dotted;
-border-color: white;
-`;
-
 export function InputNodeStyle(props: any) {
   // eslint-disable-next-line
-    return <Presets.classic.Node styles={() => InputStyle} {...props} />;
-  }
+  return <Presets.classic.Node styles={() => InputStyle} {...props} />;
+}
 export function OutputNodeStyle(props: any) {
-// eslint-disable-next-line
+  // eslint-disable-next-line
   return <Presets.classic.Node styles={() => OutputStyle} {...props} />;
 }
 export function SourceNodeStyle(props: any) {
-// eslint-disable-next-line
+  // eslint-disable-next-line
   return <Presets.classic.Node styles={() => SourceStyle} {...props} />;
 }
 export function ProcessorNodeStyle(props: any) {
-// eslint-disable-next-line
-  return <Presets.classic.Node styles={() => ProcessorStyle} {...props} />;
-}
-export function BundlerNodeStyle(props: any) {
   // eslint-disable-next-line
-    return <Presets.classic.Node styles={() => BundlerStyle} {...props} />;
+  return <Presets.classic.Node styles={() => ProcessorStyle} {...props} />;
 }

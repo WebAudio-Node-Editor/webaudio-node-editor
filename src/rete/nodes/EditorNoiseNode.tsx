@@ -2,20 +2,20 @@ import { ClassicPreset as Classic } from "rete"
 import { socket, audioCtx, audioSources, audioSourceStates } from "../default"
 import { DropdownControl } from "../controls/DropdownControl"
 
-export class EditorNoiseNode extends Classic.Node<{}, { signal: Classic.Socket }, { noiseType: DropdownControl}> {
+export class EditorNoiseNode extends Classic.Node<{}, { signal: Classic.Socket }, { noiseType: DropdownControl }> {
   width = 180
   height = 130
-  constructor(change: () => void, initial?: {noiseType: string}) {
+  constructor(change: () => void, initial?: { noiseType: string }) {
     super("Noise");
     const dropdownOptions = [
-			{ value: "White Noise", label: "White Noise" },
-			{ value: "Brown Noise", label: "Brown Noise" },
-		]
+      { value: "White Noise", label: "White Noise" },
+      { value: "Brown Noise", label: "Brown Noise" },
+    ]
     this.addControl("noiseType", new DropdownControl(change, dropdownOptions, initial ? initial.noiseType : "White Noise"))
     this.addOutput("signal", new Classic.Output(socket, "Signal"))
   }
 
-  data(): { signal: AudioNode[] } {
+  data(): { signal: AudioNode } {
     const noiseSource = audioCtx.createBufferSource();
     var bufferSize = 10 * audioCtx.sampleRate;
     var noiseBuffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
@@ -42,7 +42,7 @@ export class EditorNoiseNode extends Classic.Node<{}, { signal: Classic.Socket }
     audioSourceStates.push(false);
 
     return {
-      signal: [noiseSource]
+      signal: noiseSource
     }
   }
 

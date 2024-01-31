@@ -1,7 +1,6 @@
 import { ClassicPreset as Classic } from "rete"
 import { socket, audioCtx } from "../default"
 import { LabeledInputControl } from "../controls/LabeledInputControl"
-import { processBundledSignal } from "../utils"
 
 export class EditorDelayNode extends Classic.Node<{ signal: Classic.Socket, delayTime: Classic.Socket }, { signal: Classic.Socket }, { maxDelay: LabeledInputControl }> {
 	width = 180
@@ -22,36 +21,22 @@ export class EditorDelayNode extends Classic.Node<{ signal: Classic.Socket, dela
 		this.addOutput("signal", new Classic.Output(socket, "Signal"))
 	}
 
-	data(inputs: { signal?: AudioNode[][], delayTime?: AudioNode[][] }): { signal: AudioNode[] } {
+	data(inputs: { signal?: AudioNode[], delayTime?: AudioNode[] }): { signal: AudioNode } {
 		const delayControl = this.inputs.delayTime?.control;
 
-		const signal = processBundledSignal(inputs.signal)
-		const delay = processBundledSignal(inputs.delayTime)
-		const outputs: AudioNode[] = []
+		const delayNode = audioCtx.createDelay(Math.max(this.controls.maxDelay.value, 1));
 
-		const getDelayNode = (delay: AudioNode[]) => {
-			const delayNode = audioCtx.createDelay(Math.max(this.controls.maxDelay.value, 1));
-
-			if (delay.length > 0) {
-				delayNode.delayTime.setValueAtTime(0, audioCtx.currentTime)
-				delay.forEach(itm => itm.connect(delayNode.delayTime))
-			} else {
-				delayNode.delayTime.setValueAtTime((delayControl as LabeledInputControl).value || 0, audioCtx.currentTime);
-			}
-
-			return delayNode
+		if (inputs.delayTime && inputs.delayTime.length > 0) {
+			delayNode.delayTime.setValueAtTime(0, audioCtx.currentTime)
+			inputs.delayTime.forEach(itm => itm.connect(delayNode.delayTime))
+		} else {
+			delayNode.delayTime.setValueAtTime((delayControl as LabeledInputControl).value || 0, audioCtx.currentTime);
 		}
 
-		for (const inSignal of signal) {
-			for (const d of delay) {
-				const delayNode = getDelayNode(d)
-				inSignal.forEach(itm => itm.connect(delayNode))
-				outputs.push(delayNode)
-			}
-		}
+		inputs.signal?.forEach(itm => itm.connect(delayNode))
 
 		return {
-			signal: outputs
+			signal: delayNode
 		}
 	}
 

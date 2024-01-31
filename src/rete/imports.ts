@@ -8,7 +8,6 @@ import { TimeDomainVisualizerNode, FrequencyDomainVisualizerNode } from './nodes
 import { EditorBiquadNode } from './nodes/EditorBiquadNode';
 import { ClipNode } from './nodes/ClipNode';
 import { NoteFrequencyNode, TransposeNode } from "./nodes/NoteFrequencyNode";
-import { SignalBundlerNode, SignalFlattenerNode, BundleDebuggerNode } from "./nodes/SignalBundlerNode";
 import { ConsoleDebuggerNode } from "./nodes/ConsoleDebuggerNode";
 import { KeyboardADSRNode, KeyboardNoteNode } from "./nodes/KeyboardOscillatorNode";
 import { EditorDelayNode } from "./nodes/EditorDelayNode";
@@ -18,25 +17,25 @@ export async function createNode(
   name: string,
   data: any
 ) {
-	switch(name) {
-		case "Audio Output":
-			return new AudioOutputNode(process);
-		case "Universal Output":
-			return new UniversalOutputNode(process, data);
-		case "Clip Signal":
-			return new ClipNode(process, data);
-		case "Biquad Filter":
-			return new EditorBiquadNode(process, data);
-		case "Constant":
-			return new EditorConstantNode(process, data);
-		case "Gain":
-			return new EditorGainNode(process, data);
+  switch (name) {
+    case "Audio Output":
+      return new AudioOutputNode(process);
+    case "Universal Output":
+      return new UniversalOutputNode(process, data);
+    case "Clip Signal":
+      return new ClipNode(process, data);
+    case "Biquad Filter":
+      return new EditorBiquadNode(process, data);
+    case "Constant":
+      return new EditorConstantNode(process, data);
+    case "Gain":
+      return new EditorGainNode(process, data);
     case "Delay":
       return new EditorDelayNode(process, data);
-		case "Noise":
-			return new EditorNoiseNode(process, data);
-		case "Oscillator":
-			return new EditorOscillatorNode(process, data);
+    case "Noise":
+      return new EditorNoiseNode(process, data);
+    case "Oscillator":
+      return new EditorOscillatorNode(process, data);
     case "Note Frequency":
       return new NoteFrequencyNode(process, data);
     case "Transpose":
@@ -47,19 +46,13 @@ export async function createNode(
       return new FrequencyDomainVisualizerNode();
     case "Console Debugger":
       return new ConsoleDebuggerNode();
-    case "Signal Bundler":
-      return new SignalBundlerNode((c) => area.update("control", c.id));
-    case "Signal Flattener":
-      return new SignalFlattenerNode();
-    case "Bundle Debugger":
-      return new BundleDebuggerNode((c) => area.update("control", c.id));
     case "Keyboard Note":
       return new KeyboardNoteNode(process, data);
     case "Keyboard ADSR":
       return new KeyboardADSRNode(process, data);
-		default:
-			throw new Error("Unsupported node");
-	}
+    default:
+      throw new Error("Unsupported node");
+  }
 }
 
 export async function importEditor(context: Context, data: any) {

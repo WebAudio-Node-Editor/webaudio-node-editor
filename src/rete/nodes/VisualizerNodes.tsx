@@ -16,10 +16,9 @@ export class TimeDomainVisualizerNode extends Classic.Node<{ signal: Classic.Soc
 		);
 	}
 
-	data(inputs: { signal?: AudioNode[][] }): { value: AnalyserNode } {
+	data(inputs: { signal?: AudioNode[] }): { value: AnalyserNode } {
 		if (inputs.signal) {
-			const signal = inputs.signal.flat()
-			signal.forEach(itm => itm.connect(this.analyserNode))
+			inputs.signal.forEach(itm => itm.connect(this.analyserNode))
 		}
 		return {
 			value: this.analyserNode
@@ -45,10 +44,9 @@ export class FrequencyDomainVisualizerNode extends Classic.Node<{ signal: Classi
 		);
 	}
 
-	data(inputs: { signal?: AudioNode[][] }): { value: AnalyserNode } {
+	data(inputs: { signal?: AudioNode[] }): { value: AnalyserNode } {
 		if (inputs.signal) {
-			const signal = inputs.signal.flat()
-			signal.forEach(itm => itm.connect(this.analyserNode))
+			inputs.signal.forEach(itm => itm.connect(this.analyserNode))
 		}
 		return {
 			value: this.analyserNode
