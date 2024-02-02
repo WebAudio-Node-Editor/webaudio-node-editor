@@ -19,7 +19,8 @@ export class NodeTemplate extends Classic.Node<
         change: () => void,
         initial?: { exampleInitialVal: number; exampleInitialVal2: number }
     ) {
-        super('Gain')
+        // This is the node's label that shows up in the editor
+        super('NodeTemplate')
 
         /*  This is an input socket
             Arguments are: 
