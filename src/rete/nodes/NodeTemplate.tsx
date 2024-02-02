@@ -4,18 +4,21 @@ import { LabeledInputControl } from '../controls/LabeledInputControl'
 
 export class NodeTemplate extends Classic.Node<
     {
-        exampleInput: Classic.Socket,
+        exampleInput: Classic.Socket
         exampleInputWithControl: Classic.Socket
     },
     { exampleOutput: Classic.Socket },
-    { exampleControl: LabeledInputControl}
+    { exampleControl: LabeledInputControl }
 > {
     width = 180
     height = 200
 
     // The change argument is a function that should be called whenever a value changes
     // We generally use it to trigger reevaluating the graph when a value is changed
-    constructor(change: () => void, initial?: { exampleInitialVal: number, exampleInitialVal2: number }) {
+    constructor(
+        change: () => void,
+        initial?: { exampleInitialVal: number; exampleInitialVal2: number }
+    ) {
         super('Gain')
 
         /*  This is an input socket
@@ -31,7 +34,11 @@ export class NodeTemplate extends Classic.Node<
 
         /* This is an input socket that alternatively takes a manually entered input value
          instead of a node connection */
-        let exInputWithControl = new Classic.Input(socket, 'Another Label', false)
+        let exInputWithControl = new Classic.Input(
+            socket,
+            'Another Label',
+            false
+        )
         exInputWithControl.addControl(
             new LabeledInputControl(
                 initial ? initial.exampleInitialVal : 0, // initial value of this control
@@ -53,13 +60,21 @@ export class NodeTemplate extends Classic.Node<
                 change (nullable): Called when the value changes
                 readonly: Whether the field should be readonly or not (defaults false)
         */
-        this.addControl('exampleControl', new LabeledInputControl(initial ? initial.exampleInitialVal2 : 0, "control label", change, false))
+        this.addControl(
+            'exampleControl',
+            new LabeledInputControl(
+                initial ? initial.exampleInitialVal2 : 0,
+                'control label',
+                change,
+                false
+            )
+        )
     }
 
     // The data method is called by the engine to evaluate nodes
     // It's where the inputs are processed to create output(s)
     data(inputs: {
-        exampleInput: AudioNode[],
+        exampleInput: AudioNode[]
         exampleInputWithControl: AudioNode[]
     }): { exampleOutput: AudioNode } {
         // The inputs are all lists of AudioNodes because a socket generally may have multiple inputs
@@ -76,7 +91,9 @@ export class NodeTemplate extends Classic.Node<
         if (inputs.exampleInputWithControl) {
             // If there's any connections, ignore the value in the input field (which gets hidden)
             gainNode.gain.setValueAtTime(0, audioCtx.currentTime)
-            inputs.exampleInputWithControl.forEach((itm) => itm.connect(gainNode.gain))
+            inputs.exampleInputWithControl.forEach((itm) =>
+                itm.connect(gainNode.gain)
+            )
         } else {
             // Otherwise, use the value in the input field
             gainNode.gain.setValueAtTime(
@@ -93,7 +110,10 @@ export class NodeTemplate extends Classic.Node<
     // This stores the values in our node in JSON format, used for import/export to reinitialize the node
     serialize() {
         return {
-            exampleInitialVal: (this.inputs.exampleInputWithControl?.control as LabeledInputControl).value,
+            exampleInitialVal: (
+                this.inputs.exampleInputWithControl
+                    ?.control as LabeledInputControl
+            ).value,
         }
     }
 }
