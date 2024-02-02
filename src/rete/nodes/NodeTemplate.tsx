@@ -114,6 +114,9 @@ export class NodeTemplate extends Classic.Node<
                 this.inputs.exampleInputWithControl
                     ?.control as LabeledInputControl
             ).value,
+            exampleInitialVal2: (
+                this.controls.exampleControl as LabeledInputControl
+            ).value,
         }
     }
 }
