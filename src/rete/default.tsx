@@ -84,7 +84,7 @@ import lofiSynthExample from './examples/lofisynth.json'
 import gatedLofiExample from './examples/gatedlofisynth.json'
 
 const examples: { [key in string]: any } = {
-    Default: {
+    'Default': {
         json: defaultExample,
         concepts:
             'Drag from socket to socket to create connections; right click for context menu. Try loading some examples to the left of this!',
