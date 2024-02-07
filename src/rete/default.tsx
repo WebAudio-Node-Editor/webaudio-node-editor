@@ -65,15 +65,6 @@ import { importEditor, exportEditor } from './imports'
 import { clearEditor } from './utils'
 import { CustomSocket } from './styles/socketstyles'
 
-import defaultExample from './examples/default.json'
-//import brookExample from './examples/brook.json';
-import amfmExample from './examples/amfm.json'
-import jetEngineExample from './examples/jetengine.json'
-import keyboardJetEngineExample from './examples/keyboardcontrolledjet.json'
-import chordExample from './examples/chord.json'
-import lofiSynthExample from './examples/lofisynth.json'
-import gatedLofiExample from './examples/gatedlofisynth.json'
-
 import { CustomContextMenu } from './styles/contextstyles'
 import { ConsoleDebuggerNode } from './nodes/ConsoleDebuggerNode'
 import {
@@ -83,6 +74,14 @@ import {
     initKeyboardHandlers,
 } from './nodes/KeyboardOscillatorNode'
 import { EditorDelayNode } from './nodes/EditorDelayNode'
+
+import defaultExample from './examples/default.json'
+import amfmExample from './examples/amfm.json'
+import jetEngineExample from './examples/jetengine.json'
+import keyboardJetEngineExample from './examples/keyboardcontrolledjet.json'
+import chordExample from './examples/chord.json'
+import lofiSynthExample from './examples/lofisynth.json'
+import gatedLofiExample from './examples/gatedlofisynth.json'
 
 const examples: { [key in string]: any } = {
     Default: {
@@ -104,7 +103,7 @@ const examples: { [key in string]: any } = {
         concepts:
             'Try pressing A! Uses a keyboard gain node to control the speed of the engine',
     },
-    Chord: { json: chordExample, concepts: 'Note frequency node' },
+    'Chord': { json: chordExample, concepts: 'Note frequency node' },
     'Lo-fi Synth': {
         json: lofiSynthExample,
         concepts:
