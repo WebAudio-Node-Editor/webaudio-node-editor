@@ -16,6 +16,7 @@ export class EditorNoiseNode extends Classic.Node<
             { value: 'Brown Noise', label: 'Brown Noise' },
             { value: 'Pink Noise', label: 'Pink Noise' },
             { value: 'Blue Noise', label: 'Blue Noise'},
+            { value: 'Violet Noise', label: 'Violet Noise'},
         ]
         this.addControl(
             'noiseType',
@@ -75,6 +76,13 @@ export class EditorNoiseNode extends Classic.Node<
             for (let i = 1; i < bufferSize; i++) {
                 output[i] = alpha * (output[i] - previousValue) + output[i-1];
                 previousValue = output[i];
+            }
+        } else if (this.controls.noiseType.value == 'Violet Noise') {
+            for (let i = 0; i < bufferSize; i++) {
+                output[i] = Math.random() * 2 - 1;
+            }
+            for (let i = bufferSize - 1; i > 0; i--) {
+                output[i] = output[i] - output[i - 1];
             }
         }
         noiseSource.buffer = noiseBuffer
