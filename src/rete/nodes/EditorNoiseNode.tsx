@@ -18,6 +18,7 @@ export class EditorNoiseNode extends Classic.Node<
             { value: 'Blue Noise', label: 'Blue Noise'},
             { value: 'Violet Noise', label: 'Violet Noise'},
             { value: 'Grey Noise', label: 'Grey Noise'},
+            { value: 'Velvet Noise', label: 'Velvet Noise'},
         ]
         this.addControl(
             'noiseType',
@@ -94,6 +95,16 @@ export class EditorNoiseNode extends Classic.Node<
             for (let i = 0; i < bufferSize; i++) {
                 output[i] = smoothingFactor * output[i] + (1 - smoothingFactor) * previousValue;
                 previousValue = output[i];
+            }
+        } else if (this.controls.noiseType.value == 'Velvet Noise') {
+            for (let i = 0; i < bufferSize; i++) {
+                output[i] = 0;
+            }
+            const impulseDensity = 100;
+            const numberOfImpulses = Math.floor(bufferSize / impulseDensity);
+            for (let i = 0; i < numberOfImpulses; i++) {
+                const position = Math.floor(Math.random() * bufferSize);
+                output[position] = Math.random() * 2 - 1;
             }
         }
         noiseSource.buffer = noiseBuffer
