@@ -54,7 +54,7 @@ export class EditorNoiseNode extends Classic.Node<
                 lastOut = output[i]
                 output[i] *= 3.5
             }
-        } else if (this.controls.noiseType.value == 'Pink Noise') {
+        } else if (this.controls.noiseType.value === 'Pink Noise') {
             let b0, b1, b2, b3, b4, b5, b6;
             b0 = b1 = b2 = b3 = b4 = b5 = b6 = 0.0;
             for (let i = 0; i < bufferSize; i++) {
@@ -69,7 +69,7 @@ export class EditorNoiseNode extends Classic.Node<
                 output[i] *= 0.11;
                 b6 = white * 0.115926;
             }
-        } else if (this.controls.noiseType.value == 'Blue Noise') { 
+        } else if (this.controls.noiseType.value === 'Blue Noise') { 
             for (let i = 0; i < bufferSize; i++) {
                 output[i] = Math.random() * 2 - 1;
             }
@@ -79,14 +79,14 @@ export class EditorNoiseNode extends Classic.Node<
                 output[i] = alpha * (output[i] - previousValue) + output[i-1];
                 previousValue = output[i];
             }
-        } else if (this.controls.noiseType.value == 'Violet Noise') {
+        } else if (this.controls.noiseType.value === 'Violet Noise') {
             for (let i = 0; i < bufferSize; i++) {
                 output[i] = Math.random() * 2 - 1;
             }
             for (let i = bufferSize - 1; i > 0; i--) {
                 output[i] = output[i] - output[i - 1];
             }
-        } else if (this.controls.noiseType.value == 'Grey Noise') {
+        } else if (this.controls.noiseType.value === 'Grey Noise') {
             for (let i = 0; i < bufferSize; i++) {
                 output[i] = Math.random() * 2 - 1;
             }
@@ -96,7 +96,7 @@ export class EditorNoiseNode extends Classic.Node<
                 output[i] = smoothingFactor * output[i] + (1 - smoothingFactor) * previousValue;
                 previousValue = output[i];
             }
-        } else if (this.controls.noiseType.value == 'Velvet Noise') {
+        } else if (this.controls.noiseType.value === 'Velvet Noise') {
             for (let i = 0; i < bufferSize; i++) {
                 output[i] = 0;
             }
