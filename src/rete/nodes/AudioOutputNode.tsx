@@ -2,6 +2,7 @@ import { ClassicPreset as Classic } from 'rete'
 import { socket, globalGain, audioCtx } from '../default'
 import { LabeledInputControl } from '../controls/LabeledInputControl'
 import { VisualizerControl } from '../controls/VisualizerControl'
+import { DropdownControl } from '../controls/DropdownControl'
 
 export class AudioOutputNode extends Classic.Node<
     { signal: Classic.Socket },
@@ -14,6 +15,7 @@ export class AudioOutputNode extends Classic.Node<
         super('Audio Output')
 
         this.addInput('signal', new Classic.Input(socket, 'Signal', true))
+
     }
 
     data(inputs: { signal?: AudioNode[] }): { value: boolean } {
@@ -30,6 +32,9 @@ export class AudioOutputNode extends Classic.Node<
     serialize() {
         return {}
     }
+
+
+    
 }
 
 export class UniversalOutputNode extends Classic.Node<
@@ -39,6 +44,7 @@ export class UniversalOutputNode extends Classic.Node<
         gain: LabeledInputControl
         timeVisualizer: VisualizerControl
         freqVisualizer: VisualizerControl
+        visual: DropdownControl
     }
 > {
     width = 400
@@ -46,7 +52,10 @@ export class UniversalOutputNode extends Classic.Node<
     public timeAnalyserNode = audioCtx.createAnalyser()
     public freqAnalyserNode = audioCtx.createAnalyser()
 
-    constructor(change: () => void, initial?: { gain: number }) {
+    constructor(
+        change: () => void, 
+        initial?: { gain: number; visual: string }
+        ) {
         super('Universal Output')
 
         this.addInput('signal', new Classic.Input(socket, 'Signal', true))
@@ -62,6 +71,21 @@ export class UniversalOutputNode extends Classic.Node<
         this.addControl(
             'freqVisualizer',
             new VisualizerControl(this.freqAnalyserNode, true)
+        )
+
+        //For chaning the dropdown
+        //- Pedro Perez
+        const dropdownOptions = [
+            { value: 'linear', label: 'linear' },
+            { value: 'log', label: 'log' },
+        ]
+
+        this.addControl(
+            'visual',
+            new DropdownControl(
+                change,
+                dropdownOptions,
+            )
         )
     }
 
