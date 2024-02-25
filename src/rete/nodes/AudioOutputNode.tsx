@@ -101,6 +101,11 @@ export class UniversalOutputNode extends Classic.Node<
         gain.connect(globalGain)
         gain.connect(this.timeAnalyserNode)
         gain.connect(this.freqAnalyserNode)
+
+        //Visualizer Control Change
+        // - Pedro Perez
+        var di_linear = this.controls.visual.value?.toString()
+        this.controls.freqVisualizer.display_linear = (di_linear?.localeCompare("linear") === 0)
         return {
             value: val,
         }

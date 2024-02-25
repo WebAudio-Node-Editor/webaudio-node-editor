@@ -4,7 +4,8 @@ import { useRef } from 'react'
 export class VisualizerControl extends Classic.Control {
     constructor(
         public analyserNode: AnalyserNode,
-        public isFrequencyDomain: boolean
+        public isFrequencyDomain: boolean,
+        public display_linear: boolean = true
     ) {
         super()
     }
@@ -21,6 +22,7 @@ export function CustomVisualizerOutput(props: { data: VisualizerControl }) {
             var canvasCtx = canvas.getContext('2d')
 
             if (canvasCtx) {
+                //Time Visualizer
                 if (!props.data.isFrequencyDomain) {
                     props.data.analyserNode.fftSize = 2048
                     var bufferLength = props.data.analyserNode.frequencyBinCount
@@ -43,6 +45,7 @@ export function CustomVisualizerOutput(props: { data: VisualizerControl }) {
                     for (var i = 0; i < bufferLength; i++) {
                         var v = dataArray[i] / 128.0
                         var y = (v * canvas.height) / 2
+
                         if (i === 0) {
                             canvasCtx.moveTo(x, y)
                         } else if (i === bufferLength - 1) {
@@ -55,6 +58,8 @@ export function CustomVisualizerOutput(props: { data: VisualizerControl }) {
                     }
 
                     canvasCtx.stroke()
+
+                //Frequency Visualizer
                 } else {
                     // based on code from https://www.telerik.com/blogs/adding-audio-visualization-react-app-using-web-audio-api
                     const bucketCt =
@@ -72,6 +77,12 @@ export function CustomVisualizerOutput(props: { data: VisualizerControl }) {
                     canvasCtx.fillRect(0, 0, canvas.width, canvas.height)
 
                     for (let i = 0; i < fftData.length; i++) {
+
+                        //Testing Removing Visuals
+                        if(!props.data.display_linear){
+                            continue
+                        }
+
                         start = i * bar_spacing
                         canvasCtx.fillStyle = 'white'
                         canvasCtx.fillRect(
