@@ -9,6 +9,24 @@ export class LabeledInputControl extends Classic.InputControl<'number'> {
     ) {
         super('number', { initial: value, readonly: Boolean(readonly), change })
     }
+    setValue(newValue: number): void {
+        let increment = 1
+        if (this.label === 'Base Gain'){
+            increment = .1
+        }
+        if (this.label === 'Base Frequency'){
+            increment = 10
+        }
+        
+        if (newValue > this.value){
+            this.value += increment;
+        }
+        else {
+            this.value -= increment;
+        }
+        this.value = Number(this.value.toFixed(1))
+    }
+
 }
 
 export function CustomLabeledInputControl(props: {
