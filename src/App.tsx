@@ -5,6 +5,7 @@ import './rete.css'
 import { createEditor } from './rete'
 import { Layout, Button, Flex, Select, Divider } from 'antd'
 import { Link } from 'react-router-dom'
+import { FaRedo, FaUndo } from "react-icons/fa";
 
 let selectedExample = 'Default'
 
@@ -87,6 +88,12 @@ function App() {
                     GitHub
                 </a>
                 <div style={{ flexGrow: 1 }} />
+                <Button style={{ border: 'none' }}>
+                    <FaUndo className={`${"icon-button"}`} />
+                </Button>
+                <Button style={{border: 'none'}}>
+                    <FaRedo className={`${"icon-button"}`} />
+                </Button>
                 <Button onClick={() => editor?.layout(true)}>
                     Auto-arrange nodes
                 </Button>
