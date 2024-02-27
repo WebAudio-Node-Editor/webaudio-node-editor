@@ -12,6 +12,14 @@ function App() {
     const [ref, editor]: readonly [any, any] = useRete(createEditor)
     const [examples, setExamples] = useState<string[]>([])
     const [concepts, setConcepts] = useState<string>('Placeholder')
+    
+    window.addEventListener('keydown', function(event) {
+        const key = event.key;
+        if (key === "Backspace" || key === "Delete") {
+            editor?.deleteComment()
+        }
+    });
+
     const items = [
         {
             key: '1',
