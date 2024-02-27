@@ -15,7 +15,8 @@ export class LabeledInputControl extends Classic.InputControl<'number'> {
         let incrementor = 1
         if (this.label === 'Base Gain') {
             incrementor = 0.1;
-        } else {
+        } 
+        if (this.label === 'Base Frequency') {
             incrementor = 50;
         }
         if (newValue > this.value) {
