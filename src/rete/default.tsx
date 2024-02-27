@@ -82,6 +82,7 @@ import keyboardJetEngineExample from './examples/keyboardcontrolledjet.json'
 import chordExample from './examples/chord.json'
 import lofiSynthExample from './examples/lofisynth.json'
 import gatedLofiExample from './examples/gatedlofisynth.json'
+import { CommentPlugin, CommentExtensions } from "rete-comment-plugin"
 
 const examples: { [key in string]: any } = {
     'Default': {
@@ -178,6 +179,7 @@ export type Context = {
     editor: NodeEditor<Schemes>
     area: AreaPlugin<Schemes, any>
     dataflow: DataflowEngine<Schemes>
+    comment: CommentPlugin<Schemes, any>
 }
 
 type AreaExtra = Area2D<Schemes> | ReactArea2D<Schemes> | ContextMenuExtra
@@ -226,6 +228,11 @@ export async function createEditor(container: HTMLElement) {
     const area = new AreaPlugin<Schemes, AreaExtra>(container)
     const editor = new NodeEditor<Schemes>()
     const engine = new DataflowEngine<Schemes>()
+
+    const comment = new CommentPlugin<Schemes, AreaExtra>()
+    const selector = AreaExtensions.selector()
+    const accumulating = AreaExtensions.accumulateOnCtrl()
+
 
     function process() {
         if (processQueued) {
@@ -346,6 +353,8 @@ export async function createEditor(container: HTMLElement) {
     area.use(contextMenu)
     area.use(connection)
     area.use(arrange)
+    area.use(comment)
+    CommentExtensions.selectable(comment, selector, accumulating)
 
     area.area.setZoomHandler(
         new SmoothZoom(0.4, 200, 'cubicBezier(.45,.91,.49,.98)', area)
@@ -420,11 +429,11 @@ export async function createEditor(container: HTMLElement) {
     const osc = new EditorOscillatorNode(process)
     const gain = new EditorGainNode(process, { gain: 0.5 })
     const output = new UniversalOutputNode(process)
-
+    
     await editor.addNode(osc)
     await editor.addNode(gain)
     await editor.addNode(output)
-
+    
     var c = new Connection<Node, Node>(
         osc,
         'signal' as never,
@@ -446,7 +455,8 @@ export async function createEditor(container: HTMLElement) {
     AreaExtensions.zoomAt(area, editor.getNodes())
 
     await editor.removeConnection(c.id)
-
+    
+    
     process()
 
     const context: Context = {
@@ -454,6 +464,7 @@ export async function createEditor(container: HTMLElement) {
         editor: editor,
         area: area,
         dataflow: engine,
+        comment: comment
     }
 
     async function loadEditor(data: any) {
@@ -524,6 +535,25 @@ export async function createEditor(container: HTMLElement) {
         process()
     }
 
+    function clear(){
+        clearEditor(editor)
+        clearComments()
+    }
+    function clearComments(){
+        comment.clear()
+    }
+    
+    function createComment(commentType:string){
+        if (commentType == "Frame"){
+            comment.addFrame("Frame",["1"])
+            console.log(comment.comments)
+        }
+        else{
+            comment.addInline("Inline", [0,0],"1")
+        }
+        
+    }
+
     return {
         layout: async (animate: boolean) => {
             await arrange.layout({ applier: animate ? applier : undefined })
@@ -531,7 +561,7 @@ export async function createEditor(container: HTMLElement) {
         },
         exportEditorToFile,
         importEditorFromFile,
-        clearEditor: () => clearEditor(editor),
+        clearEditor: () => clear(),
         destroy: () => {
             killOscillators()
             initKeyboard()
@@ -542,6 +572,8 @@ export async function createEditor(container: HTMLElement) {
         },
         loadExample,
         toggleAudio,
+        createComment,
+        clearComments,
         GetExampleDescription,
     }
 }

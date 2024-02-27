@@ -3,7 +3,7 @@ import { useRete } from 'rete-react-plugin'
 import './App.css'
 import './rete.css'
 import { createEditor } from './rete'
-import { Layout, Button, Flex, Select, Divider } from 'antd'
+import { Layout, Button, Flex, Select, Divider, Dropdown} from 'antd'
 import { Link } from 'react-router-dom'
 
 let selectedExample = 'Default'
@@ -12,7 +12,28 @@ function App() {
     const [ref, editor]: readonly [any, any] = useRete(createEditor)
     const [examples, setExamples] = useState<string[]>([])
     const [concepts, setConcepts] = useState<string>('Placeholder')
-
+    const items = [
+        {   
+            key:'1',
+            label: (<div style={{color:"#A7AFB2"}} onClick={() => editor?.createComment("Inline")}>
+            Inline
+        </div>),
+        }, 
+        {
+            key:'2',
+            label: (<div style={{color:"#A7AFB2"}}
+                             onClick={() => editor?.createComment("Frame")}>
+            Frame
+        </div>),
+        }, 
+        {
+            key:'3',
+            label: (<div style={{color:"#A7AFB2"}}
+                             onClick={() => editor?.clearComments()}>
+            Clear Comments 
+        </div>),
+        },  
+    ]
     useEffect(() => {
         if (editor) {
             const list = editor.getExamples()
@@ -87,6 +108,14 @@ function App() {
                     GitHub
                 </a>
                 <div style={{ flexGrow: 1 }} />
+                <Dropdown 
+                    menu={{
+                            items,
+                    }}
+                    arrow
+                >
+                <Button>Comments</Button>
+                </Dropdown>
                 <Button onClick={() => editor?.layout(true)}>
                     Auto-arrange nodes
                 </Button>
