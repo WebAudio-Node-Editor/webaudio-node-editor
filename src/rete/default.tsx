@@ -232,6 +232,12 @@ export async function createEditor(container: HTMLElement) {
     const area = new AreaPlugin<Schemes, AreaExtra>(container)
     const editor = new NodeEditor<Schemes>()
     const engine = new DataflowEngine<Schemes>()
+    const history = new HistoryPlugin<Schemes>();
+
+    HistoryExtensions.keyboard(history);
+    
+    history.addPreset(HistoryPresets.classic.setup());
+
 
     function process() {
         if (processQueued) {
@@ -352,6 +358,7 @@ export async function createEditor(container: HTMLElement) {
     area.use(contextMenu)
     area.use(connection)
     area.use(arrange)
+    area.use(history);
 
     area.area.setZoomHandler(
         new SmoothZoom(0.4, 200, 'cubicBezier(.45,.91,.49,.98)', area)
