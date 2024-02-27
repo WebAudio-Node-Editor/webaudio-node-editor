@@ -28,6 +28,12 @@ import {
 } from 'rete-context-menu-plugin'
 
 import {
+    HistoryExtensions,
+    HistoryPlugin,
+    Presets as HistoryPresets
+} from 'rete-history-plugin'
+
+import {
     DropdownControl,
     CustomDropdownControl,
 } from './controls/DropdownControl'
@@ -226,6 +232,12 @@ export async function createEditor(container: HTMLElement) {
     const area = new AreaPlugin<Schemes, AreaExtra>(container)
     const editor = new NodeEditor<Schemes>()
     const engine = new DataflowEngine<Schemes>()
+    const history = new HistoryPlugin<Schemes>();
+
+    HistoryExtensions.keyboard(history);
+    
+    history.addPreset(HistoryPresets.classic.setup({ timing: 0.01 }));
+
 
     function process() {
         if (processQueued) {
@@ -346,6 +358,7 @@ export async function createEditor(container: HTMLElement) {
     area.use(contextMenu)
     area.use(connection)
     area.use(arrange)
+    area.use(history);
 
     area.area.setZoomHandler(
         new SmoothZoom(0.4, 200, 'cubicBezier(.45,.91,.49,.98)', area)
@@ -446,6 +459,10 @@ export async function createEditor(container: HTMLElement) {
     AreaExtensions.zoomAt(area, editor.getNodes())
 
     await editor.removeConnection(c.id)
+    
+    //Clear history so tracking actions (for undo/redo)
+    //start with user interactions not the loaded example.
+    history.clear()
 
     process()
 
@@ -464,6 +481,10 @@ export async function createEditor(container: HTMLElement) {
     }
     async function loadExample(exampleName: string) {
         await loadEditor(examples[exampleName].json)
+        
+        //Clear history so tracking actions (for undo/redo)
+        //start with user interactions not the loaded example.
+        history.clear()
     }
     function GetExampleDescription(exampleName: string) {
         return examples[exampleName].concepts
@@ -523,6 +544,13 @@ export async function createEditor(container: HTMLElement) {
         initAudio()
         process()
     }
+    function undo(){
+        history.undo()
+    }
+    function redo(){
+        history.redo()
+    }
+
 
     return {
         layout: async (animate: boolean) => {
@@ -542,6 +570,8 @@ export async function createEditor(container: HTMLElement) {
         },
         loadExample,
         toggleAudio,
+        undo,
+        redo,
         GetExampleDescription,
     }
 }
