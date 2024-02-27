@@ -57,7 +57,6 @@ function App() {
                 </div>
             ),
         },
-        
     ]
     useEffect(() => {
         if (editor) {
