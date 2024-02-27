@@ -12,11 +12,18 @@ export class LabeledInputControl extends Classic.InputControl<'number'> {
     }
 
     setValue(newValue: number): void {
-        if (newValue > this.value) {
-            this.value += 10;
+        let incrementor = 1
+        if (this.label === 'Base Gain') {
+            incrementor = 0.1;
         } else {
-            this.value -= 10;
+            incrementor = 50;
         }
+        if (newValue > this.value) {
+            this.value += incrementor;
+        } else {
+            this.value -= incrementor;
+        }
+        this.value = Number(this.value.toFixed(1));
     }
 }
 
