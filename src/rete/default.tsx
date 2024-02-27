@@ -82,7 +82,7 @@ import keyboardJetEngineExample from './examples/keyboardcontrolledjet.json'
 import chordExample from './examples/chord.json'
 import lofiSynthExample from './examples/lofisynth.json'
 import gatedLofiExample from './examples/gatedlofisynth.json'
-import { CommentPlugin, CommentExtensions } from 'rete-comment-plugin'
+import { CommentPlugin, CommentExtensions, FrameComment } from 'rete-comment-plugin'
 
 const examples: { [key in string]: any } = {
     'Default': {
@@ -540,7 +540,7 @@ export async function createEditor(container: HTMLElement) {
     function clearComments() {
         comment.clear()
     }
-
+    
     function createComment(commentType: string) {
         if (commentType == 'Frame') {
             comment.addFrame('Frame', ['1'])
@@ -549,7 +549,19 @@ export async function createEditor(container: HTMLElement) {
             comment.addInline('Inline', [0, 0], '1')
         }
     }
-
+    
+    function deleteComment(){
+        var comments = Array.from(comment.comments.entries())
+        for (let i = 0; i<comments.length; i++){
+            console.log(i);
+            console.log(comments[i]);
+            var id = comments[i][0]
+            var label = 'comment'
+            if (selector.isSelected({id,label})){
+                comment.delete(id)
+            }
+        }
+    }
     return {
         layout: async (animate: boolean) => {
             await arrange.layout({ applier: animate ? applier : undefined })
@@ -569,6 +581,7 @@ export async function createEditor(container: HTMLElement) {
         loadExample,
         toggleAudio,
         createComment,
+        deleteComment,
         clearComments,
         GetExampleDescription,
     }

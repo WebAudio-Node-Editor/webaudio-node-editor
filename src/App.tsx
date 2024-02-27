@@ -20,7 +20,7 @@ function App() {
                     style={{ color: '#A7AFB2' }}
                     onClick={() => editor?.createComment('Inline')}
                 >
-                    Inline
+                    Create Inline Comment
                 </div>
             ),
         },
@@ -31,12 +31,23 @@ function App() {
                     style={{ color: '#A7AFB2' }}
                     onClick={() => editor?.createComment('Frame')}
                 >
-                    Frame
+                    Create Frame Comment
                 </div>
             ),
         },
         {
             key: '3',
+            label: (
+                <div
+                    style={{ color: '#A7AFB2' }}
+                    onClick={() => editor?.deleteComment()}
+                >
+                    Delete Selected Comment
+                </div>
+            ),
+        },
+        {
+            key: '4',
             label: (
                 <div
                     style={{ color: '#A7AFB2' }}
@@ -46,6 +57,7 @@ function App() {
                 </div>
             ),
         },
+        
     ]
     useEffect(() => {
         if (editor) {
