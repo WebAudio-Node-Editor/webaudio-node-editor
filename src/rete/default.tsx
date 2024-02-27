@@ -82,7 +82,7 @@ import keyboardJetEngineExample from './examples/keyboardcontrolledjet.json'
 import chordExample from './examples/chord.json'
 import lofiSynthExample from './examples/lofisynth.json'
 import gatedLofiExample from './examples/gatedlofisynth.json'
-import { CommentPlugin, CommentExtensions } from "rete-comment-plugin"
+import { CommentPlugin, CommentExtensions } from 'rete-comment-plugin'
 
 const examples: { [key in string]: any } = {
     'Default': {
@@ -232,7 +232,6 @@ export async function createEditor(container: HTMLElement) {
     const comment = new CommentPlugin<Schemes, AreaExtra>()
     const selector = AreaExtensions.selector()
     const accumulating = AreaExtensions.accumulateOnCtrl()
-
 
     function process() {
         if (processQueued) {
@@ -429,11 +428,11 @@ export async function createEditor(container: HTMLElement) {
     const osc = new EditorOscillatorNode(process)
     const gain = new EditorGainNode(process, { gain: 0.5 })
     const output = new UniversalOutputNode(process)
-    
+
     await editor.addNode(osc)
     await editor.addNode(gain)
     await editor.addNode(output)
-    
+
     var c = new Connection<Node, Node>(
         osc,
         'signal' as never,
@@ -455,8 +454,7 @@ export async function createEditor(container: HTMLElement) {
     AreaExtensions.zoomAt(area, editor.getNodes())
 
     await editor.removeConnection(c.id)
-    
-    
+
     process()
 
     const context: Context = {
@@ -464,7 +462,7 @@ export async function createEditor(container: HTMLElement) {
         editor: editor,
         area: area,
         dataflow: engine,
-        comment: comment
+        comment: comment,
     }
 
     async function loadEditor(data: any) {
@@ -535,23 +533,21 @@ export async function createEditor(container: HTMLElement) {
         process()
     }
 
-    function clear(){
+    function clear() {
         clearEditor(editor)
         clearComments()
     }
-    function clearComments(){
+    function clearComments() {
         comment.clear()
     }
-    
-    function createComment(commentType:string){
-        if (commentType == "Frame"){
-            comment.addFrame("Frame",["1"])
+
+    function createComment(commentType: string) {
+        if (commentType == 'Frame') {
+            comment.addFrame('Frame', ['1'])
             console.log(comment.comments)
+        } else {
+            comment.addInline('Inline', [0, 0], '1')
         }
-        else{
-            comment.addInline("Inline", [0,0],"1")
-        }
-        
     }
 
     return {

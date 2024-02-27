@@ -3,7 +3,7 @@ import { useRete } from 'rete-react-plugin'
 import './App.css'
 import './rete.css'
 import { createEditor } from './rete'
-import { Layout, Button, Flex, Select, Divider, Dropdown} from 'antd'
+import { Layout, Button, Flex, Select, Divider, Dropdown } from 'antd'
 import { Link } from 'react-router-dom'
 
 let selectedExample = 'Default'
@@ -13,26 +13,39 @@ function App() {
     const [examples, setExamples] = useState<string[]>([])
     const [concepts, setConcepts] = useState<string>('Placeholder')
     const items = [
-        {   
-            key:'1',
-            label: (<div style={{color:"#A7AFB2"}} onClick={() => editor?.createComment("Inline")}>
-            Inline
-        </div>),
-        }, 
         {
-            key:'2',
-            label: (<div style={{color:"#A7AFB2"}}
-                             onClick={() => editor?.createComment("Frame")}>
-            Frame
-        </div>),
-        }, 
+            key: '1',
+            label: (
+                <div
+                    style={{ color: '#A7AFB2' }}
+                    onClick={() => editor?.createComment('Inline')}
+                >
+                    Inline
+                </div>
+            ),
+        },
         {
-            key:'3',
-            label: (<div style={{color:"#A7AFB2"}}
-                             onClick={() => editor?.clearComments()}>
-            Clear Comments 
-        </div>),
-        },  
+            key: '2',
+            label: (
+                <div
+                    style={{ color: '#A7AFB2' }}
+                    onClick={() => editor?.createComment('Frame')}
+                >
+                    Frame
+                </div>
+            ),
+        },
+        {
+            key: '3',
+            label: (
+                <div
+                    style={{ color: '#A7AFB2' }}
+                    onClick={() => editor?.clearComments()}
+                >
+                    Clear Comments
+                </div>
+            ),
+        },
     ]
     useEffect(() => {
         if (editor) {
@@ -108,13 +121,13 @@ function App() {
                     GitHub
                 </a>
                 <div style={{ flexGrow: 1 }} />
-                <Dropdown 
+                <Dropdown
                     menu={{
-                            items,
+                        items,
                     }}
                     arrow
                 >
-                <Button>Comments</Button>
+                    <Button>Comments</Button>
                 </Dropdown>
                 <Button onClick={() => editor?.layout(true)}>
                     Auto-arrange nodes
