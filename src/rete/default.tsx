@@ -236,7 +236,7 @@ export async function createEditor(container: HTMLElement) {
 
     HistoryExtensions.keyboard(history);
     
-    history.addPreset(HistoryPresets.classic.setup());
+    history.addPreset(HistoryPresets.classic.setup({ timing: 0.01 }));
 
 
     function process() {
@@ -459,6 +459,10 @@ export async function createEditor(container: HTMLElement) {
     AreaExtensions.zoomAt(area, editor.getNodes())
 
     await editor.removeConnection(c.id)
+    
+    //Clear history so tracking actions (for undo/redo)
+    //start with user interactions not the loaded example.
+    history.clear()
 
     process()
 
@@ -477,6 +481,10 @@ export async function createEditor(container: HTMLElement) {
     }
     async function loadExample(exampleName: string) {
         await loadEditor(examples[exampleName].json)
+        
+        //Clear history so tracking actions (for undo/redo)
+        //start with user interactions not the loaded example.
+        history.clear()
     }
     function GetExampleDescription(exampleName: string) {
         return examples[exampleName].concepts
