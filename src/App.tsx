@@ -88,10 +88,10 @@ function App() {
                     GitHub
                 </a>
                 <div style={{ flexGrow: 1 }} />
-                <Button style={{ border: 'none' }}>
+                <Button style={{ border: 'none' }} onClick={() => editor?.undo()}>
                     <FaUndo className={`${"icon-button"}`} />
                 </Button>
-                <Button style={{border: 'none'}}>
+                <Button style={{border: 'none'}} onClick={() => editor?.redo()}>
                     <FaRedo className={`${"icon-button"}`} />
                 </Button>
                 <Button onClick={() => editor?.layout(true)}>

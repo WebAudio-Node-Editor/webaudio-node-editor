@@ -536,6 +536,13 @@ export async function createEditor(container: HTMLElement) {
         initAudio()
         process()
     }
+    function undo(){
+        history.undo()
+    }
+    function redo(){
+        history.redo()
+    }
+
 
     return {
         layout: async (animate: boolean) => {
@@ -555,6 +562,8 @@ export async function createEditor(container: HTMLElement) {
         },
         loadExample,
         toggleAudio,
+        undo,
+        redo,
         GetExampleDescription,
     }
 }
