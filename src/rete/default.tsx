@@ -28,6 +28,12 @@ import {
 } from 'rete-context-menu-plugin'
 
 import {
+    HistoryExtensions,
+    HistoryPlugin,
+    Presets as HistoryPresets
+} from 'rete-history-plugin'
+
+import {
     DropdownControl,
     CustomDropdownControl,
 } from './controls/DropdownControl'
