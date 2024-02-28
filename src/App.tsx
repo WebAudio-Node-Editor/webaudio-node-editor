@@ -5,6 +5,7 @@ import './rete.css'
 import { createEditor } from './rete'
 import { Layout, Button, Flex, Select, Divider, Dropdown } from 'antd'
 import { Link } from 'react-router-dom'
+import { FaRedo, FaUndo } from 'react-icons/fa'
 
 let selectedExample = 'Default'
 
@@ -140,6 +141,18 @@ function App() {
                     GitHub
                 </a>
                 <div style={{ flexGrow: 1 }} />
+                <Button
+                    style={{ border: 'none' }}
+                    onClick={() => editor?.undo()}
+                >
+                    <FaUndo className={`${'icon-button'}`} />
+                </Button>
+                <Button
+                    style={{ border: 'none' }}
+                    onClick={() => editor?.redo()}
+                >
+                    <FaRedo className={`${'icon-button'}`} />
+                </Button>
                 <Dropdown
                     menu={{
                         items,

@@ -28,6 +28,12 @@ import {
 } from 'rete-context-menu-plugin'
 
 import {
+    HistoryExtensions,
+    HistoryPlugin,
+    Presets as HistoryPresets,
+} from 'rete-history-plugin'
+
+import {
     DropdownControl,
     CustomDropdownControl,
 } from './controls/DropdownControl'
@@ -85,7 +91,7 @@ import gatedLofiExample from './examples/gatedlofisynth.json'
 import {
     CommentPlugin,
     CommentExtensions,
-    FrameComment,
+    //FrameComment,
 } from 'rete-comment-plugin'
 
 const examples: { [key in string]: any } = {
@@ -232,6 +238,11 @@ export async function createEditor(container: HTMLElement) {
     const area = new AreaPlugin<Schemes, AreaExtra>(container)
     const editor = new NodeEditor<Schemes>()
     const engine = new DataflowEngine<Schemes>()
+    const history = new HistoryPlugin<Schemes>()
+
+    HistoryExtensions.keyboard(history)
+
+    history.addPreset(HistoryPresets.classic.setup({ timing: 0.01 }))
 
     const comment = new CommentPlugin<Schemes, AreaExtra>()
     const selector = AreaExtensions.selector()
@@ -358,6 +369,7 @@ export async function createEditor(container: HTMLElement) {
     area.use(arrange)
     area.use(comment)
     CommentExtensions.selectable(comment, selector, accumulating)
+    area.use(history)
 
     area.area.setZoomHandler(
         new SmoothZoom(0.4, 200, 'cubicBezier(.45,.91,.49,.98)', area)
@@ -459,6 +471,10 @@ export async function createEditor(container: HTMLElement) {
 
     await editor.removeConnection(c.id)
 
+    //Clear history so tracking actions (for undo/redo)
+    //start with user interactions not the loaded example.
+    history.clear()
+
     process()
 
     const context: Context = {
@@ -477,6 +493,10 @@ export async function createEditor(container: HTMLElement) {
     }
     async function loadExample(exampleName: string) {
         await loadEditor(examples[exampleName].json)
+
+        //Clear history so tracking actions (for undo/redo)
+        //start with user interactions not the loaded example.
+        history.clear()
     }
     function GetExampleDescription(exampleName: string) {
         return examples[exampleName].concepts
@@ -536,6 +556,12 @@ export async function createEditor(container: HTMLElement) {
         initAudio()
         process()
     }
+    function undo() {
+        history.undo()
+    }
+    function redo() {
+        history.redo()
+    }
 
     function clear() {
         clearEditor(editor)
@@ -546,7 +572,7 @@ export async function createEditor(container: HTMLElement) {
     }
 
     function createComment(commentType: string) {
-        if (commentType == 'Frame') {
+        if (commentType === 'Frame') {
             comment.addFrame('Frame', ['1'])
             console.log(comment.comments)
         } else {
@@ -587,6 +613,8 @@ export async function createEditor(container: HTMLElement) {
         createComment,
         deleteComment,
         clearComments,
+        undo,
+        redo,
         GetExampleDescription,
     }
 }
