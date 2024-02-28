@@ -61,6 +61,7 @@ export function CustomVisualizerOutput(props: { data: VisualizerControl }) {
 
                 //Frequency Visualizer
                 } else {
+
                     // based on code from https://www.telerik.com/blogs/adding-audio-visualization-react-app-using-web-audio-api
                     const bucketCt =
                         props.data.analyserNode.frequencyBinCount / 8
@@ -70,27 +71,40 @@ export function CustomVisualizerOutput(props: { data: VisualizerControl }) {
                     const bar_spacing = canvas.width / bucketCt
                     const bar_width = bar_spacing
                     const height_mult = (canvas.height / 255) * 0.9
-                    let start = 0
+                    let start_x = 0
+                    let start_y = 0
 
                     canvasCtx.clearRect(0, 0, canvas.width, canvas.height)
                     canvasCtx.fillStyle = 'rgba(0,0,0,0.3)'
                     canvasCtx.fillRect(0, 0, canvas.width, canvas.height)
-
-                    for (let i = 0; i < fftData.length; i++) {
-
-                        //Testing Removing Visuals
-                        if(!props.data.display_linear){
-                            continue
+                    
+                    if (props.data.display_linear){
+                        for (let i = 0; i < fftData.length; i++) {
+                            start_x = i * bar_spacing
+                            canvasCtx.fillStyle = 'white'
+                            canvasCtx.fillRect(
+                                start_x,
+                                canvasRef.current.height,
+                                bar_width,
+                                height_mult * -fftData[i]
+                            )
                         }
-
-                        start = i * bar_spacing
-                        canvasCtx.fillStyle = 'white'
-                        canvasCtx.fillRect(
-                            start,
-                            canvasRef.current.height,
-                            bar_width,
-                            height_mult * -fftData[i]
-                        )
+                    } else {
+                        for (let i = 0; i < fftData.length; i++) {
+                            // Working solution based on https://stackoverflow.com/questions/42890542/webaudio-audio-visualizer-logarithmic-scale-x-axis
+                            const logX = Math.log2(i+1)
+                            start_x = logX * (canvas.width / Math.log2(fftData.length))
+                            
+                            const logY = Math.log2(fftData[i])
+                            start_y = logY
+                            canvasCtx.fillStyle = 'white'
+                            canvasCtx.fillRect(
+                                start_x,
+                                canvasRef.current.height,
+                                bar_width,
+                                height_mult * -fftData[i]
+                            )
+                        }
                     }
                 }
             }
