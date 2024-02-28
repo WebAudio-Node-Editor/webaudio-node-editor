@@ -3,9 +3,9 @@ import { useRete } from 'rete-react-plugin'
 import './App.css'
 import './rete.css'
 import { createEditor } from './rete'
-import { Layout, Button, Flex, Select, Divider } from 'antd'
+import { Layout, Button, Flex, Select, Divider, Dropdown } from 'antd'
 import { Link } from 'react-router-dom'
-import { FaRedo, FaUndo } from "react-icons/fa";
+import { FaRedo, FaUndo } from 'react-icons/fa'
 
 let selectedExample = 'Default'
 
@@ -14,6 +14,59 @@ function App() {
     const [examples, setExamples] = useState<string[]>([])
     const [concepts, setConcepts] = useState<string>('Placeholder')
 
+    window.addEventListener('keydown', function (event) {
+        const key = event.key
+        if (key === 'Backspace' || key === 'Delete') {
+            editor?.deleteComment()
+        }
+    })
+
+    const items = [
+        {
+            key: '1',
+            label: (
+                <div
+                    style={{ color: '#A7AFB2' }}
+                    onClick={() => editor?.createComment('Inline')}
+                >
+                    Create Inline Comment
+                </div>
+            ),
+        },
+        {
+            key: '2',
+            label: (
+                <div
+                    style={{ color: '#A7AFB2' }}
+                    onClick={() => editor?.createComment('Frame')}
+                >
+                    Create Frame Comment
+                </div>
+            ),
+        },
+        {
+            key: '3',
+            label: (
+                <div
+                    style={{ color: '#A7AFB2' }}
+                    onClick={() => editor?.deleteComment()}
+                >
+                    Delete Selected Comment
+                </div>
+            ),
+        },
+        {
+            key: '4',
+            label: (
+                <div
+                    style={{ color: '#A7AFB2' }}
+                    onClick={() => editor?.clearComments()}
+                >
+                    Clear Comments
+                </div>
+            ),
+        },
+    ]
     useEffect(() => {
         if (editor) {
             const list = editor.getExamples()
@@ -88,12 +141,26 @@ function App() {
                     GitHub
                 </a>
                 <div style={{ flexGrow: 1 }} />
-                <Button style={{ border: 'none' }} onClick={() => editor?.undo()}>
-                    <FaUndo className={`${"icon-button"}`} />
+                <Button
+                    style={{ border: 'none' }}
+                    onClick={() => editor?.undo()}
+                >
+                    <FaUndo className={`${'icon-button'}`} />
                 </Button>
-                <Button style={{border: 'none'}} onClick={() => editor?.redo()}>
-                    <FaRedo className={`${"icon-button"}`} />
+                <Button
+                    style={{ border: 'none' }}
+                    onClick={() => editor?.redo()}
+                >
+                    <FaRedo className={`${'icon-button'}`} />
                 </Button>
+                <Dropdown
+                    menu={{
+                        items,
+                    }}
+                    arrow
+                >
+                    <Button>Comments</Button>
+                </Dropdown>
                 <Button onClick={() => editor?.layout(true)}>
                     Auto-arrange nodes
                 </Button>
