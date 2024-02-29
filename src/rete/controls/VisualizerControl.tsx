@@ -5,7 +5,9 @@ export class VisualizerControl extends Classic.Control {
     constructor(
         public analyserNode: AnalyserNode,
         public isFrequencyDomain: boolean,
-        public display_linear: boolean = true
+        public display_linear: boolean = true,
+        public display_range_min: number = 0,
+        public display_range_max: number = 0
     ) {
         super()
     }
@@ -72,7 +74,6 @@ export function CustomVisualizerOutput(props: { data: VisualizerControl }) {
                     const bar_width = bar_spacing
                     const height_mult = (canvas.height / 255) * 0.9
                     let start_x = 0
-                    let start_y = 0
 
                     canvasCtx.clearRect(0, 0, canvas.width, canvas.height)
                     canvasCtx.fillStyle = 'rgba(0,0,0,0.3)'
@@ -95,8 +96,6 @@ export function CustomVisualizerOutput(props: { data: VisualizerControl }) {
                             const logX = Math.log2(i+1)
                             start_x = logX * (canvas.width / Math.log2(fftData.length))
                             
-                            const logY = Math.log2(fftData[i])
-                            start_y = logY
                             canvasCtx.fillStyle = 'white'
                             canvasCtx.fillRect(
                                 start_x,

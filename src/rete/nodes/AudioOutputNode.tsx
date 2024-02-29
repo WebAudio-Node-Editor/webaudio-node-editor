@@ -42,19 +42,21 @@ export class UniversalOutputNode extends Classic.Node<
     {},
     {
         gain: LabeledInputControl
+        range_min: LabeledInputControl
+        range_max: LabeledInputControl
         timeVisualizer: VisualizerControl
         freqVisualizer: VisualizerControl
         visual: DropdownControl
     }
 > {
     width = 400
-    height = 370
+    height = 540
     public timeAnalyserNode = audioCtx.createAnalyser()
     public freqAnalyserNode = audioCtx.createAnalyser()
 
     constructor(
         change: () => void, 
-        initial?: { gain: number; visual: string }
+        initial?: { gain: number; visual: string , range_min: number, range_max: number}
         ) {
         super('Universal Output')
 
@@ -76,8 +78,8 @@ export class UniversalOutputNode extends Classic.Node<
         //For chaning the dropdown
         //- Pedro Perez
         const dropdownOptions = [
-            { value: 'linear', label: 'linear' },
-            { value: 'log', label: 'log' },
+            { value: 'linear', label: 'Linear X-axis' },
+            { value: 'log', label: 'Log X-axis' },
         ]
 
         this.addControl(
@@ -87,6 +89,23 @@ export class UniversalOutputNode extends Classic.Node<
                 dropdownOptions,
             )
         )
+
+        //For changing the range
+        //- Adrian Cardenas
+        this.addControl(
+            'range_min',
+            new LabeledInputControl(
+                initial? initial.range_min : -100, 'Graph Min', change
+            )
+        )
+
+        this.addControl(
+            'range_max',
+            new LabeledInputControl(
+                initial? initial.range_min : -10, 'Graph Max', change
+            )
+        )
+        
     }
 
     data(inputs: { signal?: AudioNode[] }): { value: boolean } {
@@ -109,6 +128,8 @@ export class UniversalOutputNode extends Classic.Node<
         return {
             value: val,
         }
+
+
     }
 
     serialize() {
