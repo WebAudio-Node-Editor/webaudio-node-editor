@@ -6,8 +6,7 @@ export class VisualizerControl extends Classic.Control {
         public analyserNode: AnalyserNode,
         public isFrequencyDomain: boolean,
         public display_linear: boolean = true,
-        public display_range_min: number = 0,
-        public display_range_max: number = 0
+        public x_transpose: number = 0
     ) {
         super()
     }
@@ -73,6 +72,7 @@ export function CustomVisualizerOutput(props: { data: VisualizerControl }) {
                     const bar_spacing = canvas.width / bucketCt
                     const bar_width = bar_spacing
                     const height_mult = (canvas.height / 255) * 0.9
+                    let transpose = (props.data.x_transpose)
                     let start_x = 0
 
                     canvasCtx.clearRect(0, 0, canvas.width, canvas.height)
@@ -84,7 +84,7 @@ export function CustomVisualizerOutput(props: { data: VisualizerControl }) {
                             start_x = i * bar_spacing
                             canvasCtx.fillStyle = 'white'
                             canvasCtx.fillRect(
-                                start_x,
+                                start_x-transpose,
                                 canvasRef.current.height,
                                 bar_width,
                                 height_mult * -fftData[i]
@@ -98,7 +98,7 @@ export function CustomVisualizerOutput(props: { data: VisualizerControl }) {
                             
                             canvasCtx.fillStyle = 'white'
                             canvasCtx.fillRect(
-                                start_x,
+                                start_x-transpose,
                                 canvasRef.current.height,
                                 bar_width,
                                 height_mult * -fftData[i]

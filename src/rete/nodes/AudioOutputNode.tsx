@@ -42,21 +42,20 @@ export class UniversalOutputNode extends Classic.Node<
     {},
     {
         gain: LabeledInputControl
-        range_min: LabeledInputControl
-        range_max: LabeledInputControl
+        x_transpose: LabeledInputControl
         timeVisualizer: VisualizerControl
         freqVisualizer: VisualizerControl
         visual: DropdownControl
     }
 > {
     width = 400
-    height = 540
+    height = 475
     public timeAnalyserNode = audioCtx.createAnalyser()
     public freqAnalyserNode = audioCtx.createAnalyser()
 
     constructor(
         change: () => void, 
-        initial?: { gain: number; visual: string , range_min: number, range_max: number}
+        initial?: { gain: number; visual: string , x_transpose: number}
         ) {
         super('Universal Output')
 
@@ -90,19 +89,12 @@ export class UniversalOutputNode extends Classic.Node<
             )
         )
 
-        //For changing the range
+        //For transposing the x axis
         //- Adrian Cardenas
         this.addControl(
-            'range_min',
+            'x_transpose',
             new LabeledInputControl(
-                initial? initial.range_min : -100, 'Graph Min', change
-            )
-        )
-
-        this.addControl(
-            'range_max',
-            new LabeledInputControl(
-                initial? initial.range_min : -10, 'Graph Max', change
+                initial? initial.x_transpose : 0, 'Transpose Frequency Axis', change
             )
         )
         
@@ -125,6 +117,9 @@ export class UniversalOutputNode extends Classic.Node<
         // - Pedro Perez
         var di_linear = this.controls.visual.value?.toString()
         this.controls.freqVisualizer.display_linear = (di_linear?.localeCompare("linear") === 0)
+        
+        //Inputting Range Parameters
+        this.controls.freqVisualizer.x_transpose = parseFloat(this.controls.x_transpose.value?.toString())
         return {
             value: val,
         }
