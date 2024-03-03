@@ -316,7 +316,7 @@ export async function createEditor(container: HTMLElement) {
                     ],
                     [
                         'Frequency Domain Visualizer',
-                        () => new FrequencyDomainVisualizerNode(),
+                        () => new FrequencyDomainVisualizerNode(process),
                     ],
                     ['Console Debugger', () => new ConsoleDebuggerNode()],
                 ],
