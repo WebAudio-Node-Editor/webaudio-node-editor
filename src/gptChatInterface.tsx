@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import OpenAI from "openai";
-// import axios from 'axios';
 
 const GptChatInterface = () => {
   const [apiKey, setApiKey] = useState('');
