@@ -6,6 +6,7 @@ import { createEditor } from './rete'
 import { Layout, Button, Flex, Select, Divider, Dropdown } from 'antd'
 import { Link } from 'react-router-dom'
 import { FaRedo, FaUndo } from 'react-icons/fa'
+import GptChatInterface from './GptChatInterface'
 
 let selectedExample = 'Default'
 
@@ -13,6 +14,7 @@ function App() {
     const [ref, editor]: readonly [any, any] = useRete(createEditor)
     const [examples, setExamples] = useState<string[]>([])
     const [concepts, setConcepts] = useState<string>('Placeholder')
+    const [showChat, setShowChat] = useState(false);
 
     window.addEventListener('keydown', function (event) {
         const key = event.key
@@ -167,6 +169,10 @@ function App() {
                 <Button danger onClick={() => editor?.toggleAudio()}>
                     Toggle Audio
                 </Button>
+                <Button onClick={() => setShowChat(!showChat)}>
+                    {showChat ? 'Hide Chat' : 'Show Chat'}
+                </Button>
+                {showChat && <GptChatInterface />}
             </Flex>
 
             <div
