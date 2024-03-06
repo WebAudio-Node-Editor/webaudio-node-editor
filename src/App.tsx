@@ -6,7 +6,7 @@ import { createEditor } from './rete'
 import { Layout, Button, Flex, Select, Divider, Dropdown } from 'antd'
 import { Link } from 'react-router-dom'
 import { FaRedo, FaUndo } from 'react-icons/fa'
-import GptChatInterface from './GptChatInterface'
+import GptChatInterface from './gptChatInterface'
 
 let selectedExample = 'Default'
 
