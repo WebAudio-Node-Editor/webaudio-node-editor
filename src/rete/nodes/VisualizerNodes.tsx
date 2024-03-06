@@ -8,7 +8,9 @@ import { DropdownControl } from '../controls/DropdownControl'
 export class TimeDomainVisualizerNode extends Classic.Node<
     { signal: Classic.Socket },
     {},
-    { visualizer: VisualizerControl }
+    { 
+        visualizer: VisualizerControl
+     }
 > {
     width = 400
     height = 200
@@ -21,6 +23,8 @@ export class TimeDomainVisualizerNode extends Classic.Node<
             'visualizer',
             new VisualizerControl(this.analyserNode, false)
         )
+
+        
     }
 
     data(inputs: { signal?: AudioNode[] }): { value: AnalyserNode } {
@@ -41,13 +45,15 @@ export class FrequencyDomainVisualizerNode extends Classic.Node<
     { signal: Classic.Socket },
     {},
     { visualizer: VisualizerControl
-        visual: DropdownControl}
+        visual: DropdownControl
+        x_transpose: LabeledInputControl
+    }
 > {
     width = 400
-    height = 200
+    height = 300
     public analyserNode = audioCtx.createAnalyser()
     constructor( change: () => void,
-        initial?: {visual: string}
+        initial?: {visual: string; x_transpose: number}
         ) {
         super('Frequency Domain Visualizer')
 
@@ -71,6 +77,14 @@ export class FrequencyDomainVisualizerNode extends Classic.Node<
                 dropdownOptions,
             )
         )
+
+        //Based on Adrian Cardenas's Code from AudioOutputNode
+        this.addControl(
+            'x_transpose',
+            new LabeledInputControl(
+                initial? initial.x_transpose : 0, 'Transpose Frequency Axis', change
+            )
+        )
         
     }
 
@@ -83,6 +97,9 @@ export class FrequencyDomainVisualizerNode extends Classic.Node<
         // - Pedro Perez
         var di_linear = this.controls.visual.value?.toString()
         this.controls.visualizer.display_linear = (di_linear?.localeCompare("linear") === 0)
+
+        //Inputting Range Parameters
+        this.controls.visualizer.x_transpose = parseFloat(this.controls.x_transpose.value?.toString())
 
         return {
             value: this.analyserNode,
