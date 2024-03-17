@@ -1,5 +1,8 @@
 import React, { useState } from 'react';
 import OpenAI from "openai";
+import * as fs from 'fs';
+import os from 'os';
+import {formatter_prompt, assistant_instructions} from './prompts';
 
 const GptChatInterface = () => {
   const [apiKey, setApiKey] = useState('');
@@ -33,7 +36,7 @@ const GptChatInterface = () => {
     cursor: 'pointer',
     margin: '10px 0',
   };
-
+  
   const handleSendPrompt = async () => {
     const formattedPrompt = prompt.trim();
     
@@ -45,22 +48,48 @@ const GptChatInterface = () => {
     const openai = new OpenAI({
       apiKey: apiKey
     });
-  
-    try {
-      const response = await openai.chat.completions.create({
-        model: "gpt-4",
-        messages: [{ role: "system", content: formattedPrompt }],
-        temperature: 0.7,
-        max_tokens: 60,
+    
+    // BELOW IS THE FUNCTION TO CREATE OR LOAD AN ASSISTANT
+    const knowledge_base = openai.files.create({
+      file : fs.createReadStream('PLACEHOLDER.py','utf8'),
+      purpose : 'assistants',
+    });
+    
+    const path = 'assistant.json'
+
+    if (fs.existsSync(path)){
+      fs.readFile(path, 'utf8', (err, data) => {
+        if (err){
+          console.error('Error reading file: ', err);
+          return;
+        }
+        try {
+          const assistantData = JSON.parse(data);
+          const assistantID = assistantData.assistant_id;
+          console.log("Loaded existing assistant ID: ", assistantID);
+        } catch(error) {
+          console.error("Error parsing JSON: ", error)
+        }
       });
-  
-      console.log(response.choices[0].message);
-      // setResponse(response.data.choices[0].text.trim());
-    } catch (error) {
-      console.error('Error calling the OpenAI API:', error);
-      setResponse('Failed to fetch response from the API.');
-    }
+    } else {
+      try {
+        const assistant = await openai.beta.assistants.create({
+          model: "gpt-4",
+          instructions: assistant_instructions,
+          tools : [{"type" : "retrieval"}],
+          file_ids : [(await knowledge_base).id]
+        });
+            // setResponse(response.data.choices[0].text.trim());
+      } catch (error) {
+        console.error('Error calling the OpenAI API:', error);
+        setResponse('Failed to fetch response from the API.');
+      }
+    }    
+
+    
+
   };
+
   
 
   return (
