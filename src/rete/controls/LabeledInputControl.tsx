@@ -1,8 +1,6 @@
 import { ClassicPreset as Classic } from 'rete'
-import { Presets } from 'rete-react-plugin'
-
+import { Drag } from 'rete-react-plugin'
 import * as React from 'react'
-import { ClassicPreset } from 'rete'
 import styled from 'styled-components'
 
 
@@ -29,9 +27,11 @@ export class LabeledInputControl extends Classic.InputControl<'number'> {
         super('number', { initial: value, readonly: Boolean(readonly), change })
     }
 }
-export function CustomLabeledInputControl<N extends 'text' | 'number'>(props: { data: LabeledInputControl, styles?: () => any }) {
+export function CustomLabeledInputControl(props: { data: LabeledInputControl, styles?: () => any }) {
   const [value, setValue] = React.useState(props.data.value)
   const ref = React.useRef(null)
+  Drag.useNoDrag(ref)
+
   React.useEffect(() => {
     setValue(props.data.value)
   }, [props.data.value])
