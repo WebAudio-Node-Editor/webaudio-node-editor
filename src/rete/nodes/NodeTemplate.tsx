@@ -44,7 +44,8 @@ export class NodeTemplate extends Classic.Node<
             new LabeledInputControl(
                 initial ? initial.exampleInitialVal : 0, // initial value of this control
                 'Another Label', // Label should ideally match the label of the input it's being attached to
-                change
+                change,
+                99
             )
         )
         this.addInput('exampleInputWithControl', exInputWithControl)
@@ -67,6 +68,7 @@ export class NodeTemplate extends Classic.Node<
                 initial ? initial.exampleInitialVal2 : 0,
                 'control label',
                 change,
+                99,
                 false
             )
         )
