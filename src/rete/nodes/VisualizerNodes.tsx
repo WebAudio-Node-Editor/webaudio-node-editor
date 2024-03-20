@@ -50,7 +50,7 @@ export class FrequencyDomainVisualizerNode extends Classic.Node<
     }
 > {
     width = 400
-    height = 300
+    height = 240
     public analyserNode = audioCtx.createAnalyser()
     constructor( change: () => void,
         initial?: {visual: string; x_transpose: number}
@@ -78,13 +78,13 @@ export class FrequencyDomainVisualizerNode extends Classic.Node<
             )
         )
 
-        //Based on Adrian Cardenas's Code from AudioOutputNode
-        this.addControl(
-            'x_transpose',
-            new LabeledInputControl(
-                initial? initial.x_transpose : 0, 'Transpose Frequency Axis', change
-            )
-        )
+        // //Based on Adrian Cardenas's Code from AudioOutputNode
+        // this.addControl(
+        //     'x_transpose',
+        //     new LabeledInputControl(
+        //         initial? initial.x_transpose : 0, 'Transpose Frequency Axis', change
+        //     )
+        // )
         
     }
 

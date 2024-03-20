@@ -49,7 +49,7 @@ export class UniversalOutputNode extends Classic.Node<
     }
 > {
     width = 400
-    height = 475
+    height = 430
     public timeAnalyserNode = audioCtx.createAnalyser()
     public freqAnalyserNode = audioCtx.createAnalyser()
 
@@ -91,12 +91,12 @@ export class UniversalOutputNode extends Classic.Node<
 
         //For transposing the x axis
         //- Adrian Cardenas
-        this.addControl(
-            'x_transpose',
-            new LabeledInputControl(
-                initial? initial.x_transpose : 0, 'Transpose Frequency Axis', change
-            )
-        )
+        // this.addControl(
+        //     'x_transpose',
+        //     new LabeledInputControl(
+        //         initial? initial.x_transpose : 0, 'Transpose Frequency Axis', change
+        //     )
+        // )
         
     }
 
@@ -119,7 +119,7 @@ export class UniversalOutputNode extends Classic.Node<
         this.controls.freqVisualizer.display_linear = (di_linear?.localeCompare("linear") === 0)
         
         //Inputting Range Parameters
-        this.controls.freqVisualizer.x_transpose = parseFloat(this.controls.x_transpose.value?.toString())
+        // this.controls.freqVisualizer.x_transpose = parseFloat(this.controls.x_transpose.value?.toString())
         return {
             value: val,
         }
