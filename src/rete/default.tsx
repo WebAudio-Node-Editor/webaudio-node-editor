@@ -487,6 +487,7 @@ export async function createEditor(container: HTMLElement) {
 
     async function loadEditor(data: any) {
         await clearEditor(editor)
+        await clearComments()
         await importEditor(context, data)
         await arrange.layout({ applier: undefined })
         AreaExtensions.zoomAt(area, editor.getNodes())
@@ -573,10 +574,10 @@ export async function createEditor(container: HTMLElement) {
 
     function createComment(commentType: string) {
         if (commentType === 'Frame') {
-            comment.addFrame('Frame', ['1'])
+            comment.addFrame('Frame', [])
             console.log(comment.comments)
         } else {
-            comment.addInline('Inline', [0, 0], '1')
+            comment.addInline('Inline', [0, 0])
         }
     }
 
