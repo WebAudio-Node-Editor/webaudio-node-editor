@@ -99,7 +99,7 @@ export class FrequencyDomainVisualizerNode extends Classic.Node<
         this.controls.visualizer.display_linear = (di_linear?.localeCompare("linear") === 0)
 
         //Inputting Range Parameters
-        this.controls.visualizer.x_transpose = parseFloat(this.controls.x_transpose.value?.toString())
+        // this.controls.visualizer.x_transpose = parseFloat(this.controls.x_transpose.value?.toString())
 
         return {
             value: this.analyserNode,
