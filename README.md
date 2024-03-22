@@ -1,5 +1,9 @@
 # WebAudio Node Editor
 
+## Visit the webapp and try it [here](https://webaudio-node-editor.github.io/webaudio-node-editor/#/)!
+
+[Video Demo](https://youtu.be/TkXoJeamk2c)
+
 ## What is this?
 
 This is a node-based editor for WebAudio created using Rete.js, a Javascript framework for visual programming through node editors. Node editors are widely used in shader editors and even game programming (as in Unreal Engine's Blueprints). Having used node editors for Blender and other software, I wanted to take a stab at making my own node editor for WebAudio, since I found that I really missed having something like this while working on the homework for this class. Now, we've taken up this project as a group to continue development.
@@ -19,8 +23,5 @@ Finally, all nodes being used with Rete's Dataflow Engine (one way to process da
 -   Errors can force you to have to refresh before the app works again
 -   There's noticeable clicking artifacts when reevaluating the node graph
 
-## Visit the webapp and try it [here](https://webaudio-node-editor.github.io/webaudio-node-editor/#/)!
-
-[Video Demo](https://youtu.be/TkXoJeamk2c)
 
 ## Check out the [Wiki](https://github.com/WebAudio-Node-Editor/webaudio-node-editor/wiki) to get started!
