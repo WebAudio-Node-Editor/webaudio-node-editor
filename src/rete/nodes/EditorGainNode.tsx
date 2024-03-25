@@ -25,7 +25,7 @@ export class EditorGainNode extends Classic.Node<
                 initial ? initial.gain : 1,
                 'Base Gain',
                 change,
-                .1
+                0.1
             )
         )
         this.addInput('baseGain', baseGainInput)

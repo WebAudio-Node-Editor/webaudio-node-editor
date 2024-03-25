@@ -585,7 +585,7 @@ export async function createEditor(container: HTMLElement) {
         for (let i = 0; i < comments.length; i++) {
             console.log(i)
             console.log(comments[i])
-            var id = "1"
+            var id = '1'
             var label = 'comment'
             if (selector.isSelected({ id, label })) {
                 comment.delete(id)

@@ -87,6 +87,22 @@ export default function Documentation() {
                         padding: '0em 2em',
                     }}
                 >
+                    <div className="Blog-header">What is this?</div>
+                    <div className="Blog-content">
+                        This is a node-based editor for WebAudio created using{' '}
+                        <a
+                            className="Blog-link"
+                            href="https://retejs.org/"
+                            target="_blank"
+                            rel="noreferrer"
+                        >
+                            Rete.js
+                        </a>
+                        , a Javascript framework for visual programming through
+                        node editors. Node editors are widely used in shader
+                        editors and even game programming (as in Unreal Engine's
+                        Blueprints).
+                    </div>
                     <div className="Blog-header">Basic Usage</div>
                     <div className="Blog-content">
                         Drag from socket to socket to create connections between
