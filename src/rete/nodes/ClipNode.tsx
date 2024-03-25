@@ -20,7 +20,8 @@ export class ClipNode extends Classic.Node<
             new LabeledInputControl(
                 initial ? initial.amp : 1,
                 'Amplitude cutoff',
-                change
+                change,
+                .1
             )
         )
 

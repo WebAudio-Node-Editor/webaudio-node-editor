@@ -52,7 +52,7 @@ export class UniversalOutputNode extends Classic.Node<
         this.addInput('signal', new Classic.Input(socket, 'Signal', true))
         this.addControl(
             'gain',
-            new LabeledInputControl(initial ? initial.gain : 1, 'Gain', change)
+            new LabeledInputControl(initial ? initial.gain : 1, 'Gain', change, .1)
         )
 
         this.addControl(
