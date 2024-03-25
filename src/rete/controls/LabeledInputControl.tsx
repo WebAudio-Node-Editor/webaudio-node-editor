@@ -37,22 +37,25 @@ export function CustomLabeledInputControl(props: { data: LabeledInputControl, st
   }, [props.data.value])
 
   return (
-    <Input
-      value={value}
-      type={props.data.type}
-      ref={ref}
-      readOnly={props.data.readonly}
-      onChange={e => {
-        const val = (props.data.type === 'number'
-          ? +e.target.value
-          : e.target.value) as typeof props.data['value']
+    <div>
+      <div style={{ padding: '5px 6px' }}>{props.data.label}</div>
+      <Input
+        value={value}
+        type={props.data.type}
+        ref={ref}
+        readOnly={props.data.readonly}
+        onChange={e => {
+          const val = (props.data.type === 'number'
+            ? +e.target.value
+            : e.target.value) as typeof props.data['value']
 
-        setValue(val)
-        props.data.setValue(val)
-      }}
-      step = {props.data.increment}
-      styles={props.styles}
-    />
+          setValue(val)
+          props.data.setValue(val)
+        }}
+        step = {props.data.increment}
+        styles={props.styles}
+      />
+    </div>
   )
 }
 
