@@ -29,7 +29,8 @@ export class EditorBiquadNode extends Classic.Node<
             new LabeledInputControl(
                 initial ? initial.freq : 350,
                 'Filter frequency',
-                change
+                change,
+                50
             )
         )
         this.addInput('frequency', freqInput)
@@ -45,7 +46,8 @@ export class EditorBiquadNode extends Classic.Node<
             new LabeledInputControl(
                 initial ? initial.gain : 0,
                 'Filter gain',
-                change
+                change,
+                .1
             )
         )
         this.addInput('gain', gainInput)
