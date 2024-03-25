@@ -1,8 +1,23 @@
 import React, { useState } from 'react';
 import OpenAI from "openai";
 import * as fs from 'fs';
-import os from 'os';
-import {formatter_prompt, assistant_instructions} from './prompts';
+import {assistant_instructions} from './prompts';
+
+async function saveAssistantId(assistantFilePath: string, assistantId: string): Promise<string> {
+  return new Promise<string>((resolve, reject) => {
+      const data = JSON.stringify({ assistant_id: assistantId });
+
+      fs.writeFile(assistantFilePath, data, 'utf8', (err) => {
+        if (err) {
+            console.error('Error saving assistant ID:', err);
+            reject(err);
+        } else {
+            console.log('Created a new assistant and saved the ID.');
+            resolve(assistantId);
+        }
+    });
+  });
+}
 
 const GptChatInterface = () => {
   const [apiKey, setApiKey] = useState('');
@@ -46,15 +61,11 @@ const GptChatInterface = () => {
     }
   
     const openai = new OpenAI({
-      apiKey: apiKey
+      apiKey: apiKey,
+      dangerouslyAllowBrowser: true
     });
     
     // BELOW IS THE FUNCTION TO CREATE OR LOAD AN ASSISTANT
-    const knowledge_base = openai.files.create({
-      file : fs.createReadStream('PLACEHOLDER.py','utf8'),
-      purpose : 'assistants',
-    });
-    
     const path = 'assistant.json'
 
     if (fs.existsSync(path)){
@@ -73,21 +84,32 @@ const GptChatInterface = () => {
       });
     } else {
       try {
+        const knowledge_base = openai.files.create({
+          file : fs.createReadStream('knowledge.docx','utf8'),
+          purpose : 'assistants',
+        });
+
         const assistant = await openai.beta.assistants.create({
           model: "gpt-4",
           instructions: assistant_instructions,
-          tools : [{"type" : "retrieval"}],
-          file_ids : [(await knowledge_base).id]
+          tools: [{ "type": "retrieval" }],
+          file_ids: [(await knowledge_base).id]
         });
-            // setResponse(response.data.choices[0].text.trim());
+        // Send Prompt to Newly Created Assistant
+        
+        saveAssistantId(path, assistant.id)
+          .then((savedAssistantId) => {
+              console.log('Saved assistant ID:', savedAssistantId);
+          })
+          .catch((error) => {
+              console.error('Failed to save assistant ID:', error);
+          });
+          
       } catch (error) {
         console.error('Error calling the OpenAI API:', error);
         setResponse('Failed to fetch response from the API.');
       }
-    }    
-
-    
-
+    }
   };
 
   
