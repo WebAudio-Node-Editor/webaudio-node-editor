@@ -88,7 +88,7 @@ import keyboardJetEngineExample from './examples/keyboardcontrolledjet.json'
 import chordExample from './examples/chord.json'
 import lofiSynthExample from './examples/lofisynth.json'
 import gatedLofiExample from './examples/gatedlofisynth.json'
-
+const EPSILON = .0001
 const examples: { [key in string]: any } = {
     'Default': {
         json: defaultExample,
@@ -206,6 +206,7 @@ function initAudio() {
 }
 
 function reInitOscillators() {
+    globalGain.gain.linearRampToValueAtTime(1, audioCtx.currentTime + .05)
     for (let i = 0; i < audioSources.length; i++) {
         if (!audioSourceStates[i]) {
             audioSources[i].start()
@@ -217,7 +218,9 @@ function reInitOscillators() {
 function killOscillators() {
     for (let i = 0; i < audioSources.length; i++) {
         if (audioSourceStates[i]) {
-            audioSources[i].stop()
+            globalGain.gain.setValueAtTime(globalGain.gain.value, audioCtx.currentTime);
+            globalGain.gain.linearRampToValueAtTime(0, audioCtx.currentTime + .05);
+            audioSources[i].stop(audioCtx.currentTime + .05);
             audioSourceStates[i] = false
         }
     }
