@@ -62,7 +62,7 @@ export async function createNode(
 }
 
 export async function importEditor(context: Context, data: any) {
-    const { nodes, connections } = data
+    const { nodes, connections, comments } = data
 
     for (const n of nodes) {
         const node = await createNode(context, n.name, n.data)
@@ -89,11 +89,22 @@ export async function importEditor(context: Context, data: any) {
             await context.editor.addConnection(conn)
         }
     }
+    if(comments){
+        for (const cm of comments) {
+            if(cm["type"] === "frame-comment"){
+                context.comment.addFrame(cm.text, cm.links)
+            }
+            else {
+                context.comment.addInline(cm.text, [0,0], cm.links[0])
+            }
+        }
+    } 
 }
 
 export function exportEditor(context: Context) {
     const nodes = []
     const connections = []
+    const comments: { id: string; links: string[]; text: string; type: string; }[] = []
 
     for (const n of context.editor.getNodes()) {
         nodes.push({
@@ -110,9 +121,18 @@ export function exportEditor(context: Context) {
             targetInput: c.targetInput,
         })
     }
+    context.comment.comments.forEach((value, key) => {       
+        comments.push({
+            id: value.id,
+            links: value.links,
+            text: value.text,
+            type: value.element.children[0].className.split(" ")[0]
+        })
+    });
 
     return {
         nodes,
         connections,
+        comments,
     }
 }
