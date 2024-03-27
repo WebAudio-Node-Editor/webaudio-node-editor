@@ -41,7 +41,7 @@ export class EditorGainNode extends Classic.Node<
         additionalGain?: AudioNode[]
     }): { signal: AudioNode } {
         const gainNode = audioCtx.createGain()
-        //const gainControl = this.inputs['baseGain']?.control
+        const gainControl = this.controls.baseGain.value
 
         if (inputs.signal) {
             inputs.signal.forEach((itm) => itm.connect(gainNode))
@@ -51,10 +51,10 @@ export class EditorGainNode extends Classic.Node<
             gainNode.gain.setValueAtTime(0, audioCtx.currentTime)
             inputs.baseGain[0].connect(gainNode.gain)
         } else {
-            // gainNode.gain.setValueAtTime(
-            //     (gainControl as LabeledInputControl).value || 0,
-            //     audioCtx.currentTime
-            // )
+            gainNode.gain.setValueAtTime(
+                gainControl || 0,
+                audioCtx.currentTime
+            )
         }
 
         if (inputs.additionalGain) {
