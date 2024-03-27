@@ -24,7 +24,8 @@ export class EditorGainNode extends Classic.Node<
             new LabeledInputControl(
                 initial ? initial.gain : 1,
                 'Base Gain',
-                change
+                change,
+                0.1
             )
         )
         this.addInput('baseGain', baseGainInput)
