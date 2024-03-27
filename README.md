@@ -23,5 +23,4 @@ Finally, all nodes being used with Rete's Dataflow Engine (one way to process da
 -   Errors can force you to have to refresh before the app works again
 -   There's noticeable clicking artifacts when reevaluating the node graph
 
-
 ## Check out the [Wiki](https://github.com/WebAudio-Node-Editor/webaudio-node-editor/wiki) to get started!

@@ -215,7 +215,7 @@ export class KeyboardNoteNode extends Classic.Node<
                 initial ? initial.adsrProfile.attack : 0.8,
                 'Attack Amplitude',
                 change,
-                .1
+                0.1
             )
         )
         this.addControl(
@@ -224,7 +224,7 @@ export class KeyboardNoteNode extends Classic.Node<
                 initial ? initial.adsrProfile.attackLength : 0.05,
                 'Attack Length',
                 change,
-                .1
+                0.1
             )
         )
         this.addControl(
@@ -233,7 +233,7 @@ export class KeyboardNoteNode extends Classic.Node<
                 initial ? initial.adsrProfile.decay : 0.7,
                 'Decay Amplitude',
                 change,
-                .1
+                0.1
             )
         )
         this.addControl(
@@ -242,7 +242,7 @@ export class KeyboardNoteNode extends Classic.Node<
                 initial ? initial.adsrProfile.decayLength : 0.1,
                 'Decay Length',
                 change,
-                .1
+                0.1
             )
         )
         this.addControl(
@@ -251,7 +251,7 @@ export class KeyboardNoteNode extends Classic.Node<
                 initial ? initial.adsrProfile.sustain : 0.1,
                 'Sustain Amplitude',
                 change,
-                .1
+                0.1
             )
         )
         this.addControl(
@@ -390,7 +390,7 @@ export class KeyboardADSRNode extends Classic.Node<
                 initial ? initial.adsrProfile.attack : 0.8,
                 'Attack Amplitude',
                 change,
-                .1
+                0.1
             )
         )
         this.addControl(
@@ -399,7 +399,7 @@ export class KeyboardADSRNode extends Classic.Node<
                 initial ? initial.adsrProfile.attackLength : 0.05,
                 'Attack Length',
                 change,
-                .1
+                0.1
             )
         )
         this.addControl(
@@ -408,7 +408,7 @@ export class KeyboardADSRNode extends Classic.Node<
                 initial ? initial.adsrProfile.decay : 0.7,
                 'Decay Amplitude',
                 change,
-                .1
+                0.1
             )
         )
         this.addControl(
@@ -417,7 +417,7 @@ export class KeyboardADSRNode extends Classic.Node<
                 initial ? initial.adsrProfile.decayLength : 0.1,
                 'Decay Length',
                 change,
-                .1
+                0.1
             )
         )
         this.addControl(
@@ -426,7 +426,7 @@ export class KeyboardADSRNode extends Classic.Node<
                 initial ? initial.adsrProfile.sustain : 0.1,
                 'Sustain Amplitude',
                 change,
-                .1
+                0.1
             )
         )
         this.addControl(

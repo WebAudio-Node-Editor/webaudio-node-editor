@@ -21,7 +21,7 @@ export class ClipNode extends Classic.Node<
                 initial ? initial.amp : 1,
                 'Amplitude cutoff',
                 change,
-                .1
+                0.1
             )
         )
 

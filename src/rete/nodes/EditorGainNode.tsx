@@ -22,7 +22,8 @@ export class EditorGainNode extends Classic.Node<
         let gainInput = new Classic.Input(socket, 'Additional Gain', true)
         this.addInput('additionalGain', gainInput)
 
-        this.addControl('baseGain',
+        this.addControl(
+            'baseGain',
             new LabeledInputControl(
                 initial ? initial.gain : 1,
                 'Base Gain',
