@@ -2,6 +2,7 @@ import { ClassicPreset as Classic } from 'rete'
 import { socket, globalGain, audioCtx } from '../default'
 import { LabeledInputControl } from '../controls/LabeledInputControl'
 import { VisualizerControl } from '../controls/VisualizerControl'
+import { DropdownControl } from '../controls/DropdownControl'
 
 export class AudioOutputNode extends Classic.Node<
     { signal: Classic.Socket },
@@ -14,6 +15,7 @@ export class AudioOutputNode extends Classic.Node<
         super('Audio Output')
 
         this.addInput('signal', new Classic.Input(socket, 'Signal', true))
+
     }
 
     data(inputs: { signal?: AudioNode[] }): { value: boolean } {
@@ -30,6 +32,9 @@ export class AudioOutputNode extends Classic.Node<
     serialize() {
         return {}
     }
+
+
+    
 }
 
 export class UniversalOutputNode extends Classic.Node<
@@ -37,16 +42,21 @@ export class UniversalOutputNode extends Classic.Node<
     {},
     {
         gain: LabeledInputControl
+        x_transpose: LabeledInputControl
         timeVisualizer: VisualizerControl
         freqVisualizer: VisualizerControl
+        visual: DropdownControl
     }
 > {
     width = 400
-    height = 370
+    height = 430
     public timeAnalyserNode = audioCtx.createAnalyser()
     public freqAnalyserNode = audioCtx.createAnalyser()
 
-    constructor(change: () => void, initial?: { gain: number }) {
+    constructor(
+        change: () => void, 
+        initial?: { gain: number; visual: string , x_transpose: number}
+        ) {
         super('Universal Output')
 
         this.addInput('signal', new Classic.Input(socket, 'Signal', true))
@@ -63,6 +73,31 @@ export class UniversalOutputNode extends Classic.Node<
             'freqVisualizer',
             new VisualizerControl(this.freqAnalyserNode, true)
         )
+
+        //For chaning the dropdown
+        //- Pedro Perez
+        const dropdownOptions = [
+            { value: 'linear', label: 'Linear X-axis' },
+            { value: 'log', label: 'Log X-axis' },
+        ]
+
+        this.addControl(
+            'visual',
+            new DropdownControl(
+                change,
+                dropdownOptions,
+            )
+        )
+
+        //For transposing the x axis
+        //- Adrian Cardenas
+        // this.addControl(
+        //     'x_transpose',
+        //     new LabeledInputControl(
+        //         initial? initial.x_transpose : 0, 'Transpose Frequency Axis', change
+        //     )
+        // )
+        
     }
 
     data(inputs: { signal?: AudioNode[] }): { value: boolean } {
@@ -77,9 +112,19 @@ export class UniversalOutputNode extends Classic.Node<
         gain.connect(globalGain)
         gain.connect(this.timeAnalyserNode)
         gain.connect(this.freqAnalyserNode)
+
+        //Visualizer Control Change
+        // - Pedro Perez
+        var di_linear = this.controls.visual.value?.toString()
+        this.controls.freqVisualizer.display_linear = (di_linear?.localeCompare("linear") === 0)
+        
+        //Inputting Range Parameters
+        // this.controls.freqVisualizer.x_transpose = parseFloat(this.controls.x_transpose.value?.toString())
         return {
             value: val,
         }
+
+
     }
 
     serialize() {
