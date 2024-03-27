@@ -15,7 +15,6 @@ export class AudioOutputNode extends Classic.Node<
         super('Audio Output')
 
         this.addInput('signal', new Classic.Input(socket, 'Signal', true))
-
     }
 
     data(inputs: { signal?: AudioNode[] }): { value: boolean } {
@@ -32,9 +31,6 @@ export class AudioOutputNode extends Classic.Node<
     serialize() {
         return {}
     }
-
-
-    
 }
 
 export class UniversalOutputNode extends Classic.Node<
@@ -54,15 +50,20 @@ export class UniversalOutputNode extends Classic.Node<
     public freqAnalyserNode = audioCtx.createAnalyser()
 
     constructor(
-        change: () => void, 
-        initial?: { gain: number; visual: string , x_transpose: number}
-        ) {
+        change: () => void,
+        initial?: { gain: number; visual: string; x_transpose: number }
+    ) {
         super('Universal Output')
 
         this.addInput('signal', new Classic.Input(socket, 'Signal', true))
         this.addControl(
             'gain',
-            new LabeledInputControl(initial ? initial.gain : 1, 'Gain', change, .1)
+            new LabeledInputControl(
+                initial ? initial.gain : 1,
+                'Gain',
+                change,
+                0.1
+            )
         )
 
         this.addControl(
@@ -81,13 +82,7 @@ export class UniversalOutputNode extends Classic.Node<
             { value: 'log', label: 'Log X-axis' },
         ]
 
-        this.addControl(
-            'visual',
-            new DropdownControl(
-                change,
-                dropdownOptions,
-            )
-        )
+        this.addControl('visual', new DropdownControl(change, dropdownOptions))
 
         //For transposing the x axis
         //- Adrian Cardenas
@@ -97,7 +92,6 @@ export class UniversalOutputNode extends Classic.Node<
         //         initial? initial.x_transpose : 0, 'Transpose Frequency Axis', change
         //     )
         // )
-        
     }
 
     data(inputs: { signal?: AudioNode[] }): { value: boolean } {
@@ -116,15 +110,14 @@ export class UniversalOutputNode extends Classic.Node<
         //Visualizer Control Change
         // - Pedro Perez
         var di_linear = this.controls.visual.value?.toString()
-        this.controls.freqVisualizer.display_linear = (di_linear?.localeCompare("linear") === 0)
-        
+        this.controls.freqVisualizer.display_linear =
+            di_linear?.localeCompare('linear') === 0
+
         //Inputting Range Parameters
         // this.controls.freqVisualizer.x_transpose = parseFloat(this.controls.x_transpose.value?.toString())
         return {
             value: val,
         }
-
-
     }
 
     serialize() {

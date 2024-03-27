@@ -88,13 +88,14 @@ import keyboardJetEngineExample from './examples/keyboardcontrolledjet.json'
 import chordExample from './examples/chord.json'
 import lofiSynthExample from './examples/lofisynth.json'
 import gatedLofiExample from './examples/gatedlofisynth.json'
-const EPSILON = .0001
 
 import {
     CommentPlugin,
     CommentExtensions,
     //FrameComment,
 } from 'rete-comment-plugin'
+
+const EPSILON = 0.0001
 
 const examples: { [key in string]: any } = {
     'Default': {
@@ -214,7 +215,7 @@ function initAudio() {
 }
 
 function reInitOscillators() {
-    globalGain.gain.linearRampToValueAtTime(1, audioCtx.currentTime + .05)
+    globalGain.gain.linearRampToValueAtTime(1, audioCtx.currentTime + 0.1)
     for (let i = 0; i < audioSources.length; i++) {
         if (!audioSourceStates[i]) {
             audioSources[i].start()
@@ -226,9 +227,15 @@ function reInitOscillators() {
 function killOscillators() {
     for (let i = 0; i < audioSources.length; i++) {
         if (audioSourceStates[i]) {
-            globalGain.gain.setValueAtTime(globalGain.gain.value, audioCtx.currentTime);
-            globalGain.gain.linearRampToValueAtTime(0, audioCtx.currentTime + .05);
-            audioSources[i].stop(audioCtx.currentTime + .05);
+            globalGain.gain.setValueAtTime(
+                globalGain.gain.value,
+                audioCtx.currentTime
+            )
+            globalGain.gain.linearRampToValueAtTime(
+                EPSILON,
+                audioCtx.currentTime + 0.1
+            )
+            audioSources[i].stop(audioCtx.currentTime + 0.1)
             audioSourceStates[i] = false
         }
     }

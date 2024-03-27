@@ -47,7 +47,7 @@ export class EditorBiquadNode extends Classic.Node<
                 initial ? initial.gain : 0,
                 'Filter gain',
                 change,
-                .1
+                0.1
             )
         )
         this.addInput('gain', gainInput)
