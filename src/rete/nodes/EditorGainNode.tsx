@@ -5,11 +5,10 @@ import { LabeledInputControl } from '../controls/LabeledInputControl'
 export class EditorGainNode extends Classic.Node<
     {
         signal: Classic.Socket
-        baseGain: Classic.Socket
         additionalGain: Classic.Socket
     },
     { signal: Classic.Socket },
-    {}
+    { baseGain: Classic.InputControl<'number', number> }
 > {
     width = 180
     height = 200
@@ -17,10 +16,13 @@ export class EditorGainNode extends Classic.Node<
         super('Gain')
 
         let signalInput = new Classic.Input(socket, 'Signal', true)
+
         this.addInput('signal', signalInput)
 
-        let baseGainInput = new Classic.Input(socket, 'Base Gain', false)
-        baseGainInput.addControl(
+        let gainInput = new Classic.Input(socket, 'Additional Gain', true)
+        this.addInput('additionalGain', gainInput)
+
+        this.addControl('baseGain',
             new LabeledInputControl(
                 initial ? initial.gain : 1,
                 'Base Gain',
@@ -28,10 +30,6 @@ export class EditorGainNode extends Classic.Node<
                 0.1
             )
         )
-        this.addInput('baseGain', baseGainInput)
-
-        let gainInput = new Classic.Input(socket, 'Additional Gain', true)
-        this.addInput('additionalGain', gainInput)
 
         this.addOutput('signal', new Classic.Output(socket, 'Signal'))
     }
@@ -42,7 +40,7 @@ export class EditorGainNode extends Classic.Node<
         additionalGain?: AudioNode[]
     }): { signal: AudioNode } {
         const gainNode = audioCtx.createGain()
-        const gainControl = this.inputs['baseGain']?.control
+        //const gainControl = this.inputs['baseGain']?.control
 
         if (inputs.signal) {
             inputs.signal.forEach((itm) => itm.connect(gainNode))
@@ -52,10 +50,10 @@ export class EditorGainNode extends Classic.Node<
             gainNode.gain.setValueAtTime(0, audioCtx.currentTime)
             inputs.baseGain[0].connect(gainNode.gain)
         } else {
-            gainNode.gain.setValueAtTime(
-                (gainControl as LabeledInputControl).value || 0,
-                audioCtx.currentTime
-            )
+            // gainNode.gain.setValueAtTime(
+            //     (gainControl as LabeledInputControl).value || 0,
+            //     audioCtx.currentTime
+            // )
         }
 
         if (inputs.additionalGain) {
@@ -69,7 +67,7 @@ export class EditorGainNode extends Classic.Node<
 
     serialize() {
         return {
-            gain: (this.inputs.baseGain?.control as LabeledInputControl).value,
+            gain: this.controls.baseGain.value,
         }
     }
 }
