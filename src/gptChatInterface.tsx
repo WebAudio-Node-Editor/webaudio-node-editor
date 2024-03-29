@@ -44,7 +44,6 @@ const GptChatInterface = () => {
 
     } else {
 
-      // API KEY: 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
       const openai = new OpenAI({
         apiKey: apiKey, 
         dangerouslyAllowBrowser: true
