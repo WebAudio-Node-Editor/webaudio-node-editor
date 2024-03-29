@@ -3,6 +3,7 @@ import OpenAI from "openai";
 
 const GptChatInterface = () => {
   const [apiKey, setApiKey] = useState('');
+  const [assistantsapiKey, setAssistantsApiKey] = useState('');
   const [prompt, setPrompt] = useState('');
   const [response, setResponse] = useState('');
 
@@ -71,6 +72,13 @@ const GptChatInterface = () => {
         style={inputStyle}
         value={apiKey}
         onChange={(e) => setApiKey(e.target.value)}
+      />
+      <input
+        type="text"
+        placeholder="Assistants API Key"
+        style={inputStyle}
+        value={assistantsapiKey}
+        onChange={(e) => setAssistantsApiKey(e.target.value)}
       />
       <textarea
         placeholder="Enter your prompt"
