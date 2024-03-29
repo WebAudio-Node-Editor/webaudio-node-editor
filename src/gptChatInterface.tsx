@@ -1,27 +1,10 @@
 import React, { useState } from 'react';
 import OpenAI from "openai";
-import * as fs from 'fs';
-import {assistant_instructions} from './prompts';
-
-async function saveAssistantId(assistantFilePath: string, assistantId: string): Promise<string> {
-  return new Promise<string>((resolve, reject) => {
-      const data = JSON.stringify({ assistant_id: assistantId });
-
-      fs.writeFile(assistantFilePath, data, 'utf8', (err) => {
-        if (err) {
-            console.error('Error saving assistant ID:', err);
-            reject(err);
-        } else {
-            console.log('Created a new assistant and saved the ID.');
-            resolve(assistantId);
-        }
-    });
-  });
-}
 
 const GptChatInterface = () => {
   const [apiKey, setApiKey] = useState('');
   const [prompt, setPrompt] = useState('');
+  const [assistantsapiKey, setAssistantsApiKey] = useState('');
   const [response, setResponse] = useState('');
 
   const chatStyle: React.CSSProperties = {
@@ -51,65 +34,62 @@ const GptChatInterface = () => {
     cursor: 'pointer',
     margin: '10px 0',
   };
-  
+
   const handleSendPrompt = async () => {
     const formattedPrompt = prompt.trim();
     
     if (!apiKey || !formattedPrompt) {
       alert('API Key and prompt are required.');
       return;
-    }
-  
-    const openai = new OpenAI({
-      apiKey: apiKey,
-      dangerouslyAllowBrowser: true
-    });
-    
-    // BELOW IS THE FUNCTION TO CREATE OR LOAD AN ASSISTANT
-    const path = 'assistant.json'
 
-    if (fs.existsSync(path)){
-      fs.readFile(path, 'utf8', (err, data) => {
-        if (err){
-          console.error('Error reading file: ', err);
-          return;
-        }
-        try {
-          const assistantData = JSON.parse(data);
-          const assistantID = assistantData.assistant_id;
-          console.log("Loaded existing assistant ID: ", assistantID);
-        } catch(error) {
-          console.error("Error parsing JSON: ", error)
-        }
-      });
     } else {
-      try {
-        const knowledge_base = openai.files.create({
-          file : fs.createReadStream('knowledge.docx','utf8'),
-          purpose : 'assistants',
-        });
 
-        const assistant = await openai.beta.assistants.create({
-          model: "gpt-4",
-          instructions: assistant_instructions,
-          tools: [{ "type": "retrieval" }],
-          file_ids: [(await knowledge_base).id]
-        });
-        // Send Prompt to Newly Created Assistant
-        
-        saveAssistantId(path, assistant.id)
-          .then((savedAssistantId) => {
-              console.log('Saved assistant ID:', savedAssistantId);
-          })
-          .catch((error) => {
-              console.error('Failed to save assistant ID:', error);
-          });
-          
-      } catch (error) {
-        console.error('Error calling the OpenAI API:', error);
-        setResponse('Failed to fetch response from the API.');
+      // API KEY: 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
+      const openai = new OpenAI({
+        apiKey: apiKey, 
+        dangerouslyAllowBrowser: true
+      });
+
+      const thread = await openai.beta.threads.create();
+
+      const message = await openai.beta.threads.messages.create(
+        thread.id,
+        {
+          role: "user",
+          content: formattedPrompt
+        }
+      );
+      
+      let run = await openai.beta.threads.runs.create(
+        thread.id,
+        { 
+          assistant_id: assistantsapiKey,
+        }
+      );
+
+      while (['queued', 'in_progress', 'cancelling'].includes(run.status)) {
+        await new Promise(resolve => setTimeout(resolve, 1000)); // Wait for 1 second
+        run = await openai.beta.threads.runs.retrieve(
+          run.thread_id,
+          run.id
+        );
       }
+
+      if (run.status === 'completed') {
+        const messages = await openai.beta.threads.messages.list(
+          run.thread_id
+        );
+        for (const message of messages.data.reverse()) {
+          console.log(`${message.role} > ${JSON.stringify(message.content[0])}`);
+        }
+      } else {
+        console.log(run.status);
+      }
+
     }
+
+    
+      
   };
 
   
@@ -122,6 +102,13 @@ const GptChatInterface = () => {
         style={inputStyle}
         value={apiKey}
         onChange={(e) => setApiKey(e.target.value)}
+      />
+      <input
+        type="text"
+        placeholder="Assistants API Key"
+        style={inputStyle}
+        value={assistantsapiKey}
+        onChange={(e) => setAssistantsApiKey(e.target.value)}
       />
       <textarea
         placeholder="Enter your prompt"
