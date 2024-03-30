@@ -2,8 +2,8 @@ import { ClassicPreset as Classic } from 'rete'
 import { PlaybackControl } from '../controls/PlaybackControl'
 import { FileUploadControl } from '../controls/FileUploadControl'
 
-
-const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+const audioCtx = new AudioContext();
+//potential can arise if broswers only support older version -> tbd
 const audioSources: { [key: string]: AudioBufferSourceNode } = {};
 const audioSourceStates: { [key: string]: AudioSourceState } = {};
 
@@ -29,21 +29,21 @@ export class PlaybackNode extends Classic.Node<
             new FileUploadControl(change)
         )
         this.addControl(
-            'play', 
-            new PlaybackControl(change, 'Play')
+            'play',
+            new PlaybackControl(this.handlePlay, this.handlePause, this.handleRestart, this.handleLoopChange, false)
         )
         this.addControl(
-            'pause', 
-            new PlaybackControl(change, 'Pause')
+            'pause',
+            new PlaybackControl(this.handlePlay, this.handlePause, this.handleRestart, this.handleLoopChange, false)
         )
         this.addControl(
-            'restart', 
-            new PlaybackControl(change, 'Restart')
+            'restart',
+            new PlaybackControl(this.handlePlay, this.handlePause, this.handleRestart, this.handleLoopChange, false)
         )
         this.addControl(
-            'loop', 
-            new PlaybackControl(change, 'Loop', false)
-            )
+            'loop',
+            new PlaybackControl(this.handlePlay, this.handlePause, this.handleRestart, this.handleLoopChange, true)
+        )
         this.addOutput(
             'playback', 
             new Classic.Output(socket, 'Playback')
