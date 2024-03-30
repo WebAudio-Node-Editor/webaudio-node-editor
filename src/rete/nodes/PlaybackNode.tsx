@@ -20,6 +20,7 @@ export class PlaybackNode extends Classic.Node<
 > {
     width = 250
     height = 180
+    audioBuffer: AudioBuffer | null = null;
     constructor(change: () => void) {
         super('Playback')
         //const { change } = props; 
@@ -62,6 +63,10 @@ export class PlaybackNode extends Classic.Node<
 
     handlePlay = () => {
         const { playback } = this.getData('playback');
+        playback.connect(audioCtx.destination);
+        playback.onended = () => {
+            playback.disconnect();
+        };
         playback.start();
         //next display via playback control 
       };
@@ -77,6 +82,13 @@ export class PlaybackNode extends Classic.Node<
         playback.stop();
         playback.start(0);
         //next display via playback control 
+      };
+
+    handleLoopChange = () => {
+        const newLoopValue = !this.loop;
+        const { playback } = this.getData('playback');
+        playback.loop = newLoopValue;
+        this.onLoopChange(newLoopValue);
       };
 
     
