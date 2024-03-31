@@ -1,11 +1,12 @@
 import { ClassicPreset as Classic } from 'rete'
+import { socket, audioCtx, audioSources, audioSourceStates } from '../default'
 import { PlaybackControl } from '../controls/PlaybackControl'
 import { FileUploadControl } from '../controls/FileUploadControl'
 
-const audioCtx = new AudioContext();
+//const audioCtx = new AudioContext();
 //potential can arise if broswers only support older version -> tbd
-const audioSources: { [key: string]: AudioBufferSourceNode } = {};
-const audioSourceStates: { [key: string]: AudioSourceState } = {};
+//const audioSources: { [key: string]: AudioBufferSourceNode } = {};
+//const audioSourceStates: { [key: string]: AudioSourceState } = {};
 
 interface AudioSourceState {
   isPlaying: boolean;
@@ -23,6 +24,7 @@ export class PlaybackNode extends Classic.Node<
     audioBuffer: AudioBuffer | null = null;
     constructor(change: () => void) {
         super('Playback')
+        this.addOutput('playback', new Classic.Output(socket, 'Playback'))
         //const { change } = props; 
         this.addControl(
             'file',
@@ -51,7 +53,7 @@ export class PlaybackNode extends Classic.Node<
     }
     
 
-    handleFileUpload = async (file) => {
+    handleFileUpload = async (file: File) => {
             const fileReader = new FileReader();
             fileReader.onload = async () => {
               const arrayBuffer = fileReader.result;
