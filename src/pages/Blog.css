@@ -34,3 +34,70 @@
     color: white;
     text-decoration-color: white;
 }
+
+.Blog-nav{
+    width: 20%;
+    height: 100%;
+    padding: 1.25vh;
+    text-align: center;
+    display:inline-block; 
+    color: white;
+    font-size: 24px; 
+}
+
+.Blog-nav:hover{
+    background-color: white;
+    color: CornflowerBlue;
+}
+
+.Blog-nav-active{
+    width: 20%;
+    height: 100%;
+    padding: 1.25vh;
+    text-align: center;
+    display:inline-block; 
+    font-size: 24px; 
+    background-color: white;
+    color: CornflowerBlue;
+    font-weight: bold;
+    background-color: 'rgba(0,0,0,0.2)';
+}
+
+.container{
+    overflow: auto;
+    background-color: rgba(0,0,0,0.2);
+    border-radius: 20px;
+    margin: 45px auto;
+    color: white;
+    padding: 40px 40px;
+}
+
+.Block{
+    display: flex;
+    width: 80%;
+}
+
+.row{
+    display: flex;
+    flex-direction: row;
+    margin: auto 8%;
+    padding-bottom: 48px;
+}
+
+.Half-block{
+    width: 50%;
+    margin: 0% 2%;
+}
+
+.Block-header{
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 12px;
+}
+
+.Block-content{
+    font-size: 16px;
+    margin-bottom: 12px;
+}
+
+
