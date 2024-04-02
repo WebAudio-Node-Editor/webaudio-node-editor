@@ -172,7 +172,7 @@ function App() {
                 <Button onClick={() => setShowChat(!showChat)}>
                     {showChat ? 'Hide Chat' : 'Show Chat'}
                 </Button>
-                {showChat && <GptChatInterface />}
+                {showChat && <GptChatInterface loadEditor={editor?.loadEditor}/>}
             </Flex>
 
             <div
@@ -231,3 +231,4 @@ function App() {
 }
 
 export default App
+

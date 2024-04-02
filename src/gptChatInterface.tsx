@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import OpenAI from "openai";
-
-const GptChatInterface = () => {
+interface GptChatInterfaceProps {
+  loadEditor: (container: HTMLElement) => Promise<void>;
+}
+const GptChatInterface = ({ loadEditor }: GptChatInterfaceProps) => {
   const [apiKey, setApiKey] = useState('');
   const [prompt, setPrompt] = useState('');
   const [assistantsapiKey, setAssistantsApiKey] = useState('');
@@ -80,6 +82,18 @@ const GptChatInterface = () => {
         );
         for (const message of messages.data.reverse()) {
           console.log(`${message.role} > ${JSON.stringify(message.content[0])}`);
+          let parsedResponse;
+          try {
+            parsedResponse = JSON.parse(JSON.stringify(message.content[0]));
+            console.log(message.content[0]);
+          } catch (error) {
+              console.error("Error parsing response:", error);
+              return;
+          }
+          if (parsedResponse.length()>0){
+            await loadEditor(parsedResponse);
+        }
+  
         }
       } else {
         console.log(run.status);
