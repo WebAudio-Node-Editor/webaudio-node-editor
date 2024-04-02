@@ -182,6 +182,47 @@ export default function Documentation() {
                 <DocumentContent />
 
                 {/*
+                <Layout
+                    style={{
+                        display: 'flex',
+                        width: '75%',
+                        overflow: 'auto',
+                        margin: 'auto',
+                        backgroundColor: 'rgba(0,0,0,0.2)',
+                        padding: '0em 2em',
+                    }}
+                >
+                    <div className="Blog-header">What is this?</div>
+                    <div className="Blog-content">
+                        This is a node-based editor for WebAudio created using{' '}
+                        <a
+                            className="Blog-link"
+                            href="https://retejs.org/"
+                            target="_blank"
+                            rel="noreferrer"
+                        >
+                            Rete.js
+                        </a>
+                        , a Javascript framework for visual programming through
+                        node editors. Node editors are widely used in shader
+                        editors and even game programming (as in Unreal Engine's
+                        Blueprints).
+                    </div>
+                    <div className="Blog-header">Basic Usage</div>
+                    <div className="Blog-content">
+                        Drag from socket to socket to create connections between
+                        nodes.
+                        <br />
+                        Right click on empty space to open the context menu,
+                        letting you create new nodes.
+                        <br />
+                        Right click on a node to open the context menu, letting
+                        you delete the node.
+                        <br />
+                        Use the auto-arrange button in the upper right to stay
+                        organized.
+                    </div>
+
                     <div className="Blog-header">Basic Nodes</div>
                     <div className="Blog-content">
                         The most essential nodes fall into three categories:

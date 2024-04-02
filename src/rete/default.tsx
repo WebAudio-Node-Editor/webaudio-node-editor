@@ -30,7 +30,7 @@ import {
 import {
     HistoryExtensions,
     HistoryPlugin,
-    Presets as HistoryPresets
+    Presets as HistoryPresets,
 } from 'rete-history-plugin'
 
 import {
@@ -88,6 +88,14 @@ import keyboardJetEngineExample from './examples/keyboardcontrolledjet.json'
 import chordExample from './examples/chord.json'
 import lofiSynthExample from './examples/lofisynth.json'
 import gatedLofiExample from './examples/gatedlofisynth.json'
+
+import {
+    CommentPlugin,
+    CommentExtensions,
+    //FrameComment,
+} from 'rete-comment-plugin'
+
+const EPSILON = 0.0001
 
 const examples: { [key in string]: any } = {
     'Default': {
@@ -184,6 +192,7 @@ export type Context = {
     editor: NodeEditor<Schemes>
     area: AreaPlugin<Schemes, any>
     dataflow: DataflowEngine<Schemes>
+    comment: CommentPlugin<Schemes, any>
 }
 
 type AreaExtra = Area2D<Schemes> | ReactArea2D<Schemes> | ContextMenuExtra
@@ -206,6 +215,7 @@ function initAudio() {
 }
 
 function reInitOscillators() {
+    globalGain.gain.linearRampToValueAtTime(1, audioCtx.currentTime + 0.1)
     for (let i = 0; i < audioSources.length; i++) {
         if (!audioSourceStates[i]) {
             audioSources[i].start()
@@ -217,7 +227,15 @@ function reInitOscillators() {
 function killOscillators() {
     for (let i = 0; i < audioSources.length; i++) {
         if (audioSourceStates[i]) {
-            audioSources[i].stop()
+            globalGain.gain.setValueAtTime(
+                globalGain.gain.value,
+                audioCtx.currentTime
+            )
+            globalGain.gain.linearRampToValueAtTime(
+                EPSILON,
+                audioCtx.currentTime + 0.1
+            )
+            audioSources[i].stop(audioCtx.currentTime + 0.1)
             audioSourceStates[i] = false
         }
     }
@@ -232,12 +250,15 @@ export async function createEditor(container: HTMLElement) {
     const area = new AreaPlugin<Schemes, AreaExtra>(container)
     const editor = new NodeEditor<Schemes>()
     const engine = new DataflowEngine<Schemes>()
-    const history = new HistoryPlugin<Schemes>();
+    const history = new HistoryPlugin<Schemes>()
 
-    HistoryExtensions.keyboard(history);
-    
-    history.addPreset(HistoryPresets.classic.setup({ timing: 0.01 }));
+    HistoryExtensions.keyboard(history)
 
+    history.addPreset(HistoryPresets.classic.setup({ timing: 0.01 }))
+
+    const comment = new CommentPlugin<Schemes, AreaExtra>()
+    const selector = AreaExtensions.selector()
+    const accumulating = AreaExtensions.accumulateOnCtrl()
 
     function process() {
         if (processQueued) {
@@ -328,7 +349,7 @@ export async function createEditor(container: HTMLElement) {
                     ],
                     [
                         'Frequency Domain Visualizer',
-                        () => new FrequencyDomainVisualizerNode(),
+                        () => new FrequencyDomainVisualizerNode(process),
                     ],
                     ['Console Debugger', () => new ConsoleDebuggerNode()],
                 ],
@@ -358,7 +379,9 @@ export async function createEditor(container: HTMLElement) {
     area.use(contextMenu)
     area.use(connection)
     area.use(arrange)
-    area.use(history);
+    area.use(comment)
+    CommentExtensions.selectable(comment, selector, accumulating)
+    area.use(history)
 
     area.area.setZoomHandler(
         new SmoothZoom(0.4, 200, 'cubicBezier(.45,.91,.49,.98)', area)
@@ -459,7 +482,7 @@ export async function createEditor(container: HTMLElement) {
     AreaExtensions.zoomAt(area, editor.getNodes())
 
     await editor.removeConnection(c.id)
-    
+
     //Clear history so tracking actions (for undo/redo)
     //start with user interactions not the loaded example.
     history.clear()
@@ -471,17 +494,19 @@ export async function createEditor(container: HTMLElement) {
         editor: editor,
         area: area,
         dataflow: engine,
+        comment: comment,
     }
 
     async function loadEditor(data: any) {
         await clearEditor(editor)
+        await clearComments()
         await importEditor(context, data)
         await arrange.layout({ applier: undefined })
         AreaExtensions.zoomAt(area, editor.getNodes())
     }
     async function loadExample(exampleName: string) {
         await loadEditor(examples[exampleName].json)
-        
+
         //Clear history so tracking actions (for undo/redo)
         //start with user interactions not the loaded example.
         history.clear()
@@ -544,14 +569,42 @@ export async function createEditor(container: HTMLElement) {
         initAudio()
         process()
     }
-    function undo(){
+    function undo() {
         history.undo()
     }
-    function redo(){
+    function redo() {
         history.redo()
     }
 
+    function clear() {
+        clearEditor(editor)
+        clearComments()
+    }
+    function clearComments() {
+        comment.clear()
+    }
 
+    function createComment(commentType: string) {
+        if (commentType === 'Frame') {
+            comment.addFrame('Frame', [])
+            console.log(comment.comments)
+        } else {
+            comment.addInline('Inline', [0, 0])
+        }
+    }
+
+    function deleteComment() {
+        var comments = Array.from(comment.comments.entries())
+        for (let i = 0; i < comments.length; i++) {
+            console.log(i)
+            console.log(comments[i])
+            var id = '1'
+            var label = 'comment'
+            if (selector.isSelected({ id, label })) {
+                comment.delete(id)
+            }
+        }
+    }
     return {
         layout: async (animate: boolean) => {
             await arrange.layout({ applier: animate ? applier : undefined })
@@ -559,7 +612,7 @@ export async function createEditor(container: HTMLElement) {
         },
         exportEditorToFile,
         importEditorFromFile,
-        clearEditor: () => clearEditor(editor),
+        clearEditor: () => clear(),
         destroy: () => {
             killOscillators()
             initKeyboard()
@@ -570,6 +623,9 @@ export async function createEditor(container: HTMLElement) {
         },
         loadExample,
         toggleAudio,
+        createComment,
+        deleteComment,
+        clearComments,
         undo,
         redo,
         GetExampleDescription,

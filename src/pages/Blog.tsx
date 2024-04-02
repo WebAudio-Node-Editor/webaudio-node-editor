@@ -122,115 +122,33 @@ export default function Blog() {
                         I know some things don't work in Firefox, and I'm not
                         sure about other browsers.
                     </div>
-                    <div className="Blog-header">Implementation</div>
+                    <div className="Blog-header">Current Status</div>
                     <div className="Blog-content">
-                        The nice thing about this project is that WebAudio
-                        already naturally lends itself to a node-based approach.
-                        Since the underlying structure of WebAudio is already
-                        based on nodes and connections, all that needs to really
-                        be done is to link up the data connections of Rete's
-                        nodes with WebAudio nodes.
+                        This project is currently being developed by a group of
+                        students to further improve the user experience and
+                        introduce features like LLM node generation and new node
+                        types.
                     </div>
                     <div className="Blog-content">
-                        The basic structure of a Rete node contains a series of
-                        inputs, outputs, and controls. Inputs and outputs are
-                        fairly self-explanatory, and controls are the modifiable
-                        fields that let us control the node's parameters without
-                        explicitly attaching an input (such as the waveform
-                        field on an oscillator node). The frequency and time
-                        domain visualizers are implemented as custom versions of
-                        controls as well - Rete is highly customizable, and I
-                        had to write many custom components for this project.
-                        Generally speaking, I implemented most numerical
-                        parameters of AudioNodes as inputs, and nonnumerical
-                        inputs (e.g. waveform, filter type) as controls. This
-                        ensures that the data flow through connections is
-                        strictly limited to numerical data (which is actually
-                        AudioNodes under the hood, even for constants).
+                        New features since group development began include:
+                        <br />
+                        - Undo/Redo
+                        <br />
+                        - Comments
+                        <br />
+                        - More noise types
+                        <br />- Various UX improvements
                     </div>
+                    <div className="Blog-header">Upcoming features</div>
                     <div className="Blog-content">
-                        Finally, all nodes being used with Rete's Dataflow
-                        Engine (one way to process data in Rete) require a
-                        data() method. This is what transforms the inputs of a
-                        node into the output signal. Generally, most of my nodes
-                        simply create their corresponding AudioNode and
-                        connect() their inputs accordingly, and return the new
-                        node as the signal to be sent to the next node.
-                    </div>
-                    <div className="Blog-header">Design Choices</div>
-                    <div className="Blog-content">
-                        One early design decision was to have "base
-                        frequency/gain" and "additional frequency/gain" inputs
-                        on the oscillator and gain nodes. These fields are
-                        normally just one parameter on their WebAudio versions.
-                        However, I felt that the pattern of adding a signal to a
-                        constant base was common enough in WebAudio to add these
-                        controls.
-                    </div>
-                    <div className="Blog-content">
-                        I also chose to add some utilities I used often:
-                        transposition and note frequencies. When testing, I
-                        found that I was often hardcoding frequencies like
-                        A=440Hz and doubling/halving it to shift octaves. These
-                        nodes are natural extensions of those operations, and
-                        I've gotten a lot of mileage out of them!
-                    </div>
-                    <div className="Blog-content">
-                        Moving on, my end goal for this project was to create
-                        something that could be used to easily prototype
-                        keyboard-playable synths. This turned out to be much
-                        more difficult than the baseline of just having
-                        oscillators, noise nodes, and constant nodes as the only
-                        audio sources, because we need <i>25</i> oscillators to
-                        represent every playable note.
-                    </div>
-                    <div className="Blog-content">
-                        Keyboard-playable notes were the last feature I added,
-                        and I'm honestly not entirely satisfied with the final
-                        implementation. They're functional, but not as flexible
-                        as I would've wanted. Ideally, I would have the ADSR
-                        envelope as its own node, separate from the oscillators
-                        and their frequencies, but I just couldn't figure out a
-                        flexible enough way to have these elements link together
-                        properly, so instead I opted for a mega node. It...
-                        works I guess? EDIT: It's now possible (but painful) to
-                        assemble your own keyboard from Keyboard ADSR nodes and
-                        oscillators.
-                    </div>
-                    <div className="Blog-header">
-                        Limitations and Future Steps
-                    </div>
-                    <div className="Blog-content">
-                        - Some clipping prevention is included through a
-                        DynamicsCompressorNode, but it's not always enough
-                    </div>
-                    <div className="Blog-content">
-                        - I haven't figured out how to get AudioWorkletNodes to
-                        play nice with React yet, but I hope I can get this soon
-                        (if I get this, then I could implement things like
-                        Karplus-Strong, and socketable transposition nodes!)
-                    </div>
-                    <div className="Blog-content">
-                        - Cycles are not allowed by Rete
-                    </div>
-                    <div className="Blog-content">
-                        - Errors can force you to have to refresh before the app
-                        works again
-                    </div>
-                    <div className="Blog-content">
-                        - There's noticeable clicking artifacts when
-                        reevaluating the node graph
-                    </div>
-                    <div className="Blog-content">
-                        - I'm bad at web development and this is my first
-                        project that isn't just vanilla HTML/CSS/JS, so I'm sure
-                        there's bad code practices in here
-                    </div>
-                    <div className="Blog-header">
-                        Thanks for checking this out!
-                    </div>
-                    <div className="Blog-content">
-                        &nbsp;&nbsp;&nbsp;&nbsp; - Ryan
+                        - Node to play audio files
+                        <br />
+                        - Native LLM node generation
+                        <br />
+                        - UX overhaul
+                        <br />
+                        - JS code export
+                        <br />- And more!
                     </div>
                 </Layout>
             </Layout>
