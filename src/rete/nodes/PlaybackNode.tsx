@@ -9,11 +9,22 @@ import { FileUploadControl } from '../controls/FileUploadControl'
 //const audioSourceStates: { [key: string]: AudioSourceState } = {};
 
 interface AudioSourceState {
-  isPlaying: boolean;
-  isPaused: boolean;
-  isLooping: boolean;
-}
-
+    isPlaying: boolean;
+    isPaused: boolean;
+    isLooping: boolean;
+  }
+  
+//const audioSourceStates: AudioSourceState[] = [];
+  
+  /* Adding a new AudioSourceState object to the array
+export const newAudioSourceState: AudioSourceState = {
+    isPlaying: false,
+    isPaused: false,
+    isLooping: true,
+  };
+  
+  audioSourceStates.push(newAudioSourceState);
+  */
 export class PlaybackNode extends Classic.Node<
     {},
     { playback: Classic.Socket },
@@ -79,20 +90,17 @@ export class PlaybackNode extends Classic.Node<
             playback.disconnect();
         };
         playback.start();
-        //next display via playback control 
       };
       
     handlePause = () => {
         const { playback } = this.data();
         playback.stop();
-        //next display via playback control 
       };
       
     handleRestart = () => {
         const { playback } = this.data();
         playback.stop();
         playback.start(0);
-        //next display via playback control 
       };
 
     handleLoopChange = (loop: boolean) => {
@@ -104,14 +112,27 @@ export class PlaybackNode extends Classic.Node<
     
       data(): { playback: AudioBufferSourceNode } {
         if (!this.audioSource) {
-          this.audioSource = audioCtx.createBufferSource();
-          this.audioSource.buffer = this.audioBuffer;
-          this.audioSource.loop = this.loop;
+            this.audioSource = audioCtx.createBufferSource();
+            this.audioSource.buffer = this.audioBuffer;
+            this.audioSource.loop = this.loop;
+
+            // Handle play control
+            this.controls.play.handlePlay();
+
+            // Handle pause control
+            this.controls.pause.handlePause();
+
+            // Handle restart control
+            this.controls.restart.handleRestart();
+
+            // Handle loop control
+            this.controls.loop.handleLoopChange();
         }
-        return { 
-            playback: this.audioSource 
+
+        return {
+            playback: this.audioSource
         };
-      }
+    }
 
     serialize() {
         return {

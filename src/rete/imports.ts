@@ -57,8 +57,10 @@ export async function createNode(
             return new KeyboardNoteNode(process, data)
         case 'Keyboard ADSR':
             return new KeyboardADSRNode(process, data)
-        case 'Playback':
-            return new PlaybackNode(process)
+        //just ignore this for the moment 
+       // case 'Playback':
+        //    return new PlaybackNode(process)
+        //
         default:
             throw new Error('Unsupported node')
     }
