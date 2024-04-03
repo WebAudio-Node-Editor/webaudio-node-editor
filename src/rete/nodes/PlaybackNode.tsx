@@ -17,12 +17,15 @@ interface AudioSourceState {
 export class PlaybackNode extends Classic.Node<
     {},
     { playback: Classic.Socket },
-    { file: FileUploadControl, play: PlaybackControl, pause: PlaybackControl, restart: PlaybackControl, loop: PlaybackControl}
+    { file: FileUploadControl; play: PlaybackControl; pause: PlaybackControl; restart: PlaybackControl; loop: PlaybackControl }
 > {
     width = 250
     height = 180
     audioBuffer: AudioBuffer | null = null;
     loop: boolean = false;
+    private audioSource: AudioBufferSourceNode | null = null;
+    selectedFile: File | null = null;
+ 
     constructor(change: () => void) {
         super('Playback')
         this.addOutput('playback', new Classic.Output(socket, 'Playback'))
@@ -86,6 +89,7 @@ export class PlaybackNode extends Classic.Node<
       };
       
     handleRestart = () => {
+        const { playback } = this.data();
         playback.stop();
         playback.start(0);
         //next display via playback control 
@@ -98,25 +102,23 @@ export class PlaybackNode extends Classic.Node<
       };
 
     
-    data(): { playback: AudioBufferSourceNode } {
-        let audioSource = audioSources[this.id];
-        if (!audioSource) {
-            audioSource = audioCtx.createBufferSource();
-            audioSources[this.id] = audioSource;
+      data(): { playback: AudioBufferSourceNode } {
+        if (!this.audioSource) {
+          this.audioSource = audioCtx.createBufferSource();
+          this.audioSource.buffer = this.audioBuffer;
+          this.audioSource.loop = this.loop;
         }
-
-      
-        audioSource.buffer = this.audioBuffer;
-        audioSource.loop = this.controls.loop.value;
-
-        return { playback: audioSource };
-        }
-    }
+        return { 
+            playback: this.audioSource 
+        };
+      }
 
     serialize() {
         return {
-            file: this.controls.file.value,
-            loop: this.controls.loop.value
-        }
+      
+          loop: this.loop,
+          selectedFile: this.selectedFile
+          //i add a space it doesnt give me an error but if i dont then its uh oh why?
+        };
+      }
     }
-}
