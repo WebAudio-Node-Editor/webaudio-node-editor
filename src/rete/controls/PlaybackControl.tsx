@@ -26,7 +26,7 @@ export class PlaybackControl extends Classic.Control {
 
     handleLoopChange = () => {
         const newLoopValue = !this.loop;
-        this.onLoopChange(newLoopValue);
+    this.onLoopChange(newLoopValue);
     };
 }
 
@@ -47,7 +47,7 @@ export function CustomPlaybackControl(props: { control: PlaybackControl }) {
 
     const handleLoopChange = () => {
         control.handleLoopChange();
-    };
+      };
 
     return (
         <div>

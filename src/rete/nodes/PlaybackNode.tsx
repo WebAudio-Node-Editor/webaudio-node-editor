@@ -22,6 +22,7 @@ export class PlaybackNode extends Classic.Node<
     width = 250
     height = 180
     audioBuffer: AudioBuffer | null = null;
+    loop: boolean = false;
     constructor(change: () => void) {
         super('Playback')
         this.addOutput('playback', new Classic.Output(socket, 'Playback'))
@@ -57,14 +58,19 @@ export class PlaybackNode extends Classic.Node<
             const fileReader = new FileReader();
             fileReader.onload = async () => {
               const arrayBuffer = fileReader.result;
-              const audioBuffer = await audioCtx.decodeAudioData(arrayBuffer);
-              
+              if (arrayBuffer !==null) {
+                 const audioBuffer = await audioCtx.decodeAudioData(arrayBuffer as ArrayBuffer); 
+              }
+              else{
+                console.error('Error decoding audio file');
+              }
+             
             };
             fileReader.readAsArrayBuffer(file);
      };
 
     handlePlay = () => {
-        const { playback } = this.getData('playback');
+        const { playback } = this.data();
         playback.connect(audioCtx.destination);
         playback.onended = () => {
             playback.disconnect();
@@ -74,23 +80,21 @@ export class PlaybackNode extends Classic.Node<
       };
       
     handlePause = () => {
-        const { playback } = this.getData('playback');
+        const { playback } = this.data();
         playback.stop();
         //next display via playback control 
       };
       
     handleRestart = () => {
-        const { playback } = this.getData('playback');
         playback.stop();
         playback.start(0);
         //next display via playback control 
       };
 
-    handleLoopChange = () => {
-        const newLoopValue = !this.loop;
-        const { playback } = this.getData('playback');
-        playback.loop = newLoopValue;
-        this.onLoopChange(newLoopValue);
+    handleLoopChange = (loop: boolean) => {
+        this.loop = loop;
+        const { playback } = this.data();
+        playback.loop = loop;
       };
 
     
