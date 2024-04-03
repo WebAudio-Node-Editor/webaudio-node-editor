@@ -80,23 +80,21 @@ const GptChatInterface = ({ loadEditor }: GptChatInterfaceProps) => {
         const messages = await openai.beta.threads.messages.list(
           run.thread_id
         );
-        for (const message of messages.data.reverse()) {
-          //console.log(`${message.role} > ${JSON.stringify(message.content[0])}`);
-          let parsedResponse;
-          try {
-            parsedResponse = JSON.parse(JSON.stringify(message.content[0]));
-            var jsonOutput = parsedResponse["text"]["value"]
-            if (jsonOutput.length>0 && jsonOutput[0]=="{"){
-              console.log("loading GPT output:",jsonOutput);
-              await loadEditor(JSON.parse(jsonOutput));
-           }
-          } catch (error) {
-              console.error("Error parsing response:", error);
-              return;
-          }
+        console.log(messages.data[0])
+        let parsedResponse;
+        try {
+          parsedResponse = JSON.parse(JSON.stringify(messages.data[0].content[0]));
+          var jsonOutput = parsedResponse["text"]["value"]
+          console.log("loading GPT output:",jsonOutput);
+          await loadEditor(JSON.parse(jsonOutput));
+          
+        } catch (error) {
+            console.error("Error parsing response:", error);
+            return;
+        }
           
   
-        }
+        
       } else {
         console.log(run.status);
       }
