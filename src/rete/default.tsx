@@ -234,7 +234,7 @@ function killOscillators() {
             globalGain.gain.linearRampToValueAtTime(
                 EPSILON,
                 audioCtx.currentTime + 0.1
-            )
+            )  
             audioSources[i].stop(audioCtx.currentTime + 0.1)
             audioSourceStates[i] = false
         }
@@ -565,6 +565,91 @@ export async function createEditor(container: HTMLElement) {
         writeFile(hdl, JSON.stringify(data))
     }
 
+    async function exportEditorToJS() {
+        console.log("testing")
+        var json = await saveEditor()
+        async function getNewFileHandle() {
+            const handle = await window.showSaveFilePicker(fileOptions)
+            return handle
+        }
+
+        async function writeFile(fileHandle: any, contents: any) {
+            // Create a FileSystemWritableFileStream to write to.
+            const writable = await fileHandle.createWritable()
+            // Write the contents of the file to the stream.
+            await writable.write(contents)
+            // Close the file and write the contents to disk.
+            await writable.close()
+        }
+
+        try {
+            var hdl = await getNewFileHandle()
+        } catch (e) {
+            return
+        }
+        interface OscillatorNodeData {
+            baseFreq: string;
+            waveform: string;
+          }
+          
+          interface GainNodeData {
+            gain: string;
+        }
+        let nodes = new Map();
+        let nodeIDNum = 0
+        let code = "const audioCtx = new (window.AudioContext || window.webkitAudioContext)();\n"
+        json.nodes.forEach(node => {
+            let audioNode = true;
+            let newCode = "";
+            let nodeID = String(nodeIDNum)
+            switch (node.name) {
+                case "Oscillator":
+                    const oscillatorData = node.data as OscillatorNodeData;
+                    newCode = newCode.concat("audioNode", nodeID," = audioCtx.createOscillator();\n")
+                    newCode = newCode.concat("audioNode", nodeID,".frequency.setValueAtTime(", oscillatorData.baseFreq, ", audioCtx.currentTime);\n")
+                    newCode = newCode.concat("audioNode", nodeID,".type = ", oscillatorData.waveform, ";\n")
+                    newCode = newCode.concat("audioNode", nodeID,".start();\n")
+                    code = code.concat(newCode)
+                    break;
+                case "Gain":
+                    const gainData = node.data as GainNodeData;
+                    newCode = newCode.concat("audioNode", nodeID," = audioCtx.createGain();\n")
+                    newCode = newCode.concat("audioNode", nodeID,".gain.setValueAtTime(", gainData.gain, ", audioCtx.currentTime);\n")
+                    code = code.concat(newCode)
+                    break;
+                case "Universal Output":
+                    const universalGainData = node.data as GainNodeData;
+                    newCode = newCode.concat("audioNode", nodeID," = audioCtx.createGain();\n")
+                    newCode =newCode.concat("audioNode", nodeID,".gain.setValueAtTime(", universalGainData.gain,",audioCtx.currentTime);\n")
+                    newCode = newCode.concat("audioNode", nodeID,".connect(audioCtx.destination);\n")
+                    code = code.concat(newCode)
+                    break;
+                default:
+                    audioNode = false
+                    console.log("Unsupported node type:", node.name);
+
+            }
+            if (audioNode) {
+                let nodeName = "audioNode" + nodeID
+                nodes.set(node.id, nodeName);
+                nodeIDNum += 1
+            }
+    
+        });
+        json.connections.forEach(conn => {
+            const sourceNode = nodes.get(conn.source);
+            const targetNode = nodes.get(conn.target);
+
+            if (sourceNode && targetNode) {
+                code = code.concat(sourceNode, ".connect(",targetNode,");\n")
+            } else {
+                console.log("Connection failed. Node not found.");
+            }
+        });
+        console.log(code)
+        writeFile(hdl, code)
+    }
+
     function toggleAudio() {
         initAudio()
         process()
@@ -611,6 +696,7 @@ export async function createEditor(container: HTMLElement) {
             AreaExtensions.zoomAt(area, editor.getNodes())
         },
         exportEditorToFile,
+        exportEditorToJS,
         importEditorFromFile,
         clearEditor: () => clear(),
         destroy: () => {
