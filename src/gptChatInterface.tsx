@@ -81,18 +81,20 @@ const GptChatInterface = ({ loadEditor }: GptChatInterfaceProps) => {
           run.thread_id
         );
         for (const message of messages.data.reverse()) {
-          console.log(`${message.role} > ${JSON.stringify(message.content[0])}`);
+          //console.log(`${message.role} > ${JSON.stringify(message.content[0])}`);
           let parsedResponse;
           try {
             parsedResponse = JSON.parse(JSON.stringify(message.content[0]));
-            console.log(message.content[0]);
+            var jsonOutput = parsedResponse["text"]["value"]
+            if (jsonOutput.length>0 && jsonOutput[0]=="{"){
+              console.log("loading GPT output:",jsonOutput);
+              await loadEditor(JSON.parse(jsonOutput));
+           }
           } catch (error) {
               console.error("Error parsing response:", error);
               return;
           }
-          if (parsedResponse.length()>0){
-            await loadEditor(parsedResponse);
-        }
+          
   
         }
       } else {
