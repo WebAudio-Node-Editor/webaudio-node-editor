@@ -622,6 +622,7 @@ export async function createEditor(container: HTMLElement) {
             return Object.keys(examples)
         },
         loadExample,
+        loadEditor,
         toggleAudio,
         createComment,
         deleteComment,
