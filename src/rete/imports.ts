@@ -171,22 +171,26 @@ export async function importEditor(context: Context, data: any) {
             await context.editor.addConnection(conn)
         }
     }
-    if(comments){
+    if (comments) {
         for (const cm of comments) {
-            if(cm["type"] === "frame-comment"){
+            if (cm['type'] === 'frame-comment') {
                 context.comment.addFrame(cm.text, cm.links)
-            }
-            else {
-                context.comment.addInline(cm.text, [0,0], cm.links[0])
+            } else {
+                context.comment.addInline(cm.text, [0, 0], cm.links[0])
             }
         }
-    } 
+    }
 }
 
 export function exportEditor(context: Context) {
     const nodes = []
     const connections = []
-    const comments: { id: string; links: string[]; text: string; type: string; }[] = []
+    const comments: {
+        id: string
+        links: string[]
+        text: string
+        type: string
+    }[] = []
 
     for (const n of context.editor.getNodes()) {
         nodes.push({
@@ -203,14 +207,14 @@ export function exportEditor(context: Context) {
             targetInput: c.targetInput,
         })
     }
-    context.comment.comments.forEach((value, key) => {       
+    context.comment.comments.forEach((value, key) => {
         comments.push({
             id: value.id,
             links: value.links,
             text: value.text,
-            type: value.element.children[0].className.split(" ")[0]
+            type: value.element.children[0].className.split(' ')[0],
         })
-    });
+    })
 
     return {
         nodes,
