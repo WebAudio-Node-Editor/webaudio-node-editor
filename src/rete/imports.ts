@@ -27,99 +27,103 @@ export async function createNode(
         case 'Audio Output':
             return new AudioOutputNode(process)
         case 'Universal Output':
-            if(isNaN(parseInt(data['gain']))){
+            if (isNaN(parseInt(data['gain']))) {
                 throw new Error('Invalid gain')
-            }
-            else{
+            } else {
                 return new UniversalOutputNode(process, data)
             }
-             
+
         case 'Clip Signal':
-            if(isNaN(parseInt(data['amp']))){
+            if (isNaN(parseInt(data['amp']))) {
                 throw new Error('Invalid amplitude')
-            }
-            else{
+            } else {
                 return new ClipNode(process, data)
-            } 
-            
+            }
+
         case 'Biquad Filter':
-            var validSettings =['lowpass','highpass','bandpass', 'lowshelf','highshelf', 'peaking' , 'notch', 'allpass'] 
-            if (!validSettings.includes(data['filterType'])){
+            var validSettings = [
+                'lowpass',
+                'highpass',
+                'bandpass',
+                'lowshelf',
+                'highshelf',
+                'peaking',
+                'notch',
+                'allpass',
+            ]
+            if (!validSettings.includes(data['filterType'])) {
                 throw new Error('Invalid filter option')
-            }
-            else if(isNaN(parseInt(data['q']))){
+            } else if (isNaN(parseInt(data['q']))) {
                 throw new Error('Invalid Q')
-            }
-            else if(!Number.isInteger(data['freq'])){
+            } else if (!Number.isInteger(data['freq'])) {
                 throw new Error('Invalid frequency')
-            }
-            else{
+            } else {
                 return new EditorBiquadNode(process, data)
             }
-            
+
         case 'Constant':
-            if(isNaN(parseInt(data['value']))){
+            if (isNaN(parseInt(data['value']))) {
                 throw new Error('Invalid gain')
-            }
-            else{
+            } else {
                 return new EditorConstantNode(process, data)
             }
         case 'Gain':
-            if(isNaN(parseInt(data['gain']))){
+            if (isNaN(parseInt(data['gain']))) {
                 throw new Error('Invalid gain')
-            }
-            else{
+            } else {
                 return new EditorGainNode(process, data)
             }
-        
+
         case 'Delay':
-            if(!Number.isInteger(data['delay'])){
+            if (!Number.isInteger(data['delay'])) {
                 throw new Error('Invalid delay')
-            }
-            else if(!Number.isInteger(data['maxDelay'])){
+            } else if (!Number.isInteger(data['maxDelay'])) {
                 throw new Error('Invalid max delay')
-            }
-            else{
+            } else {
                 return new EditorDelayNode(process, data)
             }
-            
+
         case 'Noise':
-            console.log("noise")
+            console.log('noise')
             console.log(data)
-            var noiseTypes = ["White Noise", "Brown Noise", "Pink Noise", "Violet Noise", "Blue Noise", "Grey Noise", "Velvet Noise"]
-            if (!noiseTypes.includes(data['noiseType'])){
+            var noiseTypes = [
+                'White Noise',
+                'Brown Noise',
+                'Pink Noise',
+                'Violet Noise',
+                'Blue Noise',
+                'Grey Noise',
+                'Velvet Noise',
+            ]
+            if (!noiseTypes.includes(data['noiseType'])) {
                 throw new Error('Invalid noise type')
-            }
-            else{
+            } else {
                 return new EditorNoiseNode(process, data)
             }
         case 'Oscillator':
-            var validWaveforms = ['sine', 'sawtooth', 'triangle','square']
-            if (!validWaveforms.includes(data['waveform'])){
+            var validWaveforms = ['sine', 'sawtooth', 'triangle', 'square']
+            if (!validWaveforms.includes(data['waveform'])) {
                 throw new Error('Not a valid waveform')
-            }
-            else if(!Number.isInteger(data['baseFreq'])){
+            } else if (!Number.isInteger(data['baseFreq'])) {
                 throw new Error('Invalid frequency')
-            }
-            else{
+            } else {
                 return new EditorOscillatorNode(process, data)
             }
         case 'Note Frequency':
-            console.log("Note freq")
+            console.log('Note freq')
             console.log(data)
-            if(isNaN(parseInt(data['octave']))){
-                throw new Error('Invalid octave')   
+            if (isNaN(parseInt(data['octave']))) {
+                throw new Error('Invalid octave')
             }
-            if(isNaN(parseInt(data['note']))){
-                throw new Error('Invalid note')   
-            }
-            else{
+            if (isNaN(parseInt(data['note']))) {
+                throw new Error('Invalid note')
+            } else {
                 return new NoteFrequencyNode(process, data)
             }
         case 'Transpose':
             return new TransposeNode(process, data)
         case 'Time Domain Visualizer':
-            console.log("time domain")
+            console.log('time domain')
             console.log(data)
             return new TimeDomainVisualizerNode()
         case 'Frequency Domain Visualizer':
@@ -137,7 +141,7 @@ export async function createNode(
 
 export async function importEditor(context: Context, data: any) {
     const { nodes, connections } = data
-    const nodeIds = new Set(nodes.map((node: { id: string }) => node.id));
+    const nodeIds = new Set(nodes.map((node: { id: string }) => node.id))
     for (const n of nodes) {
         const node = await createNode(context, n.name, n.data)
         node.id = n.id
@@ -145,8 +149,8 @@ export async function importEditor(context: Context, data: any) {
     }
     for (const c of connections) {
         if (!nodeIds.has(c.source) || !nodeIds.has(c.target)) {
-            console.error("Invalid connection: Node ID not found");
-            continue; 
+            console.error('Invalid connection: Node ID not found')
+            continue
         }
         const source = context.editor.getNode(c.source)
         const target = context.editor.getNode(c.target)
@@ -194,4 +198,3 @@ export function exportEditor(context: Context) {
         connections,
     }
 }
-
