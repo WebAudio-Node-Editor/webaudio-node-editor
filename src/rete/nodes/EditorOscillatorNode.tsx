@@ -21,7 +21,8 @@ export class EditorOscillatorNode extends Classic.Node<
             new LabeledInputControl(
                 initial ? initial.baseFreq : 440,
                 'Base Frequency',
-                change
+                change,
+                50
             )
         )
         this.addInput('baseFrequency', baseFreqInput)

@@ -123,7 +123,7 @@ export async function createNode(
             console.log(data)
             return new TimeDomainVisualizerNode()
         case 'Frequency Domain Visualizer':
-            return new FrequencyDomainVisualizerNode()
+            return new FrequencyDomainVisualizerNode(process, data)
         case 'Console Debugger':
             return new ConsoleDebuggerNode()
         case 'Keyboard Note':

@@ -214,7 +214,8 @@ export class KeyboardNoteNode extends Classic.Node<
             new LabeledInputControl(
                 initial ? initial.adsrProfile.attack : 0.8,
                 'Attack Amplitude',
-                change
+                change,
+                0.1
             )
         )
         this.addControl(
@@ -222,7 +223,8 @@ export class KeyboardNoteNode extends Classic.Node<
             new LabeledInputControl(
                 initial ? initial.adsrProfile.attackLength : 0.05,
                 'Attack Length',
-                change
+                change,
+                0.1
             )
         )
         this.addControl(
@@ -230,7 +232,8 @@ export class KeyboardNoteNode extends Classic.Node<
             new LabeledInputControl(
                 initial ? initial.adsrProfile.decay : 0.7,
                 'Decay Amplitude',
-                change
+                change,
+                0.1
             )
         )
         this.addControl(
@@ -238,7 +241,8 @@ export class KeyboardNoteNode extends Classic.Node<
             new LabeledInputControl(
                 initial ? initial.adsrProfile.decayLength : 0.1,
                 'Decay Length',
-                change
+                change,
+                0.1
             )
         )
         this.addControl(
@@ -246,7 +250,8 @@ export class KeyboardNoteNode extends Classic.Node<
             new LabeledInputControl(
                 initial ? initial.adsrProfile.sustain : 0.1,
                 'Sustain Amplitude',
-                change
+                change,
+                0.1
             )
         )
         this.addControl(
@@ -384,7 +389,8 @@ export class KeyboardADSRNode extends Classic.Node<
             new LabeledInputControl(
                 initial ? initial.adsrProfile.attack : 0.8,
                 'Attack Amplitude',
-                change
+                change,
+                0.1
             )
         )
         this.addControl(
@@ -392,7 +398,8 @@ export class KeyboardADSRNode extends Classic.Node<
             new LabeledInputControl(
                 initial ? initial.adsrProfile.attackLength : 0.05,
                 'Attack Length',
-                change
+                change,
+                0.1
             )
         )
         this.addControl(
@@ -400,7 +407,8 @@ export class KeyboardADSRNode extends Classic.Node<
             new LabeledInputControl(
                 initial ? initial.adsrProfile.decay : 0.7,
                 'Decay Amplitude',
-                change
+                change,
+                0.1
             )
         )
         this.addControl(
@@ -408,7 +416,8 @@ export class KeyboardADSRNode extends Classic.Node<
             new LabeledInputControl(
                 initial ? initial.adsrProfile.decayLength : 0.1,
                 'Decay Length',
-                change
+                change,
+                0.1
             )
         )
         this.addControl(
@@ -416,7 +425,8 @@ export class KeyboardADSRNode extends Classic.Node<
             new LabeledInputControl(
                 initial ? initial.adsrProfile.sustain : 0.1,
                 'Sustain Amplitude',
-                change
+                change,
+                0.1
             )
         )
         this.addControl(
