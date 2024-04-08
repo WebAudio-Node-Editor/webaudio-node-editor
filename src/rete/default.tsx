@@ -50,6 +50,7 @@ import { EditorNoiseNode } from './nodes/EditorNoiseNode'
 import { EditorGainNode } from './nodes/EditorGainNode'
 import { AudioOutputNode, UniversalOutputNode } from './nodes/AudioOutputNode'
 import { EditorConstantNode } from './nodes/EditorConstantNode'
+import { PlaybackNode } from './nodes/PlaybackNode'
 import {
     TimeDomainVisualizerNode,
     FrequencyDomainVisualizerNode,
@@ -132,12 +133,14 @@ type SourceNode =
     | EditorOscillatorNode
     | EditorNoiseNode
     | NoteFrequencyNode
+    | PlaybackNode
 
 const sourceNodeTypes = [
     EditorConstantNode,
     EditorOscillatorNode,
     EditorNoiseNode,
     NoteFrequencyNode,
+    PlaybackNode,
 ]
 
 type ProcessorNode =
@@ -296,6 +299,11 @@ export async function createEditor(container: HTMLElement) {
                 'Noise',
                 () =>
                     new EditorNoiseNode(process, { noiseType: 'White Noise' }),
+            ],
+            [
+                'Playback',
+                () =>
+                    new PlaybackNode(process),
             ],
             [
                 'Processors',
