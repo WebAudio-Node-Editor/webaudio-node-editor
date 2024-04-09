@@ -16,7 +16,7 @@ export class FileUploadControl extends Classic.Control {
 
 }
 
-export function CustomFileUpload(props: { control: FileUploadControl }) {
+export function CustomFileUploadControl(props: { control: FileUploadControl }) {
     const inputRef = useRef<HTMLInputElement>(null);
 
     const handleClick = () => {

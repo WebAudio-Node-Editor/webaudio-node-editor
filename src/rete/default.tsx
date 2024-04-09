@@ -45,6 +45,15 @@ import {
     VisualizerControl,
     CustomVisualizerOutput,
 } from './controls/VisualizerControl'
+import {
+    PlaybackControl,
+    CustomPlaybackControl,
+} from './controls/PlaybackControl'
+import {
+    FileUploadControl,
+    CustomFileUploadControl,
+} from './controls/FileUploadControl'
+
 import { EditorOscillatorNode } from './nodes/EditorOscillatorNode'
 import { EditorNoiseNode } from './nodes/EditorNoiseNode'
 import { EditorGainNode } from './nodes/EditorGainNode'
@@ -399,6 +408,12 @@ export async function createEditor(container: HTMLElement) {
                     }
                     if (data.payload instanceof Classic.InputControl) {
                         return Presets.classic.Control
+                    }
+                    if (data.payload instanceof PlaybackControl) {
+                        return CustomPlaybackControl
+                    }
+                    if (data.payload instanceof FileUploadControl){
+                        return CustomFileUploadControl
                     }
                     return null
                 },

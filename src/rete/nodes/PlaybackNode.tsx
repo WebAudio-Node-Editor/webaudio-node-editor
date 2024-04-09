@@ -2,6 +2,7 @@ import { ClassicPreset as Classic } from 'rete'
 import { socket, audioCtx, audioSources, audioSourceStates } from '../default'
 import { PlaybackControl } from '../controls/PlaybackControl'
 import { FileUploadControl } from '../controls/FileUploadControl'
+import { CustomPlaybackControl } from '../controls/PlaybackControl';
 
 //const audioCtx = new AudioContext();
 //potential can arise if broswers only support older version -> tbd
@@ -25,13 +26,13 @@ export const newAudioSourceState: AudioSourceState = {
   
   audioSourceStates.push(newAudioSourceState);
   */
-export class PlaybackNode extends Classic.Node<
-    {},
-    { playback: Classic.Socket },
-    { file: FileUploadControl; play: PlaybackControl; pause: PlaybackControl; restart: PlaybackControl; loop: PlaybackControl }
+  export class PlaybackNode extends Classic.Node<
+  {},
+  { playback: Classic.Socket },
+  { file: FileUploadControl; play: PlaybackControl; pause: PlaybackControl; restart: PlaybackControl; loop: PlaybackControl }
 > {
-    width = 250
-    height = 180
+    width = 180
+    height = 210
     audioBuffer: AudioBuffer | null = null;
     loop: boolean = false;
     private audioSource: AudioBufferSourceNode | null = null;
@@ -39,8 +40,6 @@ export class PlaybackNode extends Classic.Node<
  
     constructor(change: () => void) {
         super('Playback')
-        this.addOutput('playback', new Classic.Output(socket, 'Playback'))
-        //const { change } = props; 
         this.addControl(
             'file',
             new FileUploadControl(change)
@@ -63,7 +62,7 @@ export class PlaybackNode extends Classic.Node<
         )
         this.addOutput(
             'playback', 
-            new Classic.Output(socket, 'Playback')
+            new Classic.Output(socket, 'Signal')
         )
     }
     
@@ -73,7 +72,7 @@ export class PlaybackNode extends Classic.Node<
             fileReader.onload = async () => {
               const arrayBuffer = fileReader.result;
               if (arrayBuffer !==null) {
-                 const audioBuffer = await audioCtx.decodeAudioData(arrayBuffer as ArrayBuffer); 
+                    this.audioBuffer = await audioCtx.decodeAudioData(arrayBuffer as ArrayBuffer); 
               }
               else{
                 console.error('Error decoding audio file');
@@ -81,6 +80,7 @@ export class PlaybackNode extends Classic.Node<
              
             };
             fileReader.readAsArrayBuffer(file);
+            this.selectedFile = file;
      };
 
     handlePlay = () => {
@@ -114,19 +114,7 @@ export class PlaybackNode extends Classic.Node<
         if (!this.audioSource) {
             this.audioSource = audioCtx.createBufferSource();
             this.audioSource.buffer = this.audioBuffer;
-            this.audioSource.loop = this.loop;
-
-            // Handle play control
-            this.controls.play.handlePlay();
-
-            // Handle pause control
-            this.controls.pause.handlePause();
-
-            // Handle restart control
-            this.controls.restart.handleRestart();
-
-            // Handle loop control
-            this.controls.loop.handleLoopChange();
+            this.audioSource.loop = this.controls.loop.loop;
         }
 
         return {
@@ -136,10 +124,8 @@ export class PlaybackNode extends Classic.Node<
 
     serialize() {
         return {
-      
           loop: this.loop,
           selectedFile: this.selectedFile
-          //i add a space it doesnt give me an error but if i dont then its uh oh why?
         };
       }
     }

@@ -7,7 +7,7 @@ export class PlaybackControl extends Classic.Control {
         public onPause: () => void,
         public onRestart: () => void,
         public onLoopChange: (loop: boolean) => void,
-        public loop: boolean = false
+        public loop: boolean
     ) {
         super();
     }
@@ -30,8 +30,8 @@ export class PlaybackControl extends Classic.Control {
     };
 }
 
-export function CustomPlaybackControl(props: { control: PlaybackControl }) {
-    const { control } = props;
+export function CustomPlaybackControl(props: { data: PlaybackControl }) {
+    const { data: control } = props;
 
     const handlePlayClick = () => {
         control.handlePlay();
