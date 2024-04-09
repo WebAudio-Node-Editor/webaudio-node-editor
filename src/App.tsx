@@ -14,7 +14,7 @@ function App() {
     const [ref, editor]: readonly [any, any] = useRete(createEditor)
     const [examples, setExamples] = useState<string[]>([])
     const [concepts, setConcepts] = useState<string>('Placeholder')
-    const [showChat, setShowChat] = useState(false);
+    const [showChat, setShowChat] = useState(false)
 
     window.addEventListener('keydown', function (event) {
         const key = event.key
@@ -170,9 +170,11 @@ function App() {
                     Toggle Audio
                 </Button>
                 <Button onClick={() => setShowChat(!showChat)}>
-                    {showChat ? 'Hide Chat' : 'Show Chat'}
+                    {showChat ? 'Hide LLM Chat' : 'Show LLM Chat'}
                 </Button>
-                {showChat && <GptChatInterface loadEditor={editor?.loadEditor}/>}
+                {showChat && (
+                    <GptChatInterface loadEditor={editor?.loadEditor} />
+                )}
             </Flex>
 
             <div
@@ -231,4 +233,3 @@ function App() {
 }
 
 export default App
-
