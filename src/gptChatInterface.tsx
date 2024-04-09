@@ -8,6 +8,7 @@ const GptChatInterface = ({ loadEditor }: GptChatInterfaceProps) => {
   const [prompt, setPrompt] = useState('');
   const [assistantsapiKey, setAssistantsApiKey] = useState('');
   const [response, setResponse] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
 
   const chatStyle: React.CSSProperties = {
     padding: '20px',
@@ -37,7 +38,15 @@ const GptChatInterface = ({ loadEditor }: GptChatInterfaceProps) => {
     margin: '10px 0',
   };
 
+  const errorMessageStyle: React.CSSProperties = {
+    color: 'black', 
+    backgroundColor: '#ffe6e6', 
+    padding: '10px', 
+    borderRadius: '5px', 
+    marginTop: '10px'
+  }
   const handleSendPrompt = async () => {
+    setErrorMessage('');
     const formattedPrompt = prompt.trim();
     
     if (!apiKey || !formattedPrompt) {
@@ -85,11 +94,13 @@ const GptChatInterface = ({ loadEditor }: GptChatInterfaceProps) => {
         try {
           parsedResponse = JSON.parse(JSON.stringify(messages.data[0].content[0]));
           var jsonOutput = parsedResponse["text"]["value"]
+          setResponse(jsonOutput);
           console.log("loading GPT output:",jsonOutput);
           await loadEditor(JSON.parse(jsonOutput));
           
-        } catch (error) {
+        } catch (error: any) {
             console.error("Error parsing response:", error);
+            setErrorMessage("Error parsing response: " + error.message);
             return;
         }
           
@@ -131,9 +142,14 @@ const GptChatInterface = ({ loadEditor }: GptChatInterfaceProps) => {
       />
       <button style={buttonStyle} onClick={handleSendPrompt}>Send Prompt</button>
       <div>
-        <p>Response:</p>
-        <p>{response}</p>
+        <p style ={{color: "black"}}>Response:</p>
+        <p style ={{color: "black"}}>{response}</p>
       </div>
+      {errorMessage && (
+        <div style = {errorMessageStyle}>
+          {errorMessage}
+        </div>
+      )}
     </div>
   );
 };
