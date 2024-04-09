@@ -1,5 +1,5 @@
-import { ClassicPreset as Classic } from 'rete';
-import { useRef } from 'react';
+import { ClassicPreset as Classic } from 'rete'
+import { useRef } from 'react'
 
 export class PlaybackControl extends Classic.Control {
     constructor(
@@ -9,45 +9,45 @@ export class PlaybackControl extends Classic.Control {
         public onLoopChange: (loop: boolean) => void,
         public loop: boolean
     ) {
-        super();
+        super()
     }
 
     handlePlay = () => {
-        this.onPlay();
-    };
+        this.onPlay()
+    }
 
     handlePause = () => {
-        this.onPause();
-    };
+        this.onPause()
+    }
 
     handleRestart = () => {
-        this.onRestart();
-    };
+        this.onRestart()
+    }
 
     handleLoopChange = () => {
-        const newLoopValue = !this.loop;
-    this.onLoopChange(newLoopValue);
-    };
+        const newLoopValue = !this.loop
+        this.onLoopChange(newLoopValue)
+    }
 }
 
 export function CustomPlaybackControl(props: { data: PlaybackControl }) {
-    const { data: control } = props;
+    const { data: control } = props
 
     const handlePlayClick = () => {
-        control.handlePlay();
-    };
+        control.handlePlay()
+    }
 
     const handlePauseClick = () => {
-        control.handlePause();
-    };
+        control.handlePause()
+    }
 
     const handleRestartClick = () => {
-        control.handleRestart();
-    };
+        control.handleRestart()
+    }
 
     const handleLoopChange = () => {
-        control.handleLoopChange();
-      };
+        control.handleLoopChange()
+    }
 
     return (
         <div>
@@ -61,5 +61,5 @@ export function CustomPlaybackControl(props: { data: PlaybackControl }) {
             />
             <label>Loop</label>
         </div>
-    );
+    )
 }

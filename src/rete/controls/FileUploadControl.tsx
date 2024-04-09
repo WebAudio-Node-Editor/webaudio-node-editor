@@ -3,27 +3,26 @@ import { useRef } from 'react'
 
 export class FileUploadControl extends Classic.Control {
     constructor(public onFileUpload: (file: File) => void) {
-        super();
+        super()
     }
 
     handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const files = event.target.files;
+        const files = event.target.files
         if (files && files.length > 0) {
-            const file = files[0];
-            this.onFileUpload(file);
+            const file = files[0]
+            this.onFileUpload(file)
         }
-    };
-
+    }
 }
 
-export function CustomFileUploadControl(props: { control: FileUploadControl }) {
-    const inputRef = useRef<HTMLInputElement>(null);
+export function CustomFileUploadControl(props: { data: FileUploadControl }) {
+    const inputRef = useRef<HTMLInputElement>(null)
 
     const handleClick = () => {
         if (inputRef.current) {
-            inputRef.current.click();
+            inputRef.current.click()
         }
-    };
+    }
 
     return (
         <div>
@@ -32,9 +31,9 @@ export function CustomFileUploadControl(props: { control: FileUploadControl }) {
                 accept="audio/*"
                 ref={inputRef}
                 style={{ display: 'none' }}
-                onChange={props.control.handleFileChange}
+                onChange={props.data.handleFileChange}
             />
             <button onClick={handleClick}>Upload Audio File</button>
         </div>
-    );
+    )
 }

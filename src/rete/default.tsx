@@ -309,11 +309,7 @@ export async function createEditor(container: HTMLElement) {
                 () =>
                     new EditorNoiseNode(process, { noiseType: 'White Noise' }),
             ],
-            [
-                'Playback',
-                () =>
-                    new PlaybackNode(process),
-            ],
+            ['Playback', () => new PlaybackNode(process)],
             [
                 'Processors',
                 [
@@ -412,7 +408,7 @@ export async function createEditor(container: HTMLElement) {
                     if (data.payload instanceof PlaybackControl) {
                         return CustomPlaybackControl
                     }
-                    if (data.payload instanceof FileUploadControl){
+                    if (data.payload instanceof FileUploadControl) {
                         return CustomFileUploadControl
                     }
                     return null
