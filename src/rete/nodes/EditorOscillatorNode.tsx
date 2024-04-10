@@ -6,7 +6,10 @@ import { DropdownControl } from '../controls/DropdownControl'
 export class EditorOscillatorNode extends Classic.Node<
     { frequency: Classic.Socket },
     { signal: Classic.Socket },
-    { waveform: DropdownControl, baseFrequency: Classic.InputControl<'number', number> }
+    {
+        waveform: DropdownControl
+        baseFrequency: Classic.InputControl<'number', number>
+    }
 > {
     width = 180
     height = 230
@@ -48,10 +51,10 @@ export class EditorOscillatorNode extends Classic.Node<
         )
     }
 
-    data(inputs: { 
-        baseFrequency?: AudioNode[];
-        additionalFrequency?: AudioNode[] 
-    }):{ signal: AudioNode } {
+    data(inputs: {
+        baseFrequency?: AudioNode[]
+        additionalFrequency?: AudioNode[]
+    }): { signal: AudioNode } {
         const osc = audioCtx.createOscillator()
         osc.type =
             (this.controls.waveform.value?.toString() as OscillatorType) ||

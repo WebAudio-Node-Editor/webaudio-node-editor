@@ -51,10 +51,7 @@ export class EditorGainNode extends Classic.Node<
             gainNode.gain.setValueAtTime(0, audioCtx.currentTime)
             inputs.baseGain[0].connect(gainNode.gain)
         } else {
-            gainNode.gain.setValueAtTime(
-                gainControl || 0,
-                audioCtx.currentTime
-            )
+            gainNode.gain.setValueAtTime(gainControl || 0, audioCtx.currentTime)
         }
 
         if (inputs.additionalGain) {
