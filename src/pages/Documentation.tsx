@@ -94,11 +94,66 @@ export default function Documentation() {
                         </div>
                         
                         <div style={{ display: (this.state.active === "nodes") ? "block" : "none" }}>
-                            Node Types
+                        <Layout className="Block container">
+                            <div className="Block-header">Basic Nodes</div>
+                            <div className="Block-content">This is a node-based editor for WebAudio created using Rete.js, a Javascript framework for visual programming through node editors. Node editors are widely used in shader editors and even game programming (as in Unreal Engine's Blueprints).</div>
+                        </Layout>
+
+                        <Layout className="Block container">
+                            <div className="Block-header">Advanced Nodes</div>
+                            <div className="Block-content">This is a node-based editor for WebAudio created using Rete.js, a Javascript framework for visual programming through node editors. Node editors are widely used in shader editors and even game programming (as in Unreal Engine's Blueprints).</div>
+                        </Layout>
                         </div>
                         
                         <div style={{ display: (this.state.active === "keyboard") ? "block" : "none" }}>
-                            Keyboard
+                        <Layout className="Block container">
+                            <div className="Block-header">Keyboard Nodes</div>
+                            <div className="Block-content">
+                                <div className="row" style={{ margin: "20px 0px"}}>
+                                    <div className="Half-block" style={{display: 'inline-flex'}}>
+                                        <img src={require('../images/Keyboard_Note.png')} alt="Adding Nodes" width="25%" />
+                                        <div style={{marginLeft: '30px'}}>
+                                        <div className="Block-content"><b>Note</b></div>
+                                        <div className='Block-content'>
+                                            The Keyboard Note node allows you to play notes from your keyboard!
+                                        </div>
+                                        <div className='Block-content'>
+                                            Range: C4 to C6, but can be transposed as a whole. Use its built-in controls to do so.
+                                        </div>
+                                        <div className='Block-content'>
+                                            Each note's ADSR envelope's heights and interval lengths can be adjusted via the controls on the node.
+                                        </div>
+                                        <div className='Block-content'>
+                                            Amplitudes will ramp exponentially to each other over time (though this sounds linear to the human ear).
+                                        </div>
+                                        <div className='Block-content'>
+                                            Clicking artifacts may occur.
+                                        </div>
+                                        </div> 
+                                    </div>
+                                    <div className="Half-block" style={{display: 'inline-flex'}}>
+                                    <img src={require('../images/Keyboard_ASDR.png')} alt="Adding Nodes" width="30%"/>
+                                        <div style={{marginLeft: '40px'}}>
+                                        <div className="Block-content"><b>ASDR</b></div>
+                                        <div className='Block-content'>
+                                            Like the Keyboard Note node but with one individual ADSR envelope separated out.
+                                            This node lets you attach an ADSR envelope to anything, not just the preset
+                                            notes of the Keyboard Note node.
+                                        </div>
+                                        <div className='Block-content'>
+                                            In theory, it is possible to create the Keyboard Note node by combining
+                                            oscillators and these nodes; building the keyboard "from fundamentals" in this
+                                            way is more flexible.
+                                        </div>
+                                        <div className='Block-content'>
+                                            Check out the Keyboard Controlled Jet or Gated Lo-fi Synth examples to see
+                                            this node in action.
+                                        </div> 
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </Layout>
                         </div>
                 </div> 
             )
