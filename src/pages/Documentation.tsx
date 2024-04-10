@@ -101,7 +101,53 @@ export default function Documentation() {
 
                         <Layout className="Block container">
                             <div className="Block-header">Advanced Nodes</div>
-                            <div className="Block-content">This is a node-based editor for WebAudio created using Rete.js, a Javascript framework for visual programming through node editors. Node editors are widely used in shader editors and even game programming (as in Unreal Engine's Blueprints).</div>
+                            <div className="Block-content">
+                                <div className="row" style={{ margin: "20px 0px"}}>
+                                    <div className="Half-block" style={{display: 'inline-flex'}}>
+                                        <img src={require('../images/Note_Freq.png')} alt="Adding Nodes" width="35%" />
+                                        <div style={{marginLeft: '30px'}}>
+                                            <div className="Block-content"><b>Note Frequency</b></div>
+                                            <div className='Block-content'>
+                                                This node is a special case of a constant signal node. It outputs a constant signal with a value equal to the frequency of the specified note.
+                                            </div>
+                                        </div> 
+                                    </div>
+                                    <div className="Half-block" style={{display: 'inline-flex'}}>
+                                        <img src={require('../images/Delay.png')} alt="Adding Nodes" width="30%" />
+                                        <div style={{marginLeft: '30px'}}>
+                                            <div className="Block-content"><b>Delay</b></div>
+                                            <div className='Block-content'>
+                                                Delays the output. Not useful unless using it along with keyboard input. 
+                                            </div>
+                                            <div className='Block-content'>
+                                                "Max delay" parameter must be set higher than the maximum possible delay in your graph.                                            </div>
+                                            </div>
+                                    </div>
+                                </div>
+                                <div className="row" style={{ margin: "20px 0px"}}>
+                                    <div className="Half-block" style={{display: 'inline-flex'}}>
+                                        <img src={require('../images/Transpose.png')} alt="Adding Nodes" width="40%" height="75%" />
+                                        <div style={{marginLeft: '20px'}}>
+                                            <div className="Block-content"><b>Transpose</b></div>
+                                            <div className='Block-content'>
+                                            Takes in a frequency signal and outputs an appropriately scaled frequency signal corresponding to the specified transposition. 1 octave = 12 half-steps.                                            </div>
+                                            <div className='Block-content'>
+                                            <b>This node won’t properly on audio signals</b> - it will scale the  signal amplitude not frequency.                                            </div>
+                                        </div> 
+                                    </div>
+                                    <div className="Half-block" style={{display: 'inline-flex'}}>
+                                        <img src={require('../images/Console_Debug.png')} alt="Adding Nodes" width="35%" height="30%" />
+                                        <div style={{marginLeft: '20px'}}>
+                                            <div className="Block-content"><b>Console Debugger</b></div>
+                                            <div className='Block-content'>
+                                            Outputs the input to your browser's console. Use this to get an extra fine look at what's going on.
+                                            </div>
+                                            <div className='Block-content'>
+                                            However, note that WebAudio nodes don't actually provide any way to look at the intermediate nodes of an audio set-up, so the Console Debugger Node should be attached as close to the point of interest as possible.                                            </div>
+                                            </div>
+                                    </div>
+                                    </div>
+                                 </div>
                         </Layout>
                         </div>
                         
