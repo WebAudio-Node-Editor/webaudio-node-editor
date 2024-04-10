@@ -1,5 +1,5 @@
 import { ClassicPreset as Classic } from 'rete'
-import { socket, audioCtx, audioSources, audioSourceStates } from '../default'
+import { socket, audioCtx, audioSources, audioSourceStates, globalGain } from '../default'
 import { PlaybackControl } from '../controls/PlaybackControl'
 import { FileUploadControl } from '../controls/FileUploadControl'
 import { CustomPlaybackControl } from '../controls/PlaybackControl'
@@ -57,36 +57,6 @@ export class PlaybackNode extends Classic.Node<
                 false
             )
         )
-        this.addControl(
-            'pause',
-            new PlaybackControl(
-                this.handlePlay,
-                this.handlePause,
-                this.handleRestart,
-                this.handleLoopChange,
-                false
-            )
-        )
-        this.addControl(
-            'restart',
-            new PlaybackControl(
-                this.handlePlay,
-                this.handlePause,
-                this.handleRestart,
-                this.handleLoopChange,
-                false
-            )
-        )
-        this.addControl(
-            'loop',
-            new PlaybackControl(
-                this.handlePlay,
-                this.handlePause,
-                this.handleRestart,
-                this.handleLoopChange,
-                true
-            )
-        )
         this.addOutput('playback', new Classic.Output(socket, 'Signal'))
     }
 
@@ -95,54 +65,50 @@ export class PlaybackNode extends Classic.Node<
         fileReader.onload = async () => {
             const arrayBuffer = fileReader.result
             if (arrayBuffer !== null) {
-                this.audioBuffer = await audioCtx.decodeAudioData(
-                    arrayBuffer as ArrayBuffer
-                )
+                this.audioBuffer = await audioCtx.decodeAudioData(arrayBuffer as ArrayBuffer)
+                this.selectedFile = file;
             } else {
                 console.error('Error decoding audio file')
             }
         }
         fileReader.readAsArrayBuffer(file)
-        this.selectedFile = file
     }
 
     handlePlay = () => {
-        const { playback } = this.data()
-        playback.connect(audioCtx.destination)
-        playback.onended = () => {
-            playback.disconnect()
+        if (!this.audioSource && this.audioBuffer) {
+            this.audioSource = audioCtx.createBufferSource()
+            this.audioSource.buffer = this.audioBuffer
+            this.audioSource.loop = this.loop
+            this.audioSource.connect(globalGain)
+            this.audioSource.start()
         }
-        playback.start()
     }
 
     handlePause = () => {
-        const { playback } = this.data()
-        playback.stop()
+       if(this.audioSource){
+            this.audioSource.stop()
+            this.audioSource = null;
+       }
     }
 
     handleRestart = () => {
-        const { playback } = this.data()
-        playback.stop()
-        playback.start(0)
+        this.handlePause();
+        this.handlePlay();
     }
 
     handleLoopChange = (loop: boolean) => {
         this.loop = loop
-        const { playback } = this.data()
-        playback.loop = loop
+        if (this.audioSource) {
+            this.audioSource.loop = loop 
+        }
     }
 
     data(): { playback: AudioBufferSourceNode } {
-        if (!this.audioSource) {
-            this.audioSource = audioCtx.createBufferSource()
-            this.audioSource.buffer = this.audioBuffer
-            this.audioSource.loop = this.controls.loop.loop
-        }
-
         return {
-            playback: this.audioSource,
+            playback: this.audioSource || audioCtx.createBufferSource(),
         }
     }
+
 
     serialize() {
         return {

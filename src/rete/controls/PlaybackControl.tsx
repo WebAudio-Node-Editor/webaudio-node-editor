@@ -51,9 +51,9 @@ export function CustomPlaybackControl(props: { data: PlaybackControl }) {
 
     return (
         <div>
-            <button onClick={handlePlayClick}>Play</button>
-            <button onClick={handlePauseClick}>Pause</button>
-            <button onClick={handleRestartClick}>Restart</button>
+            <button onClick={handlePlayClick}>Play</button><br></br>
+            <button onClick={handlePauseClick}>Pause</button><br></br>
+            <button onClick={handleRestartClick}>Restart</button><br></br>
             <input
                 type="checkbox"
                 checked={control.loop}
