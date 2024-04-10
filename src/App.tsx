@@ -216,6 +216,9 @@ function App() {
                 <Button onClick={() => editor?.exportEditorToFile()}>
                     Export to file
                 </Button>
+                <Button onClick={() => editor?.exportEditorToJS()}>
+                    Export to code
+                </Button>
                 <Button danger onClick={() => editor?.clearEditor()}>
                     Clear
                 </Button>

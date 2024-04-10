@@ -530,6 +530,16 @@ export async function createEditor(container: HTMLElement) {
             },
         ],
     }
+    const javascriptFileOption = {
+        types: [
+            {
+                description: 'Javascript files',
+                accept: {
+                    'text/plain': '.js' as `.${string}`,
+                },
+            },
+        ],
+    }
     async function importEditorFromFile() {
         var fileHandle
         try {
@@ -566,10 +576,9 @@ export async function createEditor(container: HTMLElement) {
     }
 
     async function exportEditorToJS() {
-        console.log("testing")
         var json = await saveEditor()
         async function getNewFileHandle() {
-            const handle = await window.showSaveFilePicker(fileOptions)
+            const handle = await window.showSaveFilePicker(javascriptFileOption)
             return handle
         }
 
@@ -592,8 +601,35 @@ export async function createEditor(container: HTMLElement) {
             waveform: string;
           }
           
-          interface GainNodeData {
+        interface GainNodeData {
             gain: string;
+        }
+        interface NoiseNodeData {
+            noiseType: string;
+        }
+        interface ConstantData {
+            value: string;
+        }
+        interface BiquadFilterData {
+            freq: string;
+            q: string;
+            gain: string;
+            filterType: string;
+        }
+        interface DelayNodeData {
+            delay: string;
+            maxDelay: string;
+        }
+        interface ClipNodeData {
+            amp: string;
+        }
+        interface NoteNodeData {
+            octave: string;
+            note: string;
+        }
+        interface TransposeNodeData {
+            octave: string;
+            halfstep: string;
         }
         let nodes = new Map();
         let nodeIDNum = 0
@@ -602,35 +638,150 @@ export async function createEditor(container: HTMLElement) {
             let audioNode = true;
             let newCode = "";
             let nodeID = String(nodeIDNum)
+            let nodeName = ''
             switch (node.name) {
                 case "Oscillator":
+                    nodeName = `osc${nodeID}`
                     const oscillatorData = node.data as OscillatorNodeData;
-                    newCode = newCode.concat("audioNode", nodeID," = audioCtx.createOscillator();\n")
-                    newCode = newCode.concat("audioNode", nodeID,".frequency.setValueAtTime(", oscillatorData.baseFreq, ", audioCtx.currentTime);\n")
-                    newCode = newCode.concat("audioNode", nodeID,".type = ", oscillatorData.waveform, ";\n")
-                    newCode = newCode.concat("audioNode", nodeID,".start();\n")
+                    newCode = newCode.concat("const ", nodeName," = audioCtx.createOscillator();\n")
+                    newCode = newCode.concat(nodeName,".frequency.setValueAtTime(", oscillatorData.baseFreq, ", audioCtx.currentTime);\n")
+                    newCode = newCode.concat(nodeName,".type = '", oscillatorData.waveform, "';\n")
+                    newCode = newCode.concat(nodeName,".start();\n")
                     code = code.concat(newCode)
                     break;
                 case "Gain":
+                    nodeName = `gainNode${nodeID}`
                     const gainData = node.data as GainNodeData;
-                    newCode = newCode.concat("audioNode", nodeID," = audioCtx.createGain();\n")
-                    newCode = newCode.concat("audioNode", nodeID,".gain.setValueAtTime(", gainData.gain, ", audioCtx.currentTime);\n")
+                    newCode = newCode.concat("const ", nodeName," = audioCtx.createGain();\n")
+                    newCode = newCode.concat(nodeName,".gain.setValueAtTime(", gainData.gain, ", audioCtx.currentTime);\n")
                     code = code.concat(newCode)
                     break;
                 case "Universal Output":
+                    nodeName = `outputNode${nodeID}`
                     const universalGainData = node.data as GainNodeData;
-                    newCode = newCode.concat("audioNode", nodeID," = audioCtx.createGain();\n")
-                    newCode =newCode.concat("audioNode", nodeID,".gain.setValueAtTime(", universalGainData.gain,",audioCtx.currentTime);\n")
-                    newCode = newCode.concat("audioNode", nodeID,".connect(audioCtx.destination);\n")
+                    newCode = newCode.concat("const ", nodeName," = audioCtx.createGain();\n")
+                    newCode =newCode.concat(nodeName,".gain.setValueAtTime(", universalGainData.gain,",audioCtx.currentTime);\n")
+                    newCode = newCode.concat(nodeName,".connect(audioCtx.destination);\n")
                     code = code.concat(newCode)
+                    break;
+                case "Noise":
+                    nodeName = `noiseNode${nodeID}`
+                    newCode = newCode.concat("const ", nodeName, "= audioCtx.createBufferSource();\n")
+                    newCode = newCode.concat("var bufferSize = 10 * audioCtx.sampleRate\n")
+                    newCode = newCode.concat("var noiseBuffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate)\n")
+                    newCode = newCode.concat("var output = noiseBuffer.getChannelData(0)\n")
+                    newCode = newCode.concat("var bufferSize = 10 * audioCtx.sampleRate\n")
+                    const noiseData = node.data as NoiseNodeData;
+                    let noiseType = noiseData.noiseType
+                    if (noiseType === 'White Noise') {
+                        newCode = newCode.concat("for (let i = 0; i < bufferSize; i++) { output[i] = Math.random() * 2 - 1 }\n")
+                    } else if (noiseType === 'Brown Noise') {
+                        newCode = newCode.concat("var lastOut = 0\n")
+                        newCode = newCode.concat("for (let i = 0; i < bufferSize; i++) {\n")
+                        newCode = newCode.concat("var brown = Math.random() * 2 - 1\n")
+                        newCode = newCode.concat("output[i] = (lastOut + 0.02 * brown) / 1.02\n")
+                        newCode = newCode.concat("lastOut = output[i]\n")
+                        newCode = newCode.concat("output[i] *= 3.5\n")
+                        newCode = newCode.concat("}\n")
+                    } else if (noiseType === 'Pink Noise') { 
+                        newCode = newCode.concat("let b0, b1, b2, b3, b4, b5, b6\n")
+                        newCode = newCode.concat("b0 = b1 = b2 = b3 = b4 = b5 = b6 = 0.0\n")
+                        newCode = newCode.concat("for (let i = 0; i < bufferSize; i++) {\n")
+                        newCode = newCode.concat("let white = Math.random() * 2 - 1\n")
+                        newCode = newCode.concat("b0 = 0.99886 * b0 + white * 0.0555179\n")
+                        newCode = newCode.concat("b1 = 0.99332 * b1 + white * 0.0750759\n")
+                        newCode = newCode.concat("b2 = 0.969 * b2 + white * 0.153852\n")
+                        newCode = newCode.concat("b3 = 0.8665 * b3 + white * 0.3104856\n")
+                        newCode = newCode.concat("b4 = 0.55 * b4 + white * 0.5329522\n")
+                        newCode = newCode.concat("b5 = -0.7616 * b5 - white * 0.016898\n")
+                        newCode = newCode.concat("output[i] = b0 + b1 + b2 + b3 + b4 + b5 + b6 + white * 0.5362\n")
+                        newCode = newCode.concat("output[i] *= 0.11")
+                        newCode = newCode.concat("b6 = white * 0.115926\n")
+                        newCode = newCode.concat("}")
+                    } else if (noiseType === 'Blue Noise') { 
+                        newCode = newCode.concat("for (let i = 0; i < bufferSize; i++) { output[i] = Math.random() * 2 - 1 }\n")
+                        newCode = newCode.concat("let alpha = 0.1\n")
+                        newCode = newCode.concat("let previousValue = 0\n")
+                        newCode = newCode.concat("for (let i = 1; i < bufferSize; i++) {\n")
+                        newCode = newCode.concat("output[i] = alpha * (output[i] - previousValue) + output[i - 1]\n")
+                        newCode = newCode.concat("previousValue = output[i]\n")
+                        newCode = newCode.concat("}")
+                    } else if (noiseType === 'Violet Noise') { 
+                        newCode = newCode.concat("for (let i = 0; i < bufferSize; i++) { output[i] = Math.random() * 2 - 1 }\n")
+                        newCode = newCode.concat(" for (let i = bufferSize - 1; i > 0; i--) { output[i] = output[i] - output[i - 1]}\n")
+                    } else if (noiseType === 'Grey Noise') { 
+                        newCode = newCode.concat("for (let i = 0; i < bufferSize; i++) { output[i] = Math.random() * 2 - 1 }\n")
+                        newCode = newCode.concat("let previousValue = 0\n")
+                        newCode = newCode.concat("const smoothingFactor = 0.02\n")
+                        newCode = newCode.concat("for (let i = 0; i < bufferSize; i++) {\n")
+                        newCode = newCode.concat("output[i] = smoothingFactor * output[i] + (1 - smoothingFactor) * previousValue\n")
+                        newCode = newCode.concat("previousValue = output[i]\n")
+                        newCode = newCode.concat("}\n")
+                    } else if (noiseType === 'Velvet Noise') {
+                        newCode = newCode.concat("for (let i = 0; i < bufferSize; i++) { output[i] = 0 }\n")
+                        newCode = newCode.concat("const impulseDensity = 100\n")
+                        newCode = newCode.concat("const numberOfImpulses = Math.floor(bufferSize / impulseDensity)\n")
+                        newCode = newCode.concat("for (let i = 0; i < numberOfImpulses; i++) {\n")
+                        newCode = newCode.concat("const position = Math.floor(Math.random() * bufferSize)\n")
+                        newCode = newCode.concat("output[position] = Math.random() * 2 - 1\n")
+                        newCode = newCode.concat("}\n")
+                    }
+                    newCode = newCode.concat("noiseSource.buffer = noiseBuffer \nnoiseSource.loop = true\n")
+                    break;
+                case "Constant":
+                    nodeName = `constant${nodeID}`
+                    const constantData = node.data as ConstantData;
+                    newCode = newCode.concat("const ", nodeName," = ",constantData.value)
+                    break
+                case "Biquad Filter":
+                    nodeName = `biquadFilterNode${nodeID}`
+                    const biquadFilterData = node.data as BiquadFilterData;
+                    newCode = newCode.concat("const ", nodeName, "= audioCtx.createBiquadFilter()\n")
+                    newCode = newCode.concat(nodeName,".frequency.setValueAtTime(", biquadFilterData.freq, ", audioCtx.currentTime);\n")
+                    newCode = newCode.concat(nodeName,".Q.setValueAtTime(", biquadFilterData.q, ", audioCtx.currentTime);\n")
+                    newCode = newCode.concat(nodeName,".gain.setValueAtTime(", biquadFilterData.gain, ", audioCtx.currentTime);\n")
+                    newCode = newCode.concat(nodeName,".type = ", biquadFilterData.filterType, "as BiquadFilterType\n")
+                    break
+                case "Delay":
+                    nodeName = `delayNode${nodeID}`
+                    const delayNodeData = node.data as DelayNodeData;
+                    newCode = newCode.concat("const ", nodeName," = audioCtx.createDelay(Math.max(", delayNodeData.maxDelay, ", 1))\n")
+                    newCode = newCode.concat(nodeName, ".delayTime.setValueAtTime(",delayNodeData.delay, ", audioCtx.currentTime)\n")
+                    break;
+                case "Clip Signal":
+                    let gainName = `clipGainNode${nodeID}`
+                    const clipNodeData = node.data as ClipNodeData
+                    newCode = newCode.concat("const ", gainName, " = audioCtx.createGain()\n")
+                    newCode = newCode.concat(gainName,".gain.value = 1 /", clipNodeData.amp,"\n")
+                    nodeName = `clipWaveNode${nodeID}`
+                    newCode = newCode.concat("const ", nodeName, " = new WaveShaperNode(audioCtx, { curve: new Float32Array([-",clipNodeData.amp,", ",clipNodeData.amp,"]),})\n")
+                    newCode = newCode.concat(gainName, ".connect(",nodeName,")\n")
+                    break;
+                case "Note Frequency":
+                    nodeName = `noteNode${nodeID}`
+                    const noteNodeData = node.data as NoteNodeData
+                    newCode = newCode.concat("const ", nodeName, " = audioCtx.createConstantSource()\n")
+                    newCode = newCode.concat("const noteVal", nodeID," = Number(",noteNodeData.note,")\n");
+                    newCode = newCode.concat("const octave", nodeID, " = ", noteNodeData.octave, " || 0\n")
+                    newCode = newCode.concat("const val", nodeID," = 261.625565300598634 * Math.pow(2.0, octave", nodeID," - 4 + (1.0 / 12) * noteVal", nodeID,")\n")
+                    newCode = newCode.concat(nodeName, ".offset.setValueAtTime(val",nodeID, ", audioCtx.currentTime)\n")
+                    break;
+                case "Transpose":
+                    nodeName = `transposeGainNode${nodeID}`
+                    const transposeNodeData = node.data as TransposeNodeData
+                    newCode = newCode.concat("const halfstep", nodeID, " = ", transposeNodeData.halfstep, " || 0\n")
+                    newCode = newCode.concat("const octave", nodeID, " = ", transposeNodeData.octave, " || 0\n")
+                    newCode = newCode.concat("const tranposeGainNode", nodeID, " = audioCtx.createGain()\n")
+                    newCode = newCode.concat("const val",nodeID, " = Math.pow(2.0, octave", nodeID," + (1.0 / 12) * halfstep", nodeID,")\n")
+                    newCode = newCode.concat("transposeGainNode",nodeID,".gain.value = val", nodeID, "\n")
                     break;
                 default:
                     audioNode = false
-                    console.log("Unsupported node type:", node.name);
+                    alert("Unsupported node type: " +node.name+"");
+                    return
 
             }
             if (audioNode) {
-                let nodeName = "audioNode" + nodeID
                 nodes.set(node.id, nodeName);
                 nodeIDNum += 1
             }
@@ -639,14 +790,15 @@ export async function createEditor(container: HTMLElement) {
         json.connections.forEach(conn => {
             const sourceNode = nodes.get(conn.source);
             const targetNode = nodes.get(conn.target);
+            const connType = nodes.get(conn.targetInput)
 
             if (sourceNode && targetNode) {
-                code = code.concat(sourceNode, ".connect(",targetNode,");\n")
+                code = code.concat(sourceNode, connType, ".connect(",targetNode,");\n")
             } else {
                 console.log("Connection failed. Node not found.");
             }
         });
-        console.log(code)
+        code = code.concat("audioCtx.resume();")
         writeFile(hdl, code)
     }
 
