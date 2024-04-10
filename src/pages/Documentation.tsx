@@ -24,8 +24,8 @@ export default function Documentation() {
                     >
                         <div style={{textAlign: "center"}}>
                             <div className={(this.state.active === "basicUsage") ? "Blog-nav-active" : "Blog-nav"} onClick={() => this.updateState("basicUsage")}>Basic Usage</div>
-                            <div className="Blog-nav" onClick={() => this.updateState("nodes")}>Node Types</div>
-                            <div className="Blog-nav" onClick={() => this.updateState("keyboard")}>Keyboard</div>
+                            <div className={(this.state.active === "nodes") ? "Blog-nav-active" : "Blog-nav"} onClick={() => this.updateState("nodes")}>Node Types</div>
+                            <div className={(this.state.active === "keyboard") ? "Blog-nav-active" : "Blog-nav"} onClick={() => this.updateState("keyboard")}>Keyboard</div>
                         </div>
                     </Layout> 
                     

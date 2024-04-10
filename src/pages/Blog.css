@@ -48,6 +48,7 @@
 .Blog-nav:hover{
     background-color: white;
     color: CornflowerBlue;
+    cursor: pointer;
 }
 
 .Blog-nav-active{
@@ -61,6 +62,7 @@
     color: CornflowerBlue;
     font-weight: bold;
     background-color: 'rgba(0,0,0,0.2)';
+    cursor: default;
 }
 
 .container{
