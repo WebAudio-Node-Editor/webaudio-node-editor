@@ -222,7 +222,7 @@
             "source": "32808ba55a99c764",
             "sourceOutput": "signal",
             "target": "a67f95dd6380e94b",
-            "targetInput": "baseFrequency"
+            "targetInput": "frequency"
         },
         {
             "source": "e647bfb311648133",
@@ -246,13 +246,13 @@
             "source": "0a288cf288e12669",
             "sourceOutput": "signal",
             "target": "21a076e9e594572d",
-            "targetInput": "baseFrequency"
+            "targetInput": "frequency"
         },
         {
             "source": "ee6e542e1bd1eceb",
             "sourceOutput": "signal",
             "target": "ec1dfd7450a225e3",
-            "targetInput": "baseFrequency"
+            "targetInput": "frequency"
         },
         {
             "source": "a549b26138870c74",
@@ -306,7 +306,7 @@
             "source": "97cd9547432d4607",
             "sourceOutput": "signal",
             "target": "c745645da4f055ad",
-            "targetInput": "baseFrequency"
+            "targetInput": "frequency"
         },
         {
             "source": "402b7cfe04966a13",
@@ -354,7 +354,7 @@
             "source": "2e4bbd81c72b53e8",
             "sourceOutput": "signal",
             "target": "c5969f33dc8e463f",
-            "targetInput": "baseFrequency"
+            "targetInput": "frequency"
         },
         {
             "source": "c5969f33dc8e463f",

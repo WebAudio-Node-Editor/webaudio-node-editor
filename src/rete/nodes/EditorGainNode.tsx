@@ -11,7 +11,7 @@ export class EditorGainNode extends Classic.Node<
     { baseGain: Classic.InputControl<'number', number> }
 > {
     width = 180
-    height = 200
+    height = 220
     constructor(change: () => void, initial?: { gain: number }) {
         super('Gain')
 

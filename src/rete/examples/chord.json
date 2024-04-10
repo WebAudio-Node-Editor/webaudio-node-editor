@@ -98,31 +98,31 @@
             "source": "b8ff64385f38be7c",
             "sourceOutput": "value",
             "target": "f10a4339d0207584",
-            "targetInput": "baseFrequency"
+            "targetInput": "frequency"
         },
         {
             "source": "7e04fb6deb2f873f",
             "sourceOutput": "value",
             "target": "da6ab80ecf3eb8fe",
-            "targetInput": "baseFrequency"
+            "targetInput": "frequency"
         },
         {
             "source": "2628141823d63c1b",
             "sourceOutput": "value",
             "target": "f96941fe4e5b78d4",
-            "targetInput": "baseFrequency"
+            "targetInput": "frequency"
         },
         {
             "source": "0ac7a720c3077da5",
             "sourceOutput": "value",
             "target": "6e9494d38d8c15e2",
-            "targetInput": "baseFrequency"
+            "targetInput": "frequency"
         },
         {
             "source": "b1f29eb8d7c36d3a",
             "sourceOutput": "value",
             "target": "ce460270432e5af0",
-            "targetInput": "baseFrequency"
+            "targetInput": "frequency"
         }
     ]
 }
