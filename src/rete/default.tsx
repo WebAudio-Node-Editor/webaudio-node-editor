@@ -48,6 +48,7 @@ import {
 import { EditorOscillatorNode } from './nodes/EditorOscillatorNode'
 import { EditorNoiseNode } from './nodes/EditorNoiseNode'
 import { EditorGainNode } from './nodes/EditorGainNode'
+import { DynamicsCompressorNode } from './nodes/DynamicsCompressorNode'
 import { AudioOutputNode, UniversalOutputNode } from './nodes/AudioOutputNode'
 import { EditorConstantNode } from './nodes/EditorConstantNode'
 import {
@@ -149,6 +150,7 @@ type ProcessorNode =
     | ClipNode
     | TransposeNode
     | EditorDelayNode
+    | DynamicsCompressorNode
 
 const processorNodeTypes = [
     EditorGainNode,
@@ -156,6 +158,7 @@ const processorNodeTypes = [
     ClipNode,
     TransposeNode,
     EditorDelayNode,
+    DynamicsCompressorNode,
 ]
 
 type InputNode = KeyboardNoteNode | KeyboardADSRNode
@@ -201,7 +204,7 @@ export const socket = new Classic.Socket('socket')
 
 export const audioCtx = new window.AudioContext()
 export const globalGain = audioCtx.createGain()
-const globalCompressor = audioCtx.createDynamicsCompressor()
+const globalCompressor = audioCtx.createDynamicsCompressor() //DELETE THIS
 globalGain.connect(globalCompressor).connect(audioCtx.destination)
 export const audioSources: AudioScheduledSourceNode[] = []
 export const audioSourceStates: boolean[] = []
@@ -316,6 +319,7 @@ export async function createEditor(container: HTMLElement) {
                     ['Biquad Filter', () => new EditorBiquadNode(process)],
                     ['Delay', () => new EditorDelayNode(process)],
                     ['Clip', () => new ClipNode(process)],
+                    ['Dynamics Compressor', () => new DynamicsCompressorNode(process) ],
                 ],
             ],
             [
