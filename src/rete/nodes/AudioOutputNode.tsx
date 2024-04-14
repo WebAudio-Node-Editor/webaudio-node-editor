@@ -42,16 +42,17 @@ export class UniversalOutputNode extends Classic.Node<
         timeVisualizer: VisualizerControl
         freqVisualizer: VisualizerControl
         visual: DropdownControl
+        dynamicCompressor: DropdownControl
     }
 > {
     width = 400
-    height = 430
+    height = 460
     public timeAnalyserNode = audioCtx.createAnalyser()
     public freqAnalyserNode = audioCtx.createAnalyser()
 
     constructor(
         change: () => void,
-        initial?: { gain: number; visual: string; x_transpose: number }
+        initial?: { gain: number; visual: string; x_transpose: number; dynamicCompressor: string }
     ) {
         super('Universal Output')
 
@@ -77,12 +78,18 @@ export class UniversalOutputNode extends Classic.Node<
 
         //For chaning the dropdown
         //- Pedro Perez
-        const dropdownOptions = [
+        const dropdownOptionsVisual = [
             { value: 'linear', label: 'Linear X-axis' },
             { value: 'log', label: 'Log X-axis' },
         ]
 
-        this.addControl('visual', new DropdownControl(change, dropdownOptions))
+        const dropdownOptionsCompressor = [
+            { value: 'default', label: 'Default' },
+            { value: 'node', label: 'Node Input' },
+        ]
+
+        this.addControl('visual', new DropdownControl(change, dropdownOptionsVisual))
+        this.addControl('dynamicCompressor', new DropdownControl(change, dropdownOptionsCompressor))
 
         //For transposing the x axis
         //- Adrian Cardenas

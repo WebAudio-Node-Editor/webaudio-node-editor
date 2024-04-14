@@ -205,7 +205,8 @@ export const socket = new Classic.Socket('socket')
 export const audioCtx = new window.AudioContext()
 export const globalGain = audioCtx.createGain()
 const globalCompressor = audioCtx.createDynamicsCompressor() //DELETE THIS
-globalGain.connect(globalCompressor).connect(audioCtx.destination)
+// globalGain.connect(globalCompressor).connect(audioCtx.destination)
+globalGain.connect(audioCtx.destination)
 export const audioSources: AudioScheduledSourceNode[] = []
 export const audioSourceStates: boolean[] = []
 
