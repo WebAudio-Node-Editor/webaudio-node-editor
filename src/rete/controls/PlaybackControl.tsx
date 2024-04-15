@@ -2,13 +2,13 @@ import { ClassicPreset as Classic } from 'rete'
 import { useRef } from 'react'
 
 export class PlaybackControl extends Classic.Control {
-    playing: boolean = false;
+    playing: boolean = false
     loop: boolean = false
     constructor(
         public onPlay: () => void,
         public onPause: () => void,
         public onRestart: () => void,
-        public onLoopChange: (loop: boolean) => void,
+        public onLoopChange: (loop: boolean) => void
     ) {
         super()
     }
@@ -29,7 +29,7 @@ export class PlaybackControl extends Classic.Control {
     }
 
     handleLoopChange = () => {
-        this.loop =!this.loop
+        this.loop = !this.loop
         //const newLoopValue = !this.loop
         this.onLoopChange(this.loop)
     }
@@ -56,22 +56,22 @@ export function CustomPlaybackControl(props: { data: PlaybackControl }) {
 
     return (
         <div>
-        <button onClick={handlePlayClick} disabled={control.playing}>
-          Play
-        </button>
-        <br />
-        <button onClick={handlePauseClick} disabled={!control.playing}>
-          Pause
-        </button>
-        <br />
-        <button onClick={handleRestartClick}>Restart</button>
-        <br />
-        <input
-          type="checkbox"
-          checked={control.loop}
-          onChange={handleLoopChange}
-        />
-        <label>Loop</label>
-      </div>
+            <button onClick={handlePlayClick} disabled={control.playing}>
+                Play
+            </button>
+            <br />
+            <button onClick={handlePauseClick} disabled={!control.playing}>
+                Pause
+            </button>
+            <br />
+            <button onClick={handleRestartClick}>Restart</button>
+            <br />
+            <input
+                type="checkbox"
+                checked={control.loop}
+                onChange={handleLoopChange}
+            />
+            <label>Loop</label>
+        </div>
     )
 }

@@ -1,5 +1,11 @@
 import { ClassicPreset as Classic } from 'rete'
-import { socket, audioCtx, audioSources, audioSourceStates, globalGain } from '../default'
+import {
+    socket,
+    audioCtx,
+    audioSources,
+    audioSourceStates,
+    globalGain,
+} from '../default'
 import { PlaybackControl } from '../controls/PlaybackControl'
 import { FileUploadControl } from '../controls/FileUploadControl'
 import { CustomPlaybackControl } from '../controls/PlaybackControl'
@@ -53,7 +59,7 @@ export class PlaybackNode extends Classic.Node<
                 this.handlePlay,
                 this.handlePause,
                 this.handleRestart,
-                this.handleLoopChange,
+                this.handleLoopChange
             )
         )
         this.addOutput('playback', new Classic.Output(socket, 'Signal'))
@@ -64,7 +70,9 @@ export class PlaybackNode extends Classic.Node<
         fileReader.onload = async () => {
             const arrayBuffer = fileReader.result
             if (arrayBuffer !== null) {
-                this.audioBuffer = await audioCtx.decodeAudioData(arrayBuffer as ArrayBuffer)
+                this.audioBuffer = await audioCtx.decodeAudioData(
+                    arrayBuffer as ArrayBuffer
+                )
                 //this.selectedFile = file;
             } else {
                 console.error('Error decoding audio file')
@@ -85,22 +93,22 @@ export class PlaybackNode extends Classic.Node<
     }
 
     handlePause = () => {
-       if(this.audioSource){
+        if (this.audioSource) {
             this.audioSource.stop()
             this.audioSource.disconnect()
-            this.audioSource = null;
-       }
+            this.audioSource = null
+        }
     }
 
     handleRestart = () => {
-        this.handlePause();
-        this.handlePlay();
+        this.handlePause()
+        this.handlePlay()
     }
 
     handleLoopChange = (loop: boolean) => {
         this.loop = loop
         if (this.audioSource) {
-            this.audioSource.loop = loop 
+            this.audioSource.loop = loop
         }
     }
 
@@ -110,11 +118,10 @@ export class PlaybackNode extends Classic.Node<
         }
     }
 
-
     serialize() {
         return {
             loop: this.loop,
-           // selectedFile: this.controls.play.loop,
+            // selectedFile: this.controls.play.loop,
         }
     }
 }
