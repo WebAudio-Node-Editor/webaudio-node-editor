@@ -9,11 +9,11 @@ import { CustomPlaybackControl } from '../controls/PlaybackControl'
 //const audioSources: { [key: string]: AudioBufferSourceNode } = {};
 //const audioSourceStates: { [key: string]: AudioSourceState } = {};
 
-interface AudioSourceState {
+/*interface AudioSourceState {
     isPlaying: boolean
     isPaused: boolean
     isLooping: boolean
-}
+}*/
 
 //const audioSourceStates: AudioSourceState[] = [];
 
@@ -38,15 +38,15 @@ export class PlaybackNode extends Classic.Node<
     }
 > {
     width = 180
-    height = 210
+    height = 220
     audioBuffer: AudioBuffer | null = null
     loop: boolean = false
     private audioSource: AudioBufferSourceNode | null = null
-    selectedFile: File | null = null
+    //selectedFile: File | null = null
 
     constructor(change: () => void) {
         super('Playback')
-        this.addControl('file', new FileUploadControl(change))
+        this.addControl('file', new FileUploadControl(this.handleFileUpload))
         this.addControl(
             'play',
             new PlaybackControl(
@@ -54,7 +54,6 @@ export class PlaybackNode extends Classic.Node<
                 this.handlePause,
                 this.handleRestart,
                 this.handleLoopChange,
-                false
             )
         )
         this.addOutput('playback', new Classic.Output(socket, 'Signal'))
@@ -66,7 +65,7 @@ export class PlaybackNode extends Classic.Node<
             const arrayBuffer = fileReader.result
             if (arrayBuffer !== null) {
                 this.audioBuffer = await audioCtx.decodeAudioData(arrayBuffer as ArrayBuffer)
-                this.selectedFile = file;
+                //this.selectedFile = file;
             } else {
                 console.error('Error decoding audio file')
             }
@@ -75,10 +74,11 @@ export class PlaybackNode extends Classic.Node<
     }
 
     handlePlay = () => {
-        if (!this.audioSource && this.audioBuffer) {
+        if (!this.audioSource) {
+            //&& this.audioBuffer
             this.audioSource = audioCtx.createBufferSource()
             this.audioSource.buffer = this.audioBuffer
-            this.audioSource.loop = this.loop
+            this.audioSource.loop = this.controls.play.loop
             this.audioSource.connect(globalGain)
             this.audioSource.start()
         }
@@ -87,6 +87,7 @@ export class PlaybackNode extends Classic.Node<
     handlePause = () => {
        if(this.audioSource){
             this.audioSource.stop()
+            this.audioSource.disconnect()
             this.audioSource = null;
        }
     }
@@ -113,7 +114,7 @@ export class PlaybackNode extends Classic.Node<
     serialize() {
         return {
             loop: this.loop,
-            selectedFile: this.selectedFile,
+           // selectedFile: this.controls.play.loop,
         }
     }
 }
