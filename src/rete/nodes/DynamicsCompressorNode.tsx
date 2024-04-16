@@ -137,28 +137,46 @@ export class DynamicsCompressorNode extends Classic.Node<
         
         //Threshold
         //threshold property's default value is -24 and it can be set between -100 and 0.
+        if(this.controls.threshold){
+            //Clamps value to 0 and 1
+            compressor.threshold.setValueAtTime(Math.max(Math.min(this.controls.threshold.value, 0), -100), audioCtx.currentTime)
+        }
         
         //Knee
         //The knee property's default value is 30 and it can be set between 0 and 40.
+        if(this.controls.knee){
+            //Clamps value to 0 and 1
+            compressor.knee.setValueAtTime(Math.max(Math.min(this.controls.knee.value, 40), 0), audioCtx.currentTime)
+        }
 
         //Ratio
         //The ratio property's default value is 12 and it can be set between 1 and 20.
+        if(this.controls.ratio){
+            //Clamps value to 0 and 1
+            compressor.ratio.setValueAtTime(Math.max(Math.min(this.controls.ratio.value, 20), 1), audioCtx.currentTime)
+        }
 
         //Reduction
         // it returns a value in dB, or 0 (no gain reduction) if no signal is fed into the DynamicsCompressorNode. 
         //The range of this value is between -20 and 0 (in dB).
+        if(this.controls.reduction){
+            //Clamps value to -20 and 0
+            //(Math.max(Math.min(this.controls.reduction.value, 0), -20), audioCtx.currentTime)
+        }
         
         //Attack
         //The attack property's default value is 0.003 and it can be set between 0 and 1.
-        // if(this.controls.attack){
-        //     compressor.attack.setValueAtTime(this.controls.attack.value, audioCtx.currentTime)
-        // }
+        if(this.controls.attack){
+            //Clamps value to 0 and 1
+            compressor.attack.setValueAtTime(Math.max(Math.min(this.controls.attack.value, 1), 0), audioCtx.currentTime)
+        }
 
         //Release
         //The release property's default value is 0.25 and it can be set between 0 and 1.
-        // if(this.controls.release){
-        //     compressor.release.setValueAtTime(this.controls.release.value, audioCtx.currentTime)
-        // }
+        if(this.controls.release){
+            //Clamps value to 0 and 1
+            compressor.release.setValueAtTime(Math.max(Math.min(this.controls.release.value, 1), 0), audioCtx.currentTime)
+        }
 
 
 

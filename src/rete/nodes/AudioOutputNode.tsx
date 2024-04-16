@@ -84,12 +84,13 @@ export class UniversalOutputNode extends Classic.Node<
         ]
 
         const dropdownOptionsCompressor = [
-            { value: 'default', label: 'Default' },
-            { value: 'node', label: 'Node Input' },
+            { value: 'default', label: 'Default Compressor' },
+            { value: 'node', label: 'No Compressor' },
         ]
 
         this.addControl('visual', new DropdownControl(change, dropdownOptionsVisual))
         this.addControl('dynamicCompressor', new DropdownControl(change, dropdownOptionsCompressor))
+        //Make the dropdown larger
 
         //For transposing the x axis
         //- Adrian Cardenas
@@ -120,11 +121,24 @@ export class UniversalOutputNode extends Classic.Node<
         this.controls.freqVisualizer.display_linear =
             di_linear?.localeCompare('linear') === 0
 
+
+        //if default is on
+        if(this.controls.dynamicCompressor.value?.toString() == "default"){
+
+            const compressor = audioCtx.createDynamicsCompressor()
+            inputs.signal?.forEach((itm) => itm.connect(compressor))
+
+        }
+
+        
+
         //Inputting Range Parameters
         // this.controls.freqVisualizer.x_transpose = parseFloat(this.controls.x_transpose.value?.toString())
         return {
             value: val,
         }
+
+        
     }
 
     serialize() {
@@ -132,4 +146,8 @@ export class UniversalOutputNode extends Classic.Node<
             gain: this.controls.gain.value,
         }
     }
+
+
+
+    
 }
