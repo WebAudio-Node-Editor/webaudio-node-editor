@@ -83,7 +83,7 @@
     display: flex;
     flex-direction: row;
     margin: auto 8%;
-    padding-bottom: 48px;
+    padding-bottom: 28px;
 }
 
 .Half-block{
@@ -101,5 +101,3 @@
     font-size: 16px;
     margin-bottom: 12px;
 }
-
-

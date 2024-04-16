@@ -96,7 +96,45 @@ export default function Documentation() {
                         <div style={{ display: (this.state.active === "nodes") ? "block" : "none" }}>
                         <Layout className="Block container">
                             <div className="Block-header">Basic Nodes</div>
-                            <div className="Block-content">This is a node-based editor for WebAudio created using Rete.js, a Javascript framework for visual programming through node editors. Node editors are widely used in shader editors and even game programming (as in Unreal Engine's Blueprints).</div>
+                            <div className="row" style={{ margin: "0px"}}>
+                                <div className="Half-block">
+                                    <div className="Block-content"><b>Audio Sources</b></div>
+                                    <div className='Block-content'>The first source of signals within your graph. Without them, no signal will be present propagate through your nodes and connections.</div>
+                                    <img src={require('../images/Audio_Sources.png')} alt="Adding Nodes" width="100%"/>
+                                </div>
+                                <div className="Half-block">
+                                    <div className="Block-content"><b>Processors</b></div>
+                                    <div className='Block-content'>These nodes take in a signal, modify it somehow, and pass the modified signal through. They're typically just like their WebAudio versions.</div>
+                                    <img src={require('../images/Processors.png')} alt="Adding Nodes" width="100%"/>
+                                </div>
+                            </div> 
+                            <Divider
+                                type="horizontal"
+                                style={{
+                                    top: '10px',
+                                    height: '20px',
+                                    borderColor: 'white',
+                                }}
+                            ></Divider>
+                            <div className="row" style={{ margin: "0px"}}>
+                                <div className="Half-block">
+                                    <div className="Block-content"><b>Outputs</b></div>
+                                    <div className='Block-content'>
+                                    The end points of your signals. Without being connected
+                                        to an output (whether directly or indirectly), your signals
+                                        won't have any perceivable effect.
+                                    </div>
+                                    <div className='Block-content'>
+                                        Visualizers let you see what the signal's like, and audio outputs
+                                        let you hear it. The Universal Output node combines both visualizers,
+                                        and audio output, and a gain node. In addition to their normal function,
+                                        these nodes are also useful for debugging your signal.
+                                    </div>
+                                </div>
+                                <div className="Half-block">
+                                    <img src={require('../images/Outputs.png')} alt="Adding Nodes" width="100%"/>
+                                </div>
+                            </div> 
                         </Layout>
 
                         <Layout className="Block container">
