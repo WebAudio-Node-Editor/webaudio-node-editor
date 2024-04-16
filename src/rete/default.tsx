@@ -583,11 +583,8 @@ export async function createEditor(container: HTMLElement) {
         }
 
         async function writeFile(fileHandle: any, contents: any) {
-            // Create a FileSystemWritableFileStream to write to.
             const writable = await fileHandle.createWritable()
-            // Write the contents of the file to the stream.
             await writable.write(contents)
-            // Close the file and write the contents to disk.
             await writable.close()
         }
 
@@ -596,6 +593,7 @@ export async function createEditor(container: HTMLElement) {
         } catch (e) {
             return
         }
+        //Node interfaces from JSON file
         interface OscillatorNodeData {
             baseFreq: string;
             waveform: string;
@@ -633,8 +631,8 @@ export async function createEditor(container: HTMLElement) {
         }
         let nodes = new Map();
         let nodeIDNum = 0
-        let code = "const audioCtx = new (window.AudioContext || window.webkitAudioContext)();\n"
-        json.nodes.forEach(node => {
+        let code = "var audioCtx = new (window.AudioContext || window.webkitAudioContext)();\n"
+        for (const node of json.nodes) {
             let audioNode = true;
             let newCode = "";
             let nodeID = String(nodeIDNum)
@@ -647,22 +645,12 @@ export async function createEditor(container: HTMLElement) {
                     newCode = newCode.concat(nodeName,".frequency.setValueAtTime(", oscillatorData.baseFreq, ", audioCtx.currentTime);\n")
                     newCode = newCode.concat(nodeName,".type = '", oscillatorData.waveform, "';\n")
                     newCode = newCode.concat(nodeName,".start();\n")
-                    code = code.concat(newCode)
                     break;
                 case "Gain":
                     nodeName = `gainNode${nodeID}`
                     const gainData = node.data as GainNodeData;
                     newCode = newCode.concat("const ", nodeName," = audioCtx.createGain();\n")
                     newCode = newCode.concat(nodeName,".gain.setValueAtTime(", gainData.gain, ", audioCtx.currentTime);\n")
-                    code = code.concat(newCode)
-                    break;
-                case "Universal Output":
-                    nodeName = `outputNode${nodeID}`
-                    const universalGainData = node.data as GainNodeData;
-                    newCode = newCode.concat("const ", nodeName," = audioCtx.createGain();\n")
-                    newCode =newCode.concat(nodeName,".gain.setValueAtTime(", universalGainData.gain,",audioCtx.currentTime);\n")
-                    newCode = newCode.concat(nodeName,".connect(audioCtx.destination);\n")
-                    code = code.concat(newCode)
                     break;
                 case "Noise":
                     nodeName = `noiseNode${nodeID}`
@@ -726,12 +714,15 @@ export async function createEditor(container: HTMLElement) {
                         newCode = newCode.concat("output[position] = Math.random() * 2 - 1\n")
                         newCode = newCode.concat("}\n")
                     }
-                    newCode = newCode.concat("noiseSource.buffer = noiseBuffer \nnoiseSource.loop = true\n")
+                    newCode = newCode.concat(nodeName,".buffer = noiseBuffer \n", nodeName,".loop = true\n")
+                    newCode = newCode.concat(nodeName,".start()\n")
                     break;
                 case "Constant":
                     nodeName = `constant${nodeID}`
                     const constantData = node.data as ConstantData;
-                    newCode = newCode.concat("const ", nodeName," = ",constantData.value)
+                    newCode = newCode.concat("const ", nodeName," = audioCtx.createConstantSource();\n")
+                    newCode = newCode.concat(nodeName,".offset.setValueAtTime(",constantData.value,", audioCtx.currentTime);\n")
+                    newCode = newCode.concat(nodeName,".start()\n")
                     break
                 case "Biquad Filter":
                     nodeName = `biquadFilterNode${nodeID}`
@@ -740,7 +731,7 @@ export async function createEditor(container: HTMLElement) {
                     newCode = newCode.concat(nodeName,".frequency.setValueAtTime(", biquadFilterData.freq, ", audioCtx.currentTime);\n")
                     newCode = newCode.concat(nodeName,".Q.setValueAtTime(", biquadFilterData.q, ", audioCtx.currentTime);\n")
                     newCode = newCode.concat(nodeName,".gain.setValueAtTime(", biquadFilterData.gain, ", audioCtx.currentTime);\n")
-                    newCode = newCode.concat(nodeName,".type = ", biquadFilterData.filterType, "as BiquadFilterType\n")
+                    newCode = newCode.concat(nodeName,".type = '", biquadFilterData.filterType, "'\n")
                     break
                 case "Delay":
                     nodeName = `delayNode${nodeID}`
@@ -765,6 +756,7 @@ export async function createEditor(container: HTMLElement) {
                     newCode = newCode.concat("const octave", nodeID, " = ", noteNodeData.octave, " || 0\n")
                     newCode = newCode.concat("const val", nodeID," = 261.625565300598634 * Math.pow(2.0, octave", nodeID," - 4 + (1.0 / 12) * noteVal", nodeID,")\n")
                     newCode = newCode.concat(nodeName, ".offset.setValueAtTime(val",nodeID, ", audioCtx.currentTime)\n")
+                    newCode = newCode.concat(nodeName,".start()\n")
                     break;
                 case "Transpose":
                     nodeName = `transposeGainNode${nodeID}`
@@ -775,25 +767,71 @@ export async function createEditor(container: HTMLElement) {
                     newCode = newCode.concat("const val",nodeID, " = Math.pow(2.0, octave", nodeID," + (1.0 / 12) * halfstep", nodeID,")\n")
                     newCode = newCode.concat("transposeGainNode",nodeID,".gain.value = val", nodeID, "\n")
                     break;
+                case "Universal Output":
+                    nodeName = `outputNode${nodeID}`
+                    const universalGainData = node.data as GainNodeData;
+                    newCode = newCode.concat("const ", nodeName," = audioCtx.createGain();\n")
+                    newCode =newCode.concat(nodeName,".gain.setValueAtTime(", universalGainData.gain,",audioCtx.currentTime);\n")
+                    newCode = newCode.concat(nodeName,".connect(audioCtx.destination);\n")
+                    break;
+                case "Audio Output":
+                    nodeName = `audioOutputNode${nodeID}`
+                    newCode = newCode.concat("const ", nodeName," = audioCtx.createGain();\n")
+                    newCode = newCode.concat(nodeName,".connect(audioCtx.destination);\n")
+                    break;
                 default:
                     audioNode = false
                     alert("Unsupported node type: " +node.name+"");
-                    return
+                    return;
 
             }
+            code = code.concat(newCode, "\n")
             if (audioNode) {
                 nodes.set(node.id, nodeName);
                 nodeIDNum += 1
             }
     
-        });
+        }
+        const connectionsDict = {
+            "signal": "",
+            "baseGain":".gain",
+            "additionalGain":".gain",
+            "baseFrequency":".frequency",
+            "frequency":".frequency",
+            "q":".Q",
+            "gain":".gain",
+            "delayTime": ".delayTime"
+            
+        }
+        // fix biquad node filterFrequency, is it now frequency
+        //maybe check if its frequency and not a biquad node
+        var seenNodeInputs = [["empty", "empty"]]
         json.connections.forEach(conn => {
             const sourceNode = nodes.get(conn.source);
-            const targetNode = nodes.get(conn.target);
-            const connType = nodes.get(conn.targetInput)
+            let targetNode = nodes.get(conn.target);
+            const connInputType = conn.targetInput
+            const connCodeType = connectionsDict[conn.targetInput]
+            
+            if (targetNode.includes("clip")) {
+                targetNode = "clipGainNode"+targetNode.slice(12)
+            }
 
+            const nodeInput = [targetNode, connInputType]
+            if (!seenNodeInputs.some(element => //only set a connection input to 0 once, incase of multiple connections to one input
+                nodeInput.length === element.length && nodeInput.every((value, index) => value === element[index]))) {
+                if (connInputType === "baseFrequency" || (connInputType === "frequency" && targetNode.includes("biquad"))) {
+                    code = code.concat(targetNode, ".frequency.setValueAtTime(0, audioCtx.currentTime)\n")
+                } else if (connInputType === "baseGain" || connInputType === "gain") {
+                    code = code.concat(targetNode, ".gain.setValueAtTime(0, audioCtx.currentTime)\n")
+                } else if (connInputType === "q") {
+                    code = code.concat(targetNode, ".Q.setValueAtTime(0, audioCtx.currentTime)\n")
+                } else if (connInputType === "delayTime") {
+                    code = code.concat(targetNode, ".delayTime.setValueAtTime(0, audioCtx.currentTime)\n")
+                }
+                seenNodeInputs.push(nodeInput)
+            }
             if (sourceNode && targetNode) {
-                code = code.concat(sourceNode, connType, ".connect(",targetNode,");\n")
+                code = code.concat(sourceNode,".connect(",targetNode, connCodeType,");\n")
             } else {
                 console.log("Connection failed. Node not found.");
             }
