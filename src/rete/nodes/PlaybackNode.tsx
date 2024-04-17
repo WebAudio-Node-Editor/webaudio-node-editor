@@ -93,18 +93,21 @@ export class PlaybackNode extends Classic.Node<
         //if (!this.audioSource && this.audioBuffer) {
             this.audioSource = audioCtx.createBufferSource()
             this.audioSource.buffer = this.audioBuffer
-            this.audioSource.loop = this.loop
+            this.audioSource.loop = this.controls.play.loop 
             this.audioSource.connect(globalGain)
             this.audioSource.start()
+            this.controls.play.playing = true
         }
         else{
             audioCtx.resume()
+            this.controls.play.playing = true
         }
     }
 
     handlePause = () => {
         if (this.audioSource) {
             audioCtx.suspend()
+            this.controls.play.playing = false
             //this.audioSource.disconnect()
             //this.audioSource = null
         }
@@ -112,20 +115,30 @@ export class PlaybackNode extends Classic.Node<
 
     handleRestart = () => {
         if(this.audioSource){
-            audioCtx.suspend()
-            //this.audioSource.stop()
+            //audioCtx.suspend()
+            this.audioSource.stop()
             this.audioSource.disconnect()
             this.audioSource = null 
         }
+        this.controls.play.playing = false
        // this.handlePause()
         this.handlePlay()
     }
 
     handleLoopChange = (loop: boolean) => {
-        this.loop = loop
+        this.controls.play.loop = loop
+        /*
+        if (!this.audioBuffer){
+            return 
+        }*/
         if (this.audioSource) {
             this.audioSource.loop = loop
         }
+        /*
+        else if(this.audioSource.loop = loop){
+
+        }
+        */
     }
 
     data(): { playback: AudioBufferSourceNode } {
