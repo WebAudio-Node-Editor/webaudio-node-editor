@@ -82,26 +82,42 @@ export class PlaybackNode extends Classic.Node<
     }
 
     handlePlay = () => {
-        if (!this.audioSource) {
-            //&& this.audioBuffer
+        if(!this.audioBuffer){
+            return
+        }
+        if(!this.audioSource){
+            //this.audioSource.stop()
+           // this.audioSource.disconnect()
+        
+
+        //if (!this.audioSource && this.audioBuffer) {
             this.audioSource = audioCtx.createBufferSource()
             this.audioSource.buffer = this.audioBuffer
-            this.audioSource.loop = this.controls.play.loop
+            this.audioSource.loop = this.loop
             this.audioSource.connect(globalGain)
             this.audioSource.start()
+        }
+        else{
+            audioCtx.resume()
         }
     }
 
     handlePause = () => {
         if (this.audioSource) {
-            this.audioSource.stop()
-            this.audioSource.disconnect()
-            this.audioSource = null
+            audioCtx.suspend()
+            //this.audioSource.disconnect()
+            //this.audioSource = null
         }
     }
 
     handleRestart = () => {
-        this.handlePause()
+        if(this.audioSource){
+            audioCtx.suspend()
+            //this.audioSource.stop()
+            this.audioSource.disconnect()
+            this.audioSource = null 
+        }
+       // this.handlePause()
         this.handlePlay()
     }
 
