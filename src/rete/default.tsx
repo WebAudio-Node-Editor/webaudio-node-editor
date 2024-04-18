@@ -577,22 +577,6 @@ export async function createEditor(container: HTMLElement) {
 
     async function exportEditorToJS() {
         var json = await saveEditor()
-        async function getNewFileHandle() {
-            const handle = await window.showSaveFilePicker(javascriptFileOption)
-            return handle
-        }
-
-        async function writeFile(fileHandle: any, contents: any) {
-            const writable = await fileHandle.createWritable()
-            await writable.write(contents)
-            await writable.close()
-        }
-
-        try {
-            var hdl = await getNewFileHandle()
-        } catch (e) {
-            return
-        }
         //Node interfaces from JSON file
         interface OscillatorNodeData {
             baseFreq: string;
@@ -779,6 +763,10 @@ export async function createEditor(container: HTMLElement) {
                     newCode = newCode.concat("const ", nodeName," = audioCtx.createGain();\n")
                     newCode = newCode.concat(nodeName,".connect(audioCtx.destination);\n")
                     break;
+                case "Frequency Domain Visualizer":
+                    continue;
+                case "Time Domain Visualizer":
+                    continue;
                 default:
                     audioNode = false
                     alert("Unsupported node type: " +node.name+"");
@@ -812,6 +800,9 @@ export async function createEditor(container: HTMLElement) {
             const connInputType = conn.targetInput
             const connCodeType = connectionsDict[conn.targetInput]
             
+            if (!targetNode || !sourceNode){
+                return;
+            }
             if (targetNode.includes("clip")) {
                 targetNode = "clipGainNode"+targetNode.slice(12)
             }
@@ -837,6 +828,23 @@ export async function createEditor(container: HTMLElement) {
             }
         });
         code = code.concat("audioCtx.resume();")
+
+        async function getNewFileHandle() {
+            const handle = await window.showSaveFilePicker(javascriptFileOption)
+            return handle
+        }
+
+        async function writeFile(fileHandle: any, contents: any) {
+            const writable = await fileHandle.createWritable()
+            await writable.write(contents)
+            await writable.close()
+        }
+
+        try {
+            var hdl = await getNewFileHandle()
+        } catch (e) {
+            return
+        }
         writeFile(hdl, code)
     }
 
