@@ -2,7 +2,7 @@
     "name": "webaudio-node-editor",
     "version": "0.1.0",
     "private": true,
-    "homepage": "https://webaudio-node-editor.github.io/webaudio-node-editor",
+    "homepage": "https://wavir.io/",
     "dependencies": {
         "@testing-library/jest-dom": "^5.17.0",
         "@testing-library/react": "^13.4.0",
