@@ -1,28 +1,28 @@
 {
   "files": {
-    "main.css": "/webaudio-node-editor/static/css/main.b68cb6d7.css",
-    "main.js": "/webaudio-node-editor/static/js/main.0deb1ba0.js",
-    "static/js/787.80e724c9.chunk.js": "/webaudio-node-editor/static/js/787.80e724c9.chunk.js",
-    "static/media/Arrange Nodes.gif": "/webaudio-node-editor/static/media/Arrange Nodes.4443461ddbbf19283373.gif",
-    "static/media/Adding Nodes.gif": "/webaudio-node-editor/static/media/Adding Nodes.90164be78219e8950e27.gif",
-    "static/media/Deleting Nodes.gif": "/webaudio-node-editor/static/media/Deleting Nodes.f03587f296e9aad31945.gif",
-    "static/media/Connecting Nodes.gif": "/webaudio-node-editor/static/media/Connecting Nodes.95cc5c3380cc017121b1.gif",
-    "static/media/Processors.png": "/webaudio-node-editor/static/media/Processors.3d4365d2459613cb5ce4.png",
-    "static/media/Outputs.png": "/webaudio-node-editor/static/media/Outputs.2ff7a51623713e41809a.png",
-    "static/media/Audio_Sources.png": "/webaudio-node-editor/static/media/Audio_Sources.42be8530a727faec4537.png",
-    "static/media/Keyboard_Note.png": "/webaudio-node-editor/static/media/Keyboard_Note.cc5fa0bc30c4da79f63a.png",
-    "static/media/Keyboard_ASDR.png": "/webaudio-node-editor/static/media/Keyboard_ASDR.ba773546a43fc4c1346e.png",
-    "static/media/Transpose.png": "/webaudio-node-editor/static/media/Transpose.bfe684a94e8c8ba6c7b4.png",
-    "static/media/Note_Freq.png": "/webaudio-node-editor/static/media/Note_Freq.86941e2300167b728e6d.png",
-    "static/media/Delay.png": "/webaudio-node-editor/static/media/Delay.6065af2035ebcc87e09e.png",
-    "static/media/Console_Debug.png": "/webaudio-node-editor/static/media/Console_Debug.84dbd9306019733fce08.png",
-    "index.html": "/webaudio-node-editor/index.html",
-    "main.b68cb6d7.css.map": "/webaudio-node-editor/static/css/main.b68cb6d7.css.map",
-    "main.0deb1ba0.js.map": "/webaudio-node-editor/static/js/main.0deb1ba0.js.map",
-    "787.80e724c9.chunk.js.map": "/webaudio-node-editor/static/js/787.80e724c9.chunk.js.map"
+    "main.css": "/static/css/main.b68cb6d7.css",
+    "main.js": "/static/js/main.df015d13.js",
+    "static/js/787.80e724c9.chunk.js": "/static/js/787.80e724c9.chunk.js",
+    "static/media/Arrange Nodes.gif": "/static/media/Arrange Nodes.4443461ddbbf19283373.gif",
+    "static/media/Adding Nodes.gif": "/static/media/Adding Nodes.90164be78219e8950e27.gif",
+    "static/media/Deleting Nodes.gif": "/static/media/Deleting Nodes.f03587f296e9aad31945.gif",
+    "static/media/Connecting Nodes.gif": "/static/media/Connecting Nodes.95cc5c3380cc017121b1.gif",
+    "static/media/Processors.png": "/static/media/Processors.3d4365d2459613cb5ce4.png",
+    "static/media/Outputs.png": "/static/media/Outputs.2ff7a51623713e41809a.png",
+    "static/media/Audio_Sources.png": "/static/media/Audio_Sources.42be8530a727faec4537.png",
+    "static/media/Keyboard_Note.png": "/static/media/Keyboard_Note.cc5fa0bc30c4da79f63a.png",
+    "static/media/Keyboard_ASDR.png": "/static/media/Keyboard_ASDR.ba773546a43fc4c1346e.png",
+    "static/media/Transpose.png": "/static/media/Transpose.bfe684a94e8c8ba6c7b4.png",
+    "static/media/Note_Freq.png": "/static/media/Note_Freq.86941e2300167b728e6d.png",
+    "static/media/Delay.png": "/static/media/Delay.6065af2035ebcc87e09e.png",
+    "static/media/Console_Debug.png": "/static/media/Console_Debug.84dbd9306019733fce08.png",
+    "index.html": "/index.html",
+    "main.b68cb6d7.css.map": "/static/css/main.b68cb6d7.css.map",
+    "main.df015d13.js.map": "/static/js/main.df015d13.js.map",
+    "787.80e724c9.chunk.js.map": "/static/js/787.80e724c9.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.b68cb6d7.css",
-    "static/js/main.0deb1ba0.js"
+    "static/js/main.df015d13.js"
   ]
 }
