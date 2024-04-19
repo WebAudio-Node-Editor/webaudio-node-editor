@@ -35,7 +35,7 @@ export default function Blog() {
                     }}
                 >
                     <Link to="/" className="App-link">
-                        WebAudio Node Editor
+                        Wavir
                     </Link>
                     <Divider
                         type="vertical"
@@ -99,7 +99,8 @@ export default function Blog() {
                     </div>
                     <div className="Blog-header">What is this?</div>
                     <div className="Blog-content">
-                        This is a node-based editor for WebAudio created using{' '}
+                        The WebAudio Visual InteRface, or Wavir, is a node-based
+                        editor for WebAudio created using{' '}
                         <a
                             className="Blog-link"
                             href="https://retejs.org/"
@@ -138,16 +139,15 @@ export default function Blog() {
                         <br />
                         - More noise types
                         <br />- Various UX improvements
+                        <br />
+                        - LLM integration
+                        <br />- JS code export
                     </div>
                     <div className="Blog-header">Upcoming features</div>
                     <div className="Blog-content">
                         - Node to play audio files
                         <br />
-                        - Native LLM node generation
-                        <br />
                         - UX overhaul
-                        <br />
-                        - JS code export
                         <br />- And more!
                     </div>
                 </Layout>

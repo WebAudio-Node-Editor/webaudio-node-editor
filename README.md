@@ -1,4 +1,4 @@
-# WebAudio Node Editor
+# WebAudio Visual InteRface (Wavir)
 
 ## Visit the webapp and try it [here](https://webaudio-node-editor.github.io/webaudio-node-editor/#/)!
 

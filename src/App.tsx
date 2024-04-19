@@ -102,7 +102,7 @@ function App() {
                 }}
             >
                 <Link to="/" className="App-header">
-                    WebAudio Node Editor
+                    Wavir
                 </Link>
                 <Divider
                     type="vertical"

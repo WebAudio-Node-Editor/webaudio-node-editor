@@ -525,7 +525,7 @@ export default function Documentation() {
                     }}
                 >
                     <Link to="/" className="App-link">
-                        WebAudio Node Editor
+                        Wavir
                     </Link>
                     <Divider
                         type="vertical"
