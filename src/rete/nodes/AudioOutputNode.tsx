@@ -88,6 +88,7 @@ export class UniversalOutputNode extends Classic.Node<
             { value: 'node', label: 'No Compressor' },
         ]
 
+
         this.addControl('visual', new DropdownControl(change, dropdownOptionsVisual))
         this.addControl('dynamicCompressor', new DropdownControl(change, dropdownOptionsCompressor))
         //Make the dropdown larger
@@ -109,8 +110,20 @@ export class UniversalOutputNode extends Classic.Node<
         let val = false
         if (inputs.signal) {
             val = true
-            inputs.signal.forEach((itm) => itm.connect(gain))
+
+            //if default is on
+            if(this.controls.dynamicCompressor.value?.toString()?.localeCompare('default') === 0){
+                //Connect to the compressor
+                const compressor = audioCtx.createDynamicsCompressor()
+                inputs.signal.forEach((itm) => itm.connect(compressor))
+
+                //Connect the compressor to the gain
+                compressor.connect(gain);
+            }else{
+                inputs.signal.forEach((itm) => itm.connect(gain))
+            }  
         }
+        
         gain.connect(globalGain)
         gain.connect(this.timeAnalyserNode)
         gain.connect(this.freqAnalyserNode)
@@ -120,16 +133,8 @@ export class UniversalOutputNode extends Classic.Node<
         var di_linear = this.controls.visual.value?.toString()
         this.controls.freqVisualizer.display_linear =
             di_linear?.localeCompare('linear') === 0
-
-
-        //if default is on
-        if(this.controls.dynamicCompressor.value?.toString() == "default"){
-
-            const compressor = audioCtx.createDynamicsCompressor()
-            inputs.signal?.forEach((itm) => itm.connect(compressor))
-
-        }
-
+        
+    
         
 
         //Inputting Range Parameters
