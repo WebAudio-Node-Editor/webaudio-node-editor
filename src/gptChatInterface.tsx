@@ -7,7 +7,8 @@ const GptChatInterface = ({ loadEditor }: GptChatInterfaceProps) => {
     const [apiKey, setApiKey] = useState('')
     const [prompt, setPrompt] = useState('')
     const [assistantsapiKey, setAssistantsApiKey] = useState('')
-    //const [response, setResponse] = useState('');
+    const [response, setResponse] = useState('');
+    const [errorMessage, setErrorMessage] = useState('');
 
     const chatStyle: React.CSSProperties = {
         padding: '20px',
@@ -36,10 +37,18 @@ const GptChatInterface = ({ loadEditor }: GptChatInterfaceProps) => {
         cursor: 'pointer',
         margin: '10px 0',
     }
+    const errorMessageStyle: React.CSSProperties = {
+      color: 'black', 
+      backgroundColor: '#ffe6e6', 
+      padding: '10px', 
+      borderRadius: '5px', 
+      marginTop: '10px'
+    }
 
     const handleSendPrompt = async () => {
         const formattedPrompt = prompt.trim()
-
+        setErrorMessage('');
+        setResponse('');
         if (!apiKey || !formattedPrompt) {
             alert('API Key and prompt are required.')
             return
@@ -71,29 +80,31 @@ const GptChatInterface = ({ loadEditor }: GptChatInterfaceProps) => {
                 )
             }
 
-            if (run.status === 'completed') {
-                const messages = await openai.beta.threads.messages.list(
-                    run.thread_id
-                )
-                console.log(messages.data[0])
-                let parsedResponse
-                try {
-                    parsedResponse = JSON.parse(
-                        JSON.stringify(messages.data[0].content[0])
-                    )
-                    var jsonOutput = parsedResponse['text']['value']
-                    console.log('loading GPT output:', jsonOutput)
-                    await loadEditor(JSON.parse(jsonOutput))
-                } catch (error) {
-                    console.error('Error parsing response:', error)
-                    return
-                }
-            } else {
-                console.log(run.status)
-            }
+      if (run.status === 'completed') {
+        const messages = await openai.beta.threads.messages.list(
+          run.thread_id
+        );
+        console.log(messages.data[0])
+        let parsedResponse;
+        try {
+            parsedResponse = JSON.parse(
+                JSON.stringify(messages.data[0].content[0])
+            )
+            var jsonOutput = parsedResponse["text"]["value"]
+            setResponse(jsonOutput);
+            console.log("loading GPT output:",jsonOutput);
+            await loadEditor(JSON.parse(jsonOutput));
+          
+        } catch (error: any) {
+            console.error("Error parsing response:", error);
+            setErrorMessage("Error parsing response: " + error.message);
+            return;
         }
+      } else {
+        console.log(run.status)
+      } 
     }
-
+  }
     return (
         <div style={chatStyle}>
             <input
@@ -125,12 +136,22 @@ const GptChatInterface = ({ loadEditor }: GptChatInterfaceProps) => {
                     worry about it!
                 </p>
             </div>
+            {errorMessage && (
+              <div style = {errorMessageStyle}>
+                {errorMessage}
+              </div>
+            )}
+            <div>
+              <p style ={{color: "black"}}>Response:</p>
+              <p style ={{color: "black"}}>{response}</p>
+            </div>
+            
+            
             {/* <div style={{'color': 'black'}}>
         <p>Response:</p>
         <p>{response}</p>
       </div> */}
         </div>
     )
-}
-
+    };
 export default GptChatInterface
