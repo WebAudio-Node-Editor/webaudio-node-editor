@@ -3,12 +3,13 @@ import OpenAI from 'openai'
 interface GptChatInterfaceProps {
     loadEditor: (container: HTMLElement) => Promise<void>
 }
-const GptChatInterface = ({ loadEditor }: GptChatInterfaceProps) => {
+const GptChatInterface = ({ loadEditor}: GptChatInterfaceProps) => {
     const [apiKey, setApiKey] = useState('')
     const [prompt, setPrompt] = useState('')
     const [assistantsapiKey, setAssistantsApiKey] = useState('')
     const [response, setResponse] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
+    const [nodeCount, setNodeCount] = useState('');
 
     const chatStyle: React.CSSProperties = {
         padding: '20px',
@@ -19,8 +20,8 @@ const GptChatInterface = ({ loadEditor }: GptChatInterfaceProps) => {
         position: 'fixed',
         top: 50,
         right: 5,
-        maxHeight: '100%',
-        overflowY: 'auto',
+        height: '600px', 
+        overflowY: 'auto', 
         backgroundColor: 'white',
         zIndex: 1000,
     }
@@ -44,11 +45,43 @@ const GptChatInterface = ({ loadEditor }: GptChatInterfaceProps) => {
       borderRadius: '5px', 
       marginTop: '10px'
     }
+    const fileOptions = {
+      types: [
+          {
+              description: 'JSON files',
+              accept: {
+                  'text/plain': '.json' as `.${string}`,
+              },
+          },
+      ],
+  }
+  const exportFile = async (jsonData: Record<string, any>) => {
+    const jsonDataStr = JSON.stringify(jsonData, null, 2);
+    const blob = new Blob([jsonDataStr], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+
+    const a = document.createElement('a');
+    a.href = url;
+
+    const userResponse = window.prompt("Enter file name:", "output.json");
+    if (userResponse !== null) {
+        a.download = userResponse.trim() || 'output.json';
+
+        a.style.display = 'none';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+    } else {
+        URL.revokeObjectURL(url);
+    }
+};
+
 
     const handleSendPrompt = async () => {
         const formattedPrompt = prompt.trim()
         setErrorMessage('');
         setResponse('');
+        setNodeCount('');
         if (!apiKey || !formattedPrompt) {
             alert('API Key and prompt are required.')
             return
@@ -93,7 +126,13 @@ const GptChatInterface = ({ loadEditor }: GptChatInterfaceProps) => {
             var jsonOutput = parsedResponse["text"]["value"]
             setResponse(jsonOutput);
             console.log("loading GPT output:",jsonOutput);
+            var finalOutput = JSON.parse(jsonOutput);
+            console.log("Node Count:",finalOutput["nodes"].length);
+            setNodeCount(finalOutput["nodes"].length);
+            exportFile(finalOutput);
             await loadEditor(JSON.parse(jsonOutput));
+
+
           
         } catch (error: any) {
             console.error("Error parsing response:", error);
@@ -105,6 +144,7 @@ const GptChatInterface = ({ loadEditor }: GptChatInterfaceProps) => {
       } 
     }
   }
+  
     return (
         <div style={chatStyle}>
             <input
@@ -142,8 +182,9 @@ const GptChatInterface = ({ loadEditor }: GptChatInterfaceProps) => {
               </div>
             )}
             <div>
+              <p style ={{color: "black"}}>Node Count: {nodeCount}</p>
               <p style ={{color: "black"}}>Response:</p>
-              <p style ={{color: "black"}}>{response}</p>
+              <pre id = "json" style ={{color: "black"}}>{response}</pre>
             </div>
             
             
