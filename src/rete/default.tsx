@@ -615,7 +615,13 @@ export async function createEditor(container: HTMLElement) {
         }
         let nodes = new Map();
         let nodeIDNum = 0
-        let code = "var audioCtx = new (window.AudioContext || window.webkitAudioContext)();\n"
+        var today = new Date();
+        var dd = String(today.getDate()).padStart(2, '0');
+        var mm = String(today.getMonth() + 1).padStart(2, '0'); 
+        var yyyy = today.getFullYear();
+        let todayStr = mm + '-' + dd + '-' + yyyy;
+        let code = "//WAVIRCodeVersionDate: " + todayStr + "\n\n";
+        code = code.concat("var audioCtx = new (window.AudioContext || window.webkitAudioContext)();\n")
         for (const node of json.nodes) {
             let audioNode = true;
             let newCode = "";
