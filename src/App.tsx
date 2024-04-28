@@ -6,6 +6,7 @@ import { createEditor } from './rete'
 import { Layout, Button, Flex, Select, Divider, Dropdown } from 'antd'
 import { Link } from 'react-router-dom'
 import { FaRedo, FaUndo } from 'react-icons/fa'
+import GptChatInterface from './gptChatInterface'
 
 let selectedExample = 'Default'
 
@@ -13,6 +14,7 @@ function App() {
     const [ref, editor]: readonly [any, any] = useRete(createEditor)
     const [examples, setExamples] = useState<string[]>([])
     const [concepts, setConcepts] = useState<string>('Placeholder')
+    const [showChat, setShowChat] = useState(false)
 
     window.addEventListener('keydown', function (event) {
         const key = event.key
@@ -100,7 +102,7 @@ function App() {
                 }}
             >
                 <Link to="/" className="App-header">
-                    WebAudio Node Editor
+                    Wavir
                 </Link>
                 <Divider
                     type="vertical"
@@ -167,6 +169,12 @@ function App() {
                 <Button danger onClick={() => editor?.toggleAudio()}>
                     Toggle Audio
                 </Button>
+                <Button onClick={() => setShowChat(!showChat)}>
+                    {showChat ? 'Hide LLM Chat' : 'Show LLM Chat'}
+                </Button>
+                {showChat && (
+                    <GptChatInterface loadEditor={editor?.loadEditor} />
+                )}
             </Flex>
 
             <div
@@ -215,6 +223,9 @@ function App() {
                 </Button>
                 <Button onClick={() => editor?.exportEditorToFile()}>
                     Export to file
+                </Button>
+                <Button onClick={() => editor?.exportEditorToJS()}>
+                    Export to code
                 </Button>
                 <Button danger onClick={() => editor?.clearEditor()}>
                     Clear

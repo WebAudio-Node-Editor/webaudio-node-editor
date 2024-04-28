@@ -28,28 +28,105 @@ export async function createNode(
         case 'Audio Output':
             return new AudioOutputNode(process)
         case 'Universal Output':
-            return new UniversalOutputNode(process, data)
+            if (isNaN(parseInt(data['gain']))) {
+                throw new Error('Invalid gain')
+            } else {
+                return new UniversalOutputNode(process, data)
+            }
+
         case 'Clip Signal':
-            return new ClipNode(process, data)
+            if (isNaN(parseInt(data['amp']))) {
+                throw new Error('Invalid amplitude')
+            } else {
+                return new ClipNode(process, data)
+            }
+
         case 'Biquad Filter':
-            return new EditorBiquadNode(process, data)
+            var validSettings = [
+                'lowpass',
+                'highpass',
+                'bandpass',
+                'lowshelf',
+                'highshelf',
+                'peaking',
+                'notch',
+                'allpass',
+            ]
+            if (!validSettings.includes(data['filterType'])) {
+                throw new Error('Invalid filter option')
+            } else if (isNaN(parseInt(data['q']))) {
+                throw new Error('Invalid Q')
+            } else if (!Number.isInteger(data['freq'])) {
+                throw new Error('Invalid frequency')
+            } else {
+                return new EditorBiquadNode(process, data)
+            }
+
         case 'Constant':
-            return new EditorConstantNode(process, data)
+            if (isNaN(parseInt(data['value']))) {
+                throw new Error('Invalid gain')
+            } else {
+                return new EditorConstantNode(process, data)
+            }
         case 'Gain':
-            return new EditorGainNode(process, data)
+            if (isNaN(parseInt(data['gain']))) {
+                throw new Error('Invalid gain')
+            } else {
+                return new EditorGainNode(process, data)
+            }
         case 'Dynamics Compressor':
             return new DynamicsCompressorNode(process, data)
         case 'Delay':
-            return new EditorDelayNode(process, data)
+            if (!Number.isInteger(data['delay'])) {
+                throw new Error('Invalid delay')
+            } else if (!Number.isInteger(data['maxDelay'])) {
+                throw new Error('Invalid max delay')
+            } else {
+                return new EditorDelayNode(process, data)
+            }
+
         case 'Noise':
-            return new EditorNoiseNode(process, data)
+            console.log('noise')
+            console.log(data)
+            var noiseTypes = [
+                'White Noise',
+                'Brown Noise',
+                'Pink Noise',
+                'Violet Noise',
+                'Blue Noise',
+                'Grey Noise',
+                'Velvet Noise',
+            ]
+            if (!noiseTypes.includes(data['noiseType'])) {
+                throw new Error('Invalid noise type')
+            } else {
+                return new EditorNoiseNode(process, data)
+            }
         case 'Oscillator':
-            return new EditorOscillatorNode(process, data)
+            var validWaveforms = ['sine', 'sawtooth', 'triangle', 'square']
+            if (!validWaveforms.includes(data['waveform'])) {
+                throw new Error('Not a valid waveform')
+            } else if (!Number.isInteger(data['baseFreq'])) {
+                throw new Error('Invalid frequency')
+            } else {
+                return new EditorOscillatorNode(process, data)
+            }
         case 'Note Frequency':
-            return new NoteFrequencyNode(process, data)
+            console.log('Note freq')
+            console.log(data)
+            if (isNaN(parseInt(data['octave']))) {
+                throw new Error('Invalid octave')
+            }
+            if (isNaN(parseInt(data['note']))) {
+                throw new Error('Invalid note')
+            } else {
+                return new NoteFrequencyNode(process, data)
+            }
         case 'Transpose':
             return new TransposeNode(process, data)
         case 'Time Domain Visualizer':
+            console.log('time domain')
+            console.log(data)
             return new TimeDomainVisualizerNode()
         case 'Frequency Domain Visualizer':
             return new FrequencyDomainVisualizerNode(process, data)
@@ -66,13 +143,17 @@ export async function createNode(
 
 export async function importEditor(context: Context, data: any) {
     const { nodes, connections, comments } = data
-
+    const nodeIds = new Set(nodes.map((node: { id: string }) => node.id))
     for (const n of nodes) {
         const node = await createNode(context, n.name, n.data)
         node.id = n.id
         await context.editor.addNode(node)
     }
     for (const c of connections) {
+        if (!nodeIds.has(c.source) || !nodeIds.has(c.target)) {
+            console.error('Invalid connection: Node ID not found')
+            continue
+        }
         const source = context.editor.getNode(c.source)
         const target = context.editor.getNode(c.target)
 
@@ -92,22 +173,26 @@ export async function importEditor(context: Context, data: any) {
             await context.editor.addConnection(conn)
         }
     }
-    if(comments){
+    if (comments) {
         for (const cm of comments) {
-            if(cm["type"] === "frame-comment"){
+            if (cm['type'] === 'frame-comment') {
                 context.comment.addFrame(cm.text, cm.links)
-            }
-            else {
-                context.comment.addInline(cm.text, [0,0], cm.links[0])
+            } else {
+                context.comment.addInline(cm.text, [0, 0], cm.links[0])
             }
         }
-    } 
+    }
 }
 
 export function exportEditor(context: Context) {
     const nodes = []
     const connections = []
-    const comments: { id: string; links: string[]; text: string; type: string; }[] = []
+    const comments: {
+        id: string
+        links: string[]
+        text: string
+        type: string
+    }[] = []
 
     for (const n of context.editor.getNodes()) {
         nodes.push({
@@ -124,14 +209,14 @@ export function exportEditor(context: Context) {
             targetInput: c.targetInput,
         })
     }
-    context.comment.comments.forEach((value, key) => {       
+    context.comment.comments.forEach((value, key) => {
         comments.push({
             id: value.id,
             links: value.links,
             text: value.text,
-            type: value.element.children[0].className.split(" ")[0]
+            type: value.element.children[0].className.split(' ')[0],
         })
-    });
+    })
 
     return {
         nodes,

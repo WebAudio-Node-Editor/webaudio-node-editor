@@ -1,6 +1,6 @@
-# WebAudio Node Editor
+# WebAudio Visual InteRface (Wavir)
 
-## Visit the webapp and try it [here](https://webaudio-node-editor.github.io/webaudio-node-editor/#/)!
+## Visit the webapp and try it [here](https://wavir.io/#/)!
 
 [Video Demo](https://youtu.be/TkXoJeamk2c)
 
