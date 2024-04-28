@@ -4,28 +4,20 @@ import { LabeledInputControl } from '../controls/LabeledInputControl'
 import { DropdownControl } from '../controls/DropdownControl'
 
 export class EditorOscillatorNode extends Classic.Node<
-    { baseFrequency: Classic.Socket; frequency: Classic.Socket },
+    { frequency: Classic.Socket },
     { signal: Classic.Socket },
-    { waveform: DropdownControl }
+    {
+        waveform: DropdownControl
+        baseFrequency: Classic.InputControl<'number', number>
+    }
 > {
     width = 180
-    height = 210
+    height = 230
     constructor(
         change: () => void,
         initial?: { baseFreq: number; waveform: string }
     ) {
         super('Oscillator')
-
-        let baseFreqInput = new Classic.Input(socket, 'Base Frequency', false)
-        baseFreqInput.addControl(
-            new LabeledInputControl(
-                initial ? initial.baseFreq : 440,
-                'Base Frequency',
-                change,
-                50
-            )
-        )
-        this.addInput('baseFrequency', baseFreqInput)
 
         let freqInput = new Classic.Input(socket, 'Additional Frequency', true)
         this.addInput('frequency', freqInput)
@@ -40,6 +32,16 @@ export class EditorOscillatorNode extends Classic.Node<
         ]
 
         this.addControl(
+            'baseFrequency',
+            new LabeledInputControl(
+                initial ? initial.baseFreq : 440,
+                'Base Frequency',
+                change,
+                50
+            )
+        )
+
+        this.addControl(
             'waveform',
             new DropdownControl(
                 change,
@@ -49,27 +51,28 @@ export class EditorOscillatorNode extends Classic.Node<
         )
     }
 
-    data(inputs: { baseFrequency?: AudioNode[]; frequency?: AudioNode[] }): {
-        signal: AudioNode
-    } {
+    data(inputs: {
+        baseFrequency?: AudioNode[]
+        additionalFrequency?: AudioNode[]
+    }): { signal: AudioNode } {
         const osc = audioCtx.createOscillator()
         osc.type =
             (this.controls.waveform.value?.toString() as OscillatorType) ||
             'sine'
-        const bfreqControl = this.inputs['baseFrequency']?.control
+        const bfreqControl = this.controls.baseFrequency
 
         if (inputs.baseFrequency) {
             osc.frequency.setValueAtTime(0.01, audioCtx.currentTime)
             inputs.baseFrequency[0].connect(osc.frequency)
         } else {
             osc.frequency.setValueAtTime(
-                (bfreqControl as LabeledInputControl).value || 440,
+                bfreqControl.value || 440,
                 audioCtx.currentTime
             )
         }
 
-        if (inputs.frequency) {
-            inputs.frequency.forEach((itm) => {
+        if (inputs.additionalFrequency) {
+            inputs.additionalFrequency.forEach((itm) => {
                 console.log(itm)
                 itm.connect(osc.frequency)
             })
@@ -84,9 +87,7 @@ export class EditorOscillatorNode extends Classic.Node<
 
     serialize() {
         return {
-            baseFreq: (
-                this.inputs.baseFrequency?.control as LabeledInputControl
-            ).value,
+            baseFreq: this.controls.baseFrequency.value,
             waveform: this.controls.waveform.value,
         }
     }

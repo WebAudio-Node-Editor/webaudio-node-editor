@@ -159,7 +159,7 @@
             "source": "0c3d15ed235bc486",
             "sourceOutput": "signal",
             "target": "8815237422c80a5f",
-            "targetInput": "baseGain"
+            "targetInput": "additionalGain"
         },
         {
             "source": "52eb245899d77a18",
