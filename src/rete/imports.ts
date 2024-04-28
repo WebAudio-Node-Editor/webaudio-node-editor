@@ -2,6 +2,7 @@ import { Connection, Context } from './default'
 import { EditorOscillatorNode } from './nodes/EditorOscillatorNode'
 import { EditorNoiseNode } from './nodes/EditorNoiseNode'
 import { EditorGainNode } from './nodes/EditorGainNode'
+import { DynamicsCompressorNode } from './nodes/DynamicsCompressorNode'
 import { AudioOutputNode, UniversalOutputNode } from './nodes/AudioOutputNode'
 import { EditorConstantNode } from './nodes/EditorConstantNode'
 import {
@@ -73,7 +74,8 @@ export async function createNode(
             } else {
                 return new EditorGainNode(process, data)
             }
-
+        case 'Dynamics Compressor':
+            return new DynamicsCompressorNode(process, data)
         case 'Delay':
             if (!Number.isInteger(data['delay'])) {
                 throw new Error('Invalid delay')
