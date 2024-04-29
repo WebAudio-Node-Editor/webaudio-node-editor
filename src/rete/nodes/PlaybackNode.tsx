@@ -82,19 +82,31 @@ export class PlaybackNode extends Classic.Node<
     }
 
     handlePlay = () => {
-        if(!this.audioBuffer){
+        if(!this.audioBuffer) {
             return
         }
         if(!this.audioSource){
-            //this.audioSource.stop()
-           // this.audioSource.disconnect()
-        
+            
+            if (!this.outputs.playback) {
+                console.warn('Playback node does not have a "playback" output');
+                return;
+            }
+            
+    
+            //const outputConnections = this.outputs.playback.connections;
+            /*
+            if (outputConnections.length === 0) {
+                console.warn('Playback node is not connected to an output node');
+                return;
+            }*/
 
-        //if (!this.audioSource && this.audioBuffer) {
             this.audioSource = audioCtx.createBufferSource()
             this.audioSource.buffer = this.audioBuffer
             this.audioSource.loop = this.controls.play.loop 
+
+            //this.audioSource.connect(this.outputs.playback);
             this.audioSource.connect(globalGain)
+
             this.audioSource.start()
             this.controls.play.playing = true
         }
@@ -141,16 +153,53 @@ export class PlaybackNode extends Classic.Node<
         */
     }
 
+   // data(): { playback: AudioNode } {
+       /* const outputNode = this.outputs.get('playback')?.connections[0]?.node;
+
+        if (outputNode instanceof UniversalOutputNode) {
+          return {
+            playback: this.audioSource || audioCtx.createBufferSource(),
+          };
+        } else {
+          console.error('PlaybackNode must be connected to a UniversalOutputNode');
+          return {};
+            }
+      }
+
+      if (this.outputs.signal.connections.length === 0) {
+        console.warn('Noise node is not connected');
+        return { signal: null }; 
+      }
+
+        return {
+            signal: noiseSource,
+        }
+    }
+
+    if (!this.audioSource) {
+        return { signal: audioCtx.createBufferSource() };
+    }
+
+    return {
+        signal: this.audioSource,
+  
+    //return {
+      //      signal: this.audioSource || audioCtx.createBufferSource(),
+        //}
+
+    };*/
+
     data(): { playback: AudioBufferSourceNode } {
         return {
             playback: this.audioSource || audioCtx.createBufferSource(),
         }
     }
 
+
     serialize() {
         return {
             loop: this.loop,
-            // selectedFile: this.controls.play.loop,
+          
         }
     }
 }

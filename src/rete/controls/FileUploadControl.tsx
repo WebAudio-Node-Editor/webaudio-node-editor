@@ -1,8 +1,12 @@
 import { ClassicPreset as Classic } from 'rete'
 import { useRef } from 'react'
+import { NodeEditor } from 'rete';
+import { Schemes } from '../default';
 
 export class FileUploadControl extends Classic.Control {
     file: File | null = null
+    selectedFile: File | null = null;
+
     constructor(public onFileUpload: (file: File) => void) {
         super()
     }
@@ -13,18 +17,21 @@ export class FileUploadControl extends Classic.Control {
             const file = files[0]
             this.file = file
             this.onFileUpload(file)
+            //this.emit('fileselected', file)
         }
     }
 }
 
 export function CustomFileUploadControl(props: { data: FileUploadControl }) {
     const inputRef = useRef<HTMLInputElement>(null)
-
+    //const node = props.data.node.id as PlaybackNode; 
+   
     const handleClick = () => {
         if (inputRef.current) {
             inputRef.current.click()
         }
     }
+
 
     return (
         <div>

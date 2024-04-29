@@ -260,6 +260,24 @@ export async function createEditor(container: HTMLElement) {
     const selector = AreaExtensions.selector()
     const accumulating = AreaExtensions.accumulateOnCtrl()
 
+    /* Citlall's addition 
+    const playbackNode = new PlaybackNode(process);
+    const universalOutput = new UniversalOutputNode(process);
+
+    await editor.addNode(playbackNode);
+    await editor.addNode(universalOutput);
+
+    await editor.addConnection(
+    new Connection<Node, Node>(
+        playbackNode,
+        'playback' as never,
+        universalOutput,
+        'signal' as never
+    )
+    );
+    */
+
+
     function process() {
         if (processQueued) {
             reprocessQueued = true
