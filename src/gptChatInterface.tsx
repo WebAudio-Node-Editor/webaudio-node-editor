@@ -3,7 +3,7 @@ import OpenAI from 'openai'
 interface GptChatInterfaceProps {
     loadEditor: (container: HTMLElement) => Promise<void>
 }
-const GptChatInterface = ({ loadEditor}: GptChatInterfaceProps) => {
+const GptChatInterface = ({ loadEditor }: GptChatInterfaceProps) => {
     const [apiKey, setApiKey] = useState('')
     const [prompt, setPrompt] = useState('')
     const [assistantsapiKey, setAssistantsApiKey] = useState('')
@@ -20,8 +20,8 @@ const GptChatInterface = ({ loadEditor}: GptChatInterfaceProps) => {
         position: 'fixed',
         top: 50,
         right: 5,
-        height: '600px', 
-        overflowY: 'auto', 
+        height: '600px',
+        overflowY: 'auto',
         backgroundColor: 'white',
         zIndex: 1000,
     }
@@ -39,42 +39,42 @@ const GptChatInterface = ({ loadEditor}: GptChatInterfaceProps) => {
         margin: '10px 0',
     }
     const errorMessageStyle: React.CSSProperties = {
-      color: 'black', 
-      backgroundColor: '#ffe6e6', 
-      padding: '10px', 
-      borderRadius: '5px', 
-      marginTop: '10px'
+        color: 'black',
+        backgroundColor: '#ffe6e6',
+        padding: '10px',
+        borderRadius: '5px',
+        marginTop: '10px'
     }
     const fileOptions = {
-      types: [
-          {
-              description: 'JSON files',
-              accept: {
-                  'text/plain': '.json' as `.${string}`,
-              },
-          },
-      ],
-  }
-  const exportFile = async (jsonData: Record<string, any>) => {
-    const jsonDataStr = JSON.stringify(jsonData, null, 2);
-    const blob = new Blob([jsonDataStr], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-
-    const a = document.createElement('a');
-    a.href = url;
-
-    const userResponse = window.prompt("Enter file name:", "output.json");
-    if (userResponse !== null) {
-        a.download = userResponse.trim() || 'output.json';
-
-        a.style.display = 'none';
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-    } else {
-        URL.revokeObjectURL(url);
+        types: [
+            {
+                description: 'JSON files',
+                accept: {
+                    'text/plain': '.json' as `.${string}`,
+                },
+            },
+        ],
     }
-};
+    const exportFile = async (jsonData: Record<string, any>) => {
+        const jsonDataStr = JSON.stringify(jsonData, null, 2);
+        const blob = new Blob([jsonDataStr], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+
+        const a = document.createElement('a');
+        a.href = url;
+
+        const userResponse = window.prompt("Enter file name:", "output.json");
+        if (userResponse !== null) {
+            a.download = userResponse.trim() || 'output.json';
+
+            a.style.display = 'none';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        } else {
+            URL.revokeObjectURL(url);
+        }
+    };
 
 
     const handleSendPrompt = async () => {
@@ -103,48 +103,46 @@ const GptChatInterface = ({ loadEditor}: GptChatInterfaceProps) => {
                 assistant_id: assistantsapiKey,
             })
 
-            while (
-                ['queued', 'in_progress', 'cancelling'].includes(run.status)
-            ) {
-                await new Promise((resolve) => setTimeout(resolve, 1000)) // Wait for 1 second
+            let tries = 0
+            while (run.status !== 'completed' && tries < 30) { // wait at most 30 seconds for the openAI run to complete
+                tries += 1
+                await new Promise((resolve) => setTimeout(resolve, 1000))
                 run = await openai.beta.threads.runs.retrieve(
                     run.thread_id,
                     run.id
                 )
             }
 
-      if (run.status === 'completed') {
-        const messages = await openai.beta.threads.messages.list(
-          run.thread_id
-        );
-        console.log(messages.data[0])
-        let parsedResponse;
-        try {
-            parsedResponse = JSON.parse(
-                JSON.stringify(messages.data[0].content[0])
-            )
-            var jsonOutput = parsedResponse["text"]["value"]
-            setResponse(jsonOutput);
-            console.log("loading GPT output:",jsonOutput);
-            var finalOutput = JSON.parse(jsonOutput);
-            console.log("Node Count:",finalOutput["nodes"].length);
-            setNodeCount(finalOutput["nodes"].length);
-            exportFile(finalOutput);
-            await loadEditor(JSON.parse(jsonOutput));
+            if (run.status === 'completed') {
+                const messages = await openai.beta.threads.messages.list(
+                    run.thread_id
+                );
+                console.log(messages.data[0])
+                let parsedResponse;
+                try {
+                    parsedResponse = JSON.parse(
+                        JSON.stringify(messages.data[0].content[0])
+                    )
+                    var jsonOutput = parsedResponse["text"]["value"]
+                    setResponse(jsonOutput);
+                    console.log("loading GPT output:", jsonOutput);
+                    var finalOutput = JSON.parse(jsonOutput);
+                    console.log("Node Count:", finalOutput["nodes"].length);
+                    setNodeCount(finalOutput["nodes"].length);
+                    exportFile(finalOutput);
+                    await loadEditor(JSON.parse(jsonOutput));
 
 
-          
-        } catch (error: any) {
-            console.error("Error parsing response:", error);
-            setErrorMessage("Error parsing response: " + error.message);
-            return;
+
+                } catch (error: any) {
+                    console.error("Error parsing response:", error);
+                    setErrorMessage("Error parsing response: " + error.message);
+                    return;
+                }
+            }
         }
-      } else {
-        console.log(run.status)
-      } 
     }
-  }
-  
+
     return (
         <div style={chatStyle}>
             <input
@@ -177,22 +175,22 @@ const GptChatInterface = ({ loadEditor}: GptChatInterfaceProps) => {
                 </p>
             </div>
             {errorMessage && (
-              <div style = {errorMessageStyle}>
-                {errorMessage}
-              </div>
+                <div style={errorMessageStyle}>
+                    {errorMessage}
+                </div>
             )}
             <div>
-              <p style ={{color: "black"}}>Node Count: {nodeCount}</p>
-              <p style ={{color: "black"}}>Response:</p>
-              <pre id = "json" style ={{color: "black"}}>{response}</pre>
+                <p style={{ color: "black" }}>Node Count: {nodeCount}</p>
+                <p style={{ color: "black" }}>Response:</p>
+                <pre id="json" style={{ color: "black" }}>{response}</pre>
             </div>
-            
-            
+
+
             {/* <div style={{'color': 'black'}}>
         <p>Response:</p>
         <p>{response}</p>
       </div> */}
         </div>
     )
-    };
+};
 export default GptChatInterface

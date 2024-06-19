@@ -137,7 +137,7 @@ export async function createNode(
         case 'Keyboard ADSR':
             return new KeyboardADSRNode(process, data)
         default:
-            throw new Error('Unsupported node')
+            throw new Error('Unsupported node: ' + name)
     }
 }
 
