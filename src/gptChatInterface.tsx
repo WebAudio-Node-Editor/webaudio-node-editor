@@ -63,16 +63,18 @@ const GptChatInterface = ({ loadEditor }: GptChatInterfaceProps) => {
         const a = document.createElement('a');
         a.href = url;
 
-        const userResponse = window.prompt("Enter file name:", "output.json");
-        if (userResponse !== null) {
-            a.download = userResponse.trim() || 'output.json';
+        if (location.hostname === "localhost" || location.hostname === "127.0.0.1") {
+            const userResponse = window.prompt("Enter file name:", "output.json");
+            if (userResponse !== null) {
+                a.download = userResponse.trim() || 'output.json';
 
-            a.style.display = 'none';
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-        } else {
-            URL.revokeObjectURL(url);
+                a.style.display = 'none';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+            } else {
+                URL.revokeObjectURL(url);
+            }
         }
     };
 
