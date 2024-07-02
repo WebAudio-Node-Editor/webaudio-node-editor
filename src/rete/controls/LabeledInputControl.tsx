@@ -37,6 +37,27 @@ export function CustomLabeledInputControl(props: {
         setValue(props.data.value)
     }, [props.data.value])
 
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const val = (
+            props.data.type === 'number'
+                ? (String(e.target.value) === '' ? '' : +e.target.value)
+                : e.target.value
+        ) as (typeof props.data)['value']
+
+        // If input is empty, keep field empty, but set value internally as zero
+        setValue(val)
+        // props.data.setValue(String(val) === '' ? 0 : val); // this line SHOULD give us required behavior, but doesn't
+        props.data.setValue(val); // this line unexpectedly gives us required behavior
+    }
+
+    const handleBlur = () => {
+        // If input field is out of focus and empty, set value to 0
+        if (String(value) === '') {
+            setValue(0);
+            props.data.setValue(0);
+        }
+    };
+
     return (
         <div>
             <div style={{ padding: '5px 6px' }}>{props.data.label}</div>
@@ -45,16 +66,8 @@ export function CustomLabeledInputControl(props: {
                 type={props.data.type}
                 ref={ref}
                 readOnly={props.data.readonly}
-                onChange={(e) => {
-                    const val = (
-                        props.data.type === 'number'
-                            ? +e.target.value
-                            : e.target.value
-                    ) as (typeof props.data)['value']
-
-                    setValue(val)
-                    props.data.setValue(val)
-                }}
+                onChange={handleChange}
+                onBlur={handleBlur}
                 step={props.data.increment}
                 styles={props.styles}
             />
