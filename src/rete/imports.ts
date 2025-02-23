@@ -18,6 +18,7 @@ import {
     KeyboardNoteNode,
 } from './nodes/KeyboardOscillatorNode'
 import { EditorDelayNode } from './nodes/EditorDelayNode'
+import { ASDRNode } from './nodes/ASDRNode'
 
 export async function createNode(
     { editor, area, dataflow, process }: Context,
@@ -136,6 +137,8 @@ export async function createNode(
             return new KeyboardNoteNode(process, data)
         case 'Keyboard ADSR':
             return new KeyboardADSRNode(process, data)
+        case "ASDR":
+            return new ASDRNode(process, data)
         default:
             throw new Error('Unsupported node: ' + name)
     }
