@@ -7,9 +7,9 @@ const GptChatInterface = ({ loadEditor }: GptChatInterfaceProps) => {
     const [apiKey, setApiKey] = useState('')
     const [prompt, setPrompt] = useState('')
     const [assistantsapiKey, setAssistantsApiKey] = useState('')
-    const [response, setResponse] = useState('');
-    const [errorMessage, setErrorMessage] = useState('');
-    const [nodeCount, setNodeCount] = useState('');
+    const [response, setResponse] = useState('')
+    const [errorMessage, setErrorMessage] = useState('')
+    const [nodeCount, setNodeCount] = useState('')
 
     const chatStyle: React.CSSProperties = {
         padding: '20px',
@@ -43,7 +43,7 @@ const GptChatInterface = ({ loadEditor }: GptChatInterfaceProps) => {
         backgroundColor: '#ffe6e6',
         padding: '10px',
         borderRadius: '5px',
-        marginTop: '10px'
+        marginTop: '10px',
     }
     const fileOptions = {
         types: [
@@ -56,32 +56,31 @@ const GptChatInterface = ({ loadEditor }: GptChatInterfaceProps) => {
         ],
     }
     const exportFile = async (jsonData: Record<string, any>) => {
-        const jsonDataStr = JSON.stringify(jsonData, null, 2);
-        const blob = new Blob([jsonDataStr], { type: 'application/json' });
-        const url = URL.createObjectURL(blob);
+        const jsonDataStr = JSON.stringify(jsonData, null, 2)
+        const blob = new Blob([jsonDataStr], { type: 'application/json' })
+        const url = URL.createObjectURL(blob)
 
-        const a = document.createElement('a');
-        a.href = url;
+        const a = document.createElement('a')
+        a.href = url
 
-        const userResponse = window.prompt("Enter file name:", "output.json");
+        const userResponse = window.prompt('Enter file name:', 'output.json')
         if (userResponse !== null) {
-            a.download = userResponse.trim() || 'output.json';
+            a.download = userResponse.trim() || 'output.json'
 
-            a.style.display = 'none';
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
+            a.style.display = 'none'
+            document.body.appendChild(a)
+            a.click()
+            document.body.removeChild(a)
         } else {
-            URL.revokeObjectURL(url);
+            URL.revokeObjectURL(url)
         }
-    };
-
+    }
 
     const handleSendPrompt = async () => {
         const formattedPrompt = prompt.trim()
-        setErrorMessage('');
-        setResponse('');
-        setNodeCount('');
+        setErrorMessage('')
+        setResponse('')
+        setNodeCount('')
         if (!apiKey || !formattedPrompt) {
             alert('API Key and prompt are required.')
             return
@@ -104,7 +103,8 @@ const GptChatInterface = ({ loadEditor }: GptChatInterfaceProps) => {
             })
 
             let tries = 0
-            while (run.status !== 'completed' && tries < 30) { // wait at most 30 seconds for the openAI run to complete
+            while (run.status !== 'completed' && tries < 30) {
+                // wait at most 30 seconds for the openAI run to complete
                 tries += 1
                 await new Promise((resolve) => setTimeout(resolve, 1000))
                 run = await openai.beta.threads.runs.retrieve(
@@ -116,28 +116,25 @@ const GptChatInterface = ({ loadEditor }: GptChatInterfaceProps) => {
             if (run.status === 'completed') {
                 const messages = await openai.beta.threads.messages.list(
                     run.thread_id
-                );
+                )
                 console.log(messages.data[0])
-                let parsedResponse;
+                let parsedResponse
                 try {
                     parsedResponse = JSON.parse(
                         JSON.stringify(messages.data[0].content[0])
                     )
-                    var jsonOutput = parsedResponse["text"]["value"]
-                    setResponse(jsonOutput);
-                    console.log("loading GPT output:", jsonOutput);
-                    var finalOutput = JSON.parse(jsonOutput);
-                    console.log("Node Count:", finalOutput["nodes"].length);
-                    setNodeCount(finalOutput["nodes"].length);
-                    exportFile(finalOutput);
-                    await loadEditor(JSON.parse(jsonOutput));
-
-
-
+                    var jsonOutput = parsedResponse['text']['value']
+                    setResponse(jsonOutput)
+                    console.log('loading GPT output:', jsonOutput)
+                    var finalOutput = JSON.parse(jsonOutput)
+                    console.log('Node Count:', finalOutput['nodes'].length)
+                    setNodeCount(finalOutput['nodes'].length)
+                    exportFile(finalOutput)
+                    await loadEditor(JSON.parse(jsonOutput))
                 } catch (error: any) {
-                    console.error("Error parsing response:", error);
-                    setErrorMessage("Error parsing response: " + error.message);
-                    return;
+                    console.error('Error parsing response:', error)
+                    setErrorMessage('Error parsing response: ' + error.message)
+                    return
                 }
             }
         }
@@ -175,16 +172,15 @@ const GptChatInterface = ({ loadEditor }: GptChatInterfaceProps) => {
                 </p>
             </div>
             {errorMessage && (
-                <div style={errorMessageStyle}>
-                    {errorMessage}
-                </div>
+                <div style={errorMessageStyle}>{errorMessage}</div>
             )}
             <div>
-                <p style={{ color: "black" }}>Node Count: {nodeCount}</p>
-                <p style={{ color: "black" }}>Response:</p>
-                <pre id="json" style={{ color: "black" }}>{response}</pre>
+                <p style={{ color: 'black' }}>Node Count: {nodeCount}</p>
+                <p style={{ color: 'black' }}>Response:</p>
+                <pre id="json" style={{ color: 'black' }}>
+                    {response}
+                </pre>
             </div>
-
 
             {/* <div style={{'color': 'black'}}>
         <p>Response:</p>
@@ -192,5 +188,5 @@ const GptChatInterface = ({ loadEditor }: GptChatInterfaceProps) => {
       </div> */}
         </div>
     )
-};
+}
 export default GptChatInterface

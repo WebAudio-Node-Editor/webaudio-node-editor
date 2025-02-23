@@ -5,16 +5,23 @@ import { LabeledInputControl } from '../controls/LabeledInputControl'
 export class ASDRNode extends Classic.Node<
     { signal: Classic.Socket; trigger: Classic.Socket },
     { signal: Classic.Socket },
-    { attack: Classic.InputControl<'number', number>,
-      delay: Classic.InputControl<'number', number>,
-      sustain: Classic.InputControl<'number', number>,
-      release: Classic.InputControl<'number', number> }
+    {
+        attack: Classic.InputControl<'number', number>
+        delay: Classic.InputControl<'number', number>
+        sustain: Classic.InputControl<'number', number>
+        release: Classic.InputControl<'number', number>
+    }
 > {
     width = 180
     height = 500
     constructor(
         change: () => void,
-        initial?: { attack: number; delay: number, sustain: number, release: number}
+        initial?: {
+            attack: number
+            delay: number
+            sustain: number
+            release: number
+        }
     ) {
         super('ASDR')
 
@@ -22,18 +29,18 @@ export class ASDRNode extends Classic.Node<
         this.addInput('signal', signalInput)
 
         let triggerInput = new Classic.Input(socket, 'Trigger', false)
-        this.addInput("trigger", triggerInput)
+        this.addInput('trigger', triggerInput)
 
         this.addControl(
-            "attack",
+            'attack',
             new LabeledInputControl(
                 initial ? initial.attack : 1,
-                "Attack",
+                'Attack',
                 change
             )
         )
         this.addControl(
-            "delay",
+            'delay',
             new LabeledInputControl(
                 initial ? initial.delay : 1,
                 'Delay',
@@ -61,7 +68,8 @@ export class ASDRNode extends Classic.Node<
     }
 
     data(inputs: { signal?: AudioNode[]; trigger?: AudioNode[] }): {
-        signal: AudioNode, value: boolean
+        signal: AudioNode
+        value: boolean
     } {
         const gainNode = audioCtx.createGain()
         const attack = this.controls.attack.value || 0.1
@@ -73,9 +81,18 @@ export class ASDRNode extends Classic.Node<
             const trigger = inputs.trigger[0]
             trigger.connect(gainNode.gain)
             gainNode.gain.setValueAtTime(0, audioCtx.currentTime)
-            gainNode.gain.linearRampToValueAtTime(1, audioCtx.currentTime + attack)
-            gainNode.gain.linearRampToValueAtTime(sustain, audioCtx.currentTime + attack + delay)
-            gainNode.gain.linearRampToValueAtTime(0, audioCtx.currentTime + attack + delay + release)
+            gainNode.gain.linearRampToValueAtTime(
+                1,
+                audioCtx.currentTime + attack
+            )
+            gainNode.gain.linearRampToValueAtTime(
+                sustain,
+                audioCtx.currentTime + attack + delay
+            )
+            gainNode.gain.linearRampToValueAtTime(
+                0,
+                audioCtx.currentTime + attack + delay + release
+            )
         }
 
         inputs.signal?.forEach((itm) => itm.connect(gainNode))
