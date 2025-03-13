@@ -95,7 +95,7 @@ import {
     CommentExtensions,
     //FrameComment,
 } from 'rete-comment-plugin'
-import { ASDRNode } from './nodes/ASDRNode'
+import { ADSRNode } from './nodes/ADSRNode'
 
 const EPSILON = 0.0001
 
@@ -143,7 +143,7 @@ const sourceNodeTypes = [
     EditorOscillatorNode,
     EditorNoiseNode,
     NoteFrequencyNode,
-    ASDRNode,
+    ADSRNode,
 ]
 
 type ProcessorNode =
@@ -326,7 +326,7 @@ export async function createEditor(container: HTMLElement) {
                         'Dynamics Compressor',
                         () => new DynamicsCompressorNode(process),
                     ],
-                    ['ASDR', () => new ASDRNode(process)],
+                    ['ADSR', () => new ADSRNode(process)],
                 ],
             ],
             [

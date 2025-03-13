@@ -2,7 +2,7 @@ import { ClassicPreset as Classic } from 'rete'
 import { socket, audioCtx } from '../default'
 import { LabeledInputControl } from '../controls/LabeledInputControl'
 
-export class ASDRNode extends Classic.Node<
+export class ADSRNode extends Classic.Node<
     { signal: Classic.Socket; trigger: Classic.Socket },
     { signal: Classic.Socket },
     {
@@ -14,6 +14,7 @@ export class ASDRNode extends Classic.Node<
 > {
     width = 180
     height = 500
+
     constructor(
         change: () => void,
         initial?: {
@@ -23,18 +24,16 @@ export class ASDRNode extends Classic.Node<
             release: number
         }
     ) {
-        super('ASDR')
+        super('ADSR')
 
-        let signalInput = new Classic.Input(socket, 'Signal', true)
-        this.addInput('signal', signalInput)
+        this.addInput('signal', new Classic.Input(socket, 'Signal', true))
 
-        let triggerInput = new Classic.Input(socket, 'Trigger', false)
-        this.addInput('trigger', triggerInput)
+        this.addInput('trigger', new Classic.Input(socket, 'Trigger', false))
 
         this.addControl(
             'attack',
             new LabeledInputControl(
-                initial ? initial.attack : 1,
+                initial ? initial.attack : 0.8,
                 'Attack',
                 change
             )
@@ -42,7 +41,7 @@ export class ASDRNode extends Classic.Node<
         this.addControl(
             'delay',
             new LabeledInputControl(
-                initial ? initial.delay : 1,
+                initial ? initial.delay : 0.7,
                 'Delay',
                 change
             )
@@ -50,7 +49,7 @@ export class ASDRNode extends Classic.Node<
         this.addControl(
             'sustain',
             new LabeledInputControl(
-                initial ? initial.sustain : 0.5,
+                initial ? initial.sustain : 0.1,
                 'Sustain',
                 change
             )
@@ -58,7 +57,7 @@ export class ASDRNode extends Classic.Node<
         this.addControl(
             'release',
             new LabeledInputControl(
-                initial ? initial.release : 0.5,
+                initial ? initial.release : 1,
                 'Release',
                 change
             )
@@ -72,6 +71,9 @@ export class ASDRNode extends Classic.Node<
         value: boolean
     } {
         const gainNode = audioCtx.createGain()
+
+        inputs.signal?.forEach((itm) => itm.connect(gainNode))
+
         const attack = this.controls.attack.value || 0.1
         const delay = this.controls.delay.value || 0.1
         const sustain = this.controls.sustain.value || 0.1
@@ -94,8 +96,6 @@ export class ASDRNode extends Classic.Node<
                 audioCtx.currentTime + attack + delay + release
             )
         }
-
-        inputs.signal?.forEach((itm) => itm.connect(gainNode))
 
         return {
             signal: gainNode,
