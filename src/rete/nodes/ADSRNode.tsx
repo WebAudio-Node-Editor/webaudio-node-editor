@@ -6,10 +6,10 @@ export class ADSRNode extends Classic.Node<
     { signal: Classic.Socket; trigger: Classic.Socket },
     { signal: Classic.Socket },
     {
-        attack: Classic.InputControl<'number', number>
-        delay: Classic.InputControl<'number', number>
-        sustain: Classic.InputControl<'number', number>
-        release: Classic.InputControl<'number', number>
+        attack: LabeledInputControl
+        delay: LabeledInputControl
+        sustain: LabeledInputControl
+        release: LabeledInputControl
     }
 > {
     width = 180
@@ -33,7 +33,7 @@ export class ADSRNode extends Classic.Node<
         this.addControl(
             'attack',
             new LabeledInputControl(
-                initial ? initial.attack : 0.8,
+                initial ? initial.attack : 1,
                 'Attack',
                 change
             )
@@ -41,7 +41,7 @@ export class ADSRNode extends Classic.Node<
         this.addControl(
             'delay',
             new LabeledInputControl(
-                initial ? initial.delay : 0.7,
+                initial ? initial.delay : 1,
                 'Delay',
                 change
             )
@@ -49,7 +49,7 @@ export class ADSRNode extends Classic.Node<
         this.addControl(
             'sustain',
             new LabeledInputControl(
-                initial ? initial.sustain : 0.1,
+                initial ? initial.sustain : 1,
                 'Sustain',
                 change
             )
@@ -74,10 +74,10 @@ export class ADSRNode extends Classic.Node<
 
         inputs.signal?.forEach((itm) => itm.connect(gainNode))
 
-        const attack = this.controls.attack.value || 0.1
-        const delay = this.controls.delay.value || 0.1
-        const sustain = this.controls.sustain.value || 0.1
-        const release = this.controls.release.value || 0.1
+        const attack = this.controls.attack.value || 1
+        const delay = this.controls.delay.value || 1
+        const sustain = this.controls.sustain.value || 1
+        const release = this.controls.release.value || 1
 
         if (inputs.trigger && inputs.trigger.length > 0) {
             const trigger = inputs.trigger[0]
