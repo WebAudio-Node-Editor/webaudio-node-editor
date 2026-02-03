@@ -10,11 +10,22 @@ export class EditorOscillatorNode extends Classic.Node<
 > {
     width = 180
     height = 210
+    cachedOscillator: OscillatorNode | null = null
+
     constructor(
         change: () => void,
         initial?: { baseFreq: number; waveform: string }
     ) {
         super('Oscillator')
+
+        const liveUpdateFrequency = (value: number) => {
+            if (this.cachedOscillator) {
+                this.cachedOscillator.frequency.linearRampToValueAtTime(
+                    value,
+                    audioCtx.currentTime + 0.02
+                )
+            }
+        }
 
         let baseFreqInput = new Classic.Input(socket, 'Base Frequency', false)
         baseFreqInput.addControl(
@@ -22,7 +33,10 @@ export class EditorOscillatorNode extends Classic.Node<
                 initial ? initial.baseFreq : 440,
                 'Base Frequency',
                 change,
-                50
+                50,
+                false,
+                liveUpdateFrequency,
+                2 // round to 2 decimal places
             )
         )
         this.addInput('baseFrequency', baseFreqInput)
@@ -53,6 +67,7 @@ export class EditorOscillatorNode extends Classic.Node<
         signal: AudioNode
     } {
         const osc = audioCtx.createOscillator()
+        this.cachedOscillator = osc
         osc.type =
             (this.controls.waveform.value?.toString() as OscillatorType) ||
             'sine'

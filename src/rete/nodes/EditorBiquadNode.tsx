@@ -15,11 +15,40 @@ export class EditorBiquadNode extends Classic.Node<
 > {
     width = 180
     height = 320
+    cachedBiquadNode: BiquadFilterNode | null = null
+
     constructor(
         change: () => void,
         initial?: { freq: number; q: number; gain: number; filterType: string }
     ) {
         super('Biquad Filter')
+
+        const liveUpdateFrequency = (value: number) => {
+            if (this.cachedBiquadNode) {
+                this.cachedBiquadNode.frequency.linearRampToValueAtTime(
+                    value,
+                    audioCtx.currentTime + 0.02
+                )
+            }
+        }
+
+        const liveUpdateQ = (value: number) => {
+            if (this.cachedBiquadNode) {
+                this.cachedBiquadNode.Q.linearRampToValueAtTime(
+                    value,
+                    audioCtx.currentTime + 0.02
+                )
+            }
+        }
+
+        const liveUpdateGain = (value: number) => {
+            if (this.cachedBiquadNode) {
+                this.cachedBiquadNode.gain.linearRampToValueAtTime(
+                    value,
+                    audioCtx.currentTime + 0.02
+                )
+            }
+        }
 
         let signalInput = new Classic.Input(socket, 'Signal', true)
         this.addInput('signal', signalInput)
@@ -30,14 +59,24 @@ export class EditorBiquadNode extends Classic.Node<
                 initial ? initial.freq : 350,
                 'Filter frequency',
                 change,
-                50
+                50,
+                false,
+                liveUpdateFrequency,
+                2 // round to 2 decimal places
             )
         )
         this.addInput('frequency', freqInput)
 
         let qInput = new Classic.Input(socket, 'Q', true)
         qInput.addControl(
-            new LabeledInputControl(initial ? initial.q : 1, 'Q', change)
+            new LabeledInputControl(
+                initial ? initial.q : 1,
+                'Q',
+                change,
+                0.1,
+                false,
+                liveUpdateQ
+            )
         )
         this.addInput('q', qInput)
 
@@ -47,7 +86,9 @@ export class EditorBiquadNode extends Classic.Node<
                 initial ? initial.gain : 0,
                 'Filter gain',
                 change,
-                0.1
+                0.1,
+                false,
+                liveUpdateGain
             )
         )
         this.addInput('gain', gainInput)
@@ -82,6 +123,7 @@ export class EditorBiquadNode extends Classic.Node<
         gain?: AudioNode[]
     }): { signal: AudioNode } {
         const bqNode = audioCtx.createBiquadFilter()
+        this.cachedBiquadNode = bqNode
 
         const freqControl = this.inputs.frequency?.control
         const qControl = this.inputs.q?.control

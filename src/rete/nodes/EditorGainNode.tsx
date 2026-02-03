@@ -13,8 +13,19 @@ export class EditorGainNode extends Classic.Node<
 > {
     width = 180
     height = 200
+    cachedGainNode: GainNode | null = null
+
     constructor(change: () => void, initial?: { gain: number }) {
         super('Gain')
+
+        const liveUpdateGain = (value: number) => {
+            if (this.cachedGainNode) {
+                this.cachedGainNode.gain.linearRampToValueAtTime(
+                    value,
+                    audioCtx.currentTime + 0.02
+                )
+            }
+        }
 
         let signalInput = new Classic.Input(socket, 'Signal', true)
         this.addInput('signal', signalInput)
@@ -25,7 +36,9 @@ export class EditorGainNode extends Classic.Node<
                 initial ? initial.gain : 1,
                 'Base Gain',
                 change,
-                0.1
+                0.1,
+                false,
+                liveUpdateGain
             )
         )
         this.addInput('baseGain', baseGainInput)
@@ -42,6 +55,7 @@ export class EditorGainNode extends Classic.Node<
         additionalGain?: AudioNode[]
     }): { signal: AudioNode } {
         const gainNode = audioCtx.createGain()
+        this.cachedGainNode = gainNode
         const gainControl = this.inputs['baseGain']?.control
 
         if (inputs.signal) {

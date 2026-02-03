@@ -9,11 +9,22 @@ export class EditorDelayNode extends Classic.Node<
 > {
     width = 180
     height = 240
+    cachedDelayNode: DelayNode | null = null
+
     constructor(
         change: () => void,
         initial?: { delay: number; maxDelay: number }
     ) {
         super('Delay')
+
+        const liveUpdateDelay = (value: number) => {
+            if (this.cachedDelayNode) {
+                this.cachedDelayNode.delayTime.linearRampToValueAtTime(
+                    Math.max(0, value),
+                    audioCtx.currentTime + 0.02
+                )
+            }
+        }
 
         let signalInput = new Classic.Input(socket, 'Signal', true)
         this.addInput('signal', signalInput)
@@ -23,7 +34,10 @@ export class EditorDelayNode extends Classic.Node<
             new LabeledInputControl(
                 initial ? initial.delay : 1,
                 'Delay Time',
-                change
+                change,
+                0.1,
+                false,
+                liveUpdateDelay
             )
         )
         this.addInput('delayTime', delayInput)
@@ -48,6 +62,7 @@ export class EditorDelayNode extends Classic.Node<
         const delayNode = audioCtx.createDelay(
             Math.max(this.controls.maxDelay.value, 1)
         )
+        this.cachedDelayNode = delayNode
 
         if (inputs.delayTime && inputs.delayTime.length > 0) {
             delayNode.delayTime.setValueAtTime(0, audioCtx.currentTime)

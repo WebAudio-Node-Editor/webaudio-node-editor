@@ -7,7 +7,7 @@ export class DynamicsCompressorNode extends Classic.Node<
         signal: Classic.Socket
     },
     { signal: Classic.Socket },
-    { threshold: LabeledInputControl 
+    { threshold: LabeledInputControl
       knee: LabeledInputControl
       ratio: LabeledInputControl
       reduction: LabeledInputControl
@@ -17,6 +17,7 @@ export class DynamicsCompressorNode extends Classic.Node<
 > {
     width = 220
     height = 500
+    cachedCompressor: DynamicsCompressorNode | null = null
 
     // The change argument is a function that should be called whenever a value changes
     // We generally use it to trigger reevaluating the graph when a value is changed
@@ -27,8 +28,53 @@ export class DynamicsCompressorNode extends Classic.Node<
         // This is the node's label that shows up in the editor
         super('Dynamics Compressor')
 
+        const liveUpdateThreshold = (value: number) => {
+            if (this.cachedCompressor) {
+                (this.cachedCompressor as unknown as globalThis.DynamicsCompressorNode).threshold.linearRampToValueAtTime(
+                    Math.max(Math.min(value, 0), -100),
+                    audioCtx.currentTime + 0.02
+                )
+            }
+        }
+
+        const liveUpdateKnee = (value: number) => {
+            if (this.cachedCompressor) {
+                (this.cachedCompressor as unknown as globalThis.DynamicsCompressorNode).knee.linearRampToValueAtTime(
+                    Math.max(Math.min(value, 40), 0),
+                    audioCtx.currentTime + 0.02
+                )
+            }
+        }
+
+        const liveUpdateRatio = (value: number) => {
+            if (this.cachedCompressor) {
+                (this.cachedCompressor as unknown as globalThis.DynamicsCompressorNode).ratio.linearRampToValueAtTime(
+                    Math.max(Math.min(value, 20), 1),
+                    audioCtx.currentTime + 0.02
+                )
+            }
+        }
+
+        const liveUpdateAttack = (value: number) => {
+            if (this.cachedCompressor) {
+                (this.cachedCompressor as unknown as globalThis.DynamicsCompressorNode).attack.linearRampToValueAtTime(
+                    Math.max(Math.min(value, 1), 0),
+                    audioCtx.currentTime + 0.02
+                )
+            }
+        }
+
+        const liveUpdateRelease = (value: number) => {
+            if (this.cachedCompressor) {
+                (this.cachedCompressor as unknown as globalThis.DynamicsCompressorNode).release.linearRampToValueAtTime(
+                    Math.max(Math.min(value, 1), 0),
+                    audioCtx.currentTime + 0.02
+                )
+            }
+        }
+
         /*  This is an input socket
-            Arguments are: 
+            Arguments are:
                 socket - ignore, just always pass in this or Classic.Socket
                 label - the text label that shows up over this socket
                 multipleConnections - whether the socket should accept more than one connection;
@@ -57,7 +103,8 @@ export class DynamicsCompressorNode extends Classic.Node<
                 'Threshold',
                 change,
                 1,
-                false
+                false,
+                liveUpdateThreshold
             )
         )
 
@@ -68,7 +115,8 @@ export class DynamicsCompressorNode extends Classic.Node<
                 'Knee',
                 change,
                 1,
-                false
+                false,
+                liveUpdateKnee
             )
         )
 
@@ -79,10 +127,11 @@ export class DynamicsCompressorNode extends Classic.Node<
                 'Ratio',
                 change,
                 1,
-                false
+                false,
+                liveUpdateRatio
             )
         )
-        
+
         //Reduction
         this.addControl(
             'reduction',
@@ -103,7 +152,8 @@ export class DynamicsCompressorNode extends Classic.Node<
                 'Attack',
                 change,
                 .001,
-                false
+                false,
+                liveUpdateAttack
             )
         )
 
@@ -115,7 +165,8 @@ export class DynamicsCompressorNode extends Classic.Node<
                 'Release',
                 change,
                 0.01,
-                false
+                false,
+                liveUpdateRelease
             )
         )
 
@@ -131,6 +182,7 @@ export class DynamicsCompressorNode extends Classic.Node<
         // All socket outputs should be a single AudioNode!!!
 
         const compressor = audioCtx.createDynamicsCompressor()
+        this.cachedCompressor = compressor as unknown as DynamicsCompressorNode
 
         //Set Values
         
