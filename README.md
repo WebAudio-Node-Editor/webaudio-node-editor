@@ -1,5 +1,7 @@
 # WebAudio Visual InteRface (Wavir)
 
+[![Build and Deploy](https://github.com/WebAudio-Node-Editor/webaudio-node-editor/actions/workflows/deploy.yml/badge.svg)](https://github.com/WebAudio-Node-Editor/webaudio-node-editor/actions/workflows/deploy.yml)
+
 ## Visit the webapp and try it [here](https://wavir.io/#/)!
 
 [Video Demo](https://youtu.be/TkXoJeamk2c)
