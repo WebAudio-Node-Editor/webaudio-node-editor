@@ -45,16 +45,6 @@ const GptChatInterface = ({ loadEditor }: GptChatInterfaceProps) => {
         borderRadius: '5px',
         marginTop: '10px'
     }
-    const fileOptions = {
-        types: [
-            {
-                description: 'JSON files',
-                accept: {
-                    'text/plain': '.json' as `.${string}`,
-                },
-            },
-        ],
-    }
     const exportFile = async (jsonData: Record<string, any>) => {
         const jsonDataStr = JSON.stringify(jsonData, null, 2);
         const blob = new Blob([jsonDataStr], { type: 'application/json' });
